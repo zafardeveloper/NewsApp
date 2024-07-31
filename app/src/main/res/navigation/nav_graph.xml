@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.newsapplication.ui.home.HomeFragment"
+        android:label="Home"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_fullScreenNewsFragment"
+            app:destination="@id/fullScreenNewsFragment"
+            app:enterAnim="@anim/overlay_from_right"
+            app:exitAnim="@anim/overlay_to_left"
+            app:popEnterAnim="@anim/overlay_from_left"
+            app:popExitAnim="@anim/overlay_to_right"/>
+        <action
+            android:id="@+id/action_homeFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/userFragment"
+        android:name="com.example.newsapplication.ui.user.UserFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_user" />
+    <fragment
+        android:id="@+id/categoriesFragment"
+        android:name="com.example.newsapplication.ui.categories.CategoriesFragment"
+        android:label="Categories"
+        tools:layout="@layout/fragment_categories" />
+    <fragment
+        android:id="@+id/rootFragment"
+        android:name="com.example.newsapplication.ui.favourites.RootFragment"
+        android:label="Favorites &amp; History"
+        tools:layout="@layout/fragment_root" />
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.example.newsapplication.ui.search.SearchFragment"
+        android:label="Search"
+        tools:layout="@layout/fragment_search" />
+    <fragment
+        android:id="@+id/fullScreenNewsFragment"
+        android:name="com.example.newsapplication.ui.home.full.FullScreenNewsFragment"
+        android:label=""
+        tools:layout="@layout/fragment_full_screen_news" >
+        <argument
+            android:name="newsData"
+            app:argType="com.example.newsapplication.models.Article" />
+    </fragment>
+</navigation>

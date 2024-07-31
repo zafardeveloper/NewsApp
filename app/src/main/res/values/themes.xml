@@ -1,0 +1,16 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="Base.Theme.NewsApplication" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimaryDark">@color/white</item>
+    </style>
+
+    <style name="TransparentActiveIndicatorStyle">
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="MineCustomTabText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse">
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="Theme.NewsApplication" parent="Base.Theme.NewsApplication" />
+</resources>
