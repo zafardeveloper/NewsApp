@@ -1,10 +1,8 @@
 package com.example.newsapplication.ui.search
 
 import android.content.Context
-import androidx.fragment.app.viewModels
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,16 +10,22 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.newsapplication.MainActivity
 import com.example.newsapplication.R
-import com.example.newsapplication.databinding.FragmentHomeBinding
 import com.example.newsapplication.databinding.FragmentSearchBinding
 import com.example.newsapplication.models.Article
 import com.example.newsapplication.ui.home.adapter.HomeAdapter
 import com.example.newsapplication.util.Resource
+import com.example.newsapplication.util.hideBottomNavigationView
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
@@ -46,6 +50,11 @@ class SearchFragment : Fragment(), HomeAdapter.Listener {
     ): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
         searchET = binding.searchET
+        val bottomNavigationView =
+            (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        CoroutineScope(Dispatchers.Main).launch {
+            hideBottomNavigationView(bottomNavigationView)
+        }
         return binding.root
     }
 
@@ -98,6 +107,7 @@ class SearchFragment : Fragment(), HomeAdapter.Listener {
     }
 
     override fun onClick(item: Article) {
-        Toast.makeText(requireContext(), "Hello", Toast.LENGTH_SHORT).show()
+        val action = SearchFragmentDirections.actionSearchFragmentToWebViewFragment(item)
+        findNavController().navigate(action)
     }
 }

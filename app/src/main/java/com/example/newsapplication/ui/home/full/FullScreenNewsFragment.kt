@@ -7,10 +7,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
+import com.example.newsapplication.MainActivity
 import com.example.newsapplication.R
 import com.example.newsapplication.databinding.FragmentFullScreenNewsBinding
 import com.example.newsapplication.util.formatDate
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.squareup.picasso.Picasso
 
 class FullScreenNewsFragment : Fragment() {
@@ -27,7 +29,6 @@ class FullScreenNewsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentFullScreenNewsBinding.inflate(inflater, container, false)
-
         return binding.root
     }
 

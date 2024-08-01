@@ -74,7 +74,7 @@ class HomeFragment : Fragment(), HomeAdapter.Listener {
     }
 
     override fun onClick(item: Article) {
-        val action = HomeFragmentDirections.actionHomeFragmentToFullScreenNewsFragment(item)
+        val action = HomeFragmentDirections.actionHomeFragmentToWebViewFragment(item)
         findNavController().navigate(action)
     }
 

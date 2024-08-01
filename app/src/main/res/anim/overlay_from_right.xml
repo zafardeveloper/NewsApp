@@ -6,4 +6,10 @@
         android:fromXDelta="100%"
         android:toXDelta="0%" />
 
+    <alpha
+        android:duration="150"
+        android:fromAlpha="0.0"
+        android:toAlpha="1.0" />
+
+
 </set>

@@ -2,6 +2,7 @@ package com.example.newsapplication
 
 import android.os.Build
 import android.os.Bundle
+import android.view.View
 import android.view.WindowInsetsController
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -9,7 +10,12 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.newsapplication.databinding.ActivityMainBinding
+import com.example.newsapplication.util.hideBottomNavigationView
+import com.example.newsapplication.util.showBottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -40,6 +46,22 @@ class MainActivity : AppCompatActivity() {
         navController.setGraph(R.navigation.nav_graph)
         bottomNavigationView.setupWithNavController(navController)
         setupActionBarWithNavController(navController)
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.webViewFragment -> {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        hideBottomNavigationView(bottomNavigationView)
+                    }
+//                    bottomNavigationView.visibility = View.GONE
+                }
+
+                else -> {
+                    showBottomNavigationView(bottomNavigationView)
+                    bottomNavigationView.visibility = View.VISIBLE
+                }
+            }
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {

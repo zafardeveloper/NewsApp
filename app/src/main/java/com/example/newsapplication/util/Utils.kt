@@ -1,6 +1,9 @@
 package com.example.newsapplication.util
 
 import android.icu.util.Calendar
+import android.view.View
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -26,4 +29,25 @@ fun formatDate(inputDate: String, inputFormat: String, outputFormat: String): St
         e.printStackTrace()
         inputDate
     }
+}
+
+suspend fun hideBottomNavigationView(view: BottomNavigationView) {
+    view.clearAnimation()
+    view.animate()
+        .translationY(view.height.toFloat())
+        .scaleX(0.8f)
+        .alpha(0.0f)
+        .setDuration(350)
+        .start()
+    delay(350L)
+    view.visibility = View.GONE
+}
+fun showBottomNavigationView(view: BottomNavigationView) {
+    view.clearAnimation()
+    view.animate()
+        .translationY(0f)
+        .scaleX(1f)
+        .alpha(1f)
+        .setDuration(350)
+        .start()
 }
