@@ -1,24 +1,23 @@
-package com.example.newsapplication.ui.home.adapter
+package com.example.newsapplication.ui.search.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.newsapplication.R
-import com.example.newsapplication.databinding.RowItemNewsHomeBinding
+import com.example.newsapplication.databinding.RowItemNewsSearchBinding
 import com.example.newsapplication.models.Article
 import com.example.newsapplication.util.formatDate
 import com.squareup.picasso.Picasso
 
-class HomeAdapter(private val listener: Listener) :
-    RecyclerView.Adapter<HomeAdapter.ArticleViewHolder>() {
+class SearchQueryAdapter(private val listener: Listener) :
+    RecyclerView.Adapter<SearchQueryAdapter.ArticleViewHolder>() {
 
-    inner class ArticleViewHolder(binding: RowItemNewsHomeBinding) :
-        ViewHolder(binding.root) {
+    inner class ArticleViewHolder(binding: RowItemNewsSearchBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         private val title = binding.tvTitle
-//        private val description = binding.tvDescription
+        //        private val description = binding.tvDescription
         private val source = binding.tvSource
         private val publishedAt = binding.tvPublishedAt
         private val image = binding.ivArticleImage
@@ -50,7 +49,7 @@ class HomeAdapter(private val listener: Listener) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticleViewHolder {
         val binding =
-            RowItemNewsHomeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            RowItemNewsSearchBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ArticleViewHolder(binding)
     }
 

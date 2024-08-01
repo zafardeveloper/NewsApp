@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -19,7 +18,7 @@ import com.example.newsapplication.MainActivity
 import com.example.newsapplication.R
 import com.example.newsapplication.databinding.FragmentSearchBinding
 import com.example.newsapplication.models.Article
-import com.example.newsapplication.ui.home.adapter.HomeAdapter
+import com.example.newsapplication.ui.search.adapter.SearchQueryAdapter
 import com.example.newsapplication.util.Resource
 import com.example.newsapplication.util.hideBottomNavigationView
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -32,12 +31,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class SearchFragment : Fragment(), HomeAdapter.Listener {
+class SearchFragment : Fragment(), SearchQueryAdapter.Listener {
 
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var searchAdapter: HomeAdapter
+    private lateinit var searchQueryAdapter: SearchQueryAdapter
     private lateinit var recyclerView: RecyclerView
     private lateinit var searchET: EditText
 
@@ -80,7 +79,7 @@ class SearchFragment : Fragment(), HomeAdapter.Listener {
             when (response) {
                 is Resource.Success -> {
                     response.data?.let { newsResponse ->
-                        searchAdapter.differ.submitList(newsResponse.articles)
+                        searchQueryAdapter.differ.submitList(newsResponse.articles)
                     }
                 }
 
@@ -98,10 +97,10 @@ class SearchFragment : Fragment(), HomeAdapter.Listener {
     }
 
     private fun setupRecyclerView() {
-        searchAdapter = HomeAdapter(this)
+        searchQueryAdapter = SearchQueryAdapter(this)
         recyclerView = binding.searchResultRV
         recyclerView.apply {
-            adapter = searchAdapter
+            adapter = searchQueryAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
     }
