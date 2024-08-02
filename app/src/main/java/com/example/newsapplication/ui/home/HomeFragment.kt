@@ -20,6 +20,7 @@ import com.example.newsapplication.repository.NewsRepository
 import com.example.newsapplication.ui.home.adapter.HomeAdapter
 import com.example.newsapplication.util.Constants
 import com.example.newsapplication.util.Resource
+import com.google.android.material.appbar.MaterialToolbar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

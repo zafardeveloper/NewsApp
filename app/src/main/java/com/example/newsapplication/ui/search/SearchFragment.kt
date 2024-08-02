@@ -1,13 +1,19 @@
 package com.example.newsapplication.ui.search
 
 import android.content.Context
+import android.graphics.Typeface
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.StyleSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -39,6 +45,8 @@ class SearchFragment : Fragment(), SearchQueryAdapter.Listener {
     private lateinit var searchQueryAdapter: SearchQueryAdapter
     private lateinit var recyclerView: RecyclerView
     private lateinit var searchET: EditText
+    private lateinit var progressBar: ProgressBar
+    private lateinit var resultTV: TextView
 
 
     private val viewModel: SearchViewModel by viewModels()
@@ -49,6 +57,8 @@ class SearchFragment : Fragment(), SearchQueryAdapter.Listener {
     ): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
         searchET = binding.searchET
+        progressBar = binding.paginationProgressBar
+        resultTV = binding.resultTV
         val bottomNavigationView =
             (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView)
         CoroutineScope(Dispatchers.Main).launch {
@@ -77,10 +87,24 @@ class SearchFragment : Fragment(), SearchQueryAdapter.Listener {
 
         viewModel.searchNews.observe(viewLifecycleOwner) { response ->
             when (response) {
+
+                is Resource.Loading -> showProgressBar()
+
                 is Resource.Success -> {
                     response.data?.let { newsResponse ->
                         searchQueryAdapter.differ.submitList(newsResponse.articles)
                     }
+                    resultTV.visibility = View.VISIBLE
+
+                    val queryText = searchET.text.toString()
+                    val resultText = "Result(s) on request \"$queryText\""
+                    val spannableString = SpannableString(resultText)
+                    val startIndex = resultText.indexOf(queryText)
+                    val endIndex = startIndex + queryText.length
+                    spannableString.setSpan(StyleSpan(Typeface.BOLD_ITALIC), startIndex, endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    resultTV.text = spannableString
+
+                    hideProgressBar()
                 }
 
                 is Resource.Error -> {
@@ -109,4 +133,16 @@ class SearchFragment : Fragment(), SearchQueryAdapter.Listener {
         val action = SearchFragmentDirections.actionSearchFragmentToWebViewFragment(item)
         findNavController().navigate(action)
     }
+
+    private fun hideProgressBar() {
+        progressBar.visibility = View.INVISIBLE
+    }
+
+    private fun showProgressBar() {
+        progressBar.visibility = View.VISIBLE
+    }
+
+//    private fun showResultMessage() {
+//        resultTV.text = "Резултат(ы) по запросу ""
+//    }
 }
