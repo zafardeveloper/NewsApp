@@ -27,6 +27,7 @@ import com.example.newsapplication.models.Article
 import com.example.newsapplication.ui.search.adapter.SearchQueryAdapter
 import com.example.newsapplication.util.Resource
 import com.example.newsapplication.util.hideBottomNavigationView
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -35,6 +36,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 
 @AndroidEntryPoint
 class SearchFragment : Fragment(), SearchQueryAdapter.Listener {
@@ -47,6 +49,7 @@ class SearchFragment : Fragment(), SearchQueryAdapter.Listener {
     private lateinit var searchET: EditText
     private lateinit var progressBar: ProgressBar
     private lateinit var resultTV: TextView
+    private lateinit var appBarLayout: AppBarLayout
 
 
     private val viewModel: SearchViewModel by viewModels()
@@ -59,11 +62,13 @@ class SearchFragment : Fragment(), SearchQueryAdapter.Listener {
         searchET = binding.searchET
         progressBar = binding.paginationProgressBar
         resultTV = binding.resultTV
+        appBarLayout = binding.appBarLayout
         val bottomNavigationView =
             (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView)
         CoroutineScope(Dispatchers.Main).launch {
             hideBottomNavigationView(bottomNavigationView)
         }
+        appBarLayoutBg()
         return binding.root
     }
 
@@ -142,7 +147,18 @@ class SearchFragment : Fragment(), SearchQueryAdapter.Listener {
         progressBar.visibility = View.VISIBLE
     }
 
-//    private fun showResultMessage() {
-//        resultTV.text = "Резултат(ы) по запросу ""
-//    }
+    private fun appBarLayoutBg() {
+        appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
+            if (abs(verticalOffset) == appBarLayout.totalScrollRange) {
+                // AppBarLayout is collapsed
+                appBarLayout.setBackgroundColor(resources.getColor(R.color.white))
+            } else if (verticalOffset == 0) {
+                // AppBarLayout is expanded
+                appBarLayout.setBackgroundColor(resources.getColor(R.color.white))
+            } else {
+                // AppBarLayout is in the middle of collapsing/expanding
+                appBarLayout.setBackgroundColor(resources.getColor(R.color.white))
+            }
+        })
+    }
 }
