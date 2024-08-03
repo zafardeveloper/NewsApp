@@ -6,22 +6,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.newsapplication.R
 import com.example.newsapplication.databinding.FragmentHomeBinding
 import com.example.newsapplication.models.Article
-import com.example.newsapplication.repository.NewsRepository
 import com.example.newsapplication.ui.home.adapter.HomeAdapter
 import com.example.newsapplication.util.Constants
 import com.example.newsapplication.util.Resource
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.MaterialToolbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.math.abs
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(), HomeAdapter.Listener {
@@ -30,9 +29,10 @@ class HomeFragment : Fragment(), HomeAdapter.Listener {
     private val binding get() = _binding!!
 
     private val viewModel: HomeViewModel by viewModels()
-    lateinit var myAdapter: HomeAdapter
+    private lateinit var myAdapter: HomeAdapter
     private lateinit var progressBar: ProgressBar
     private lateinit var recyclerView: RecyclerView
+    private lateinit var appBarLayout: AppBarLayout
 
 
     override fun onCreateView(
@@ -41,6 +41,8 @@ class HomeFragment : Fragment(), HomeAdapter.Listener {
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         progressBar = binding.paginationProgressBar
+        appBarLayout = binding.appBarLayout
+        appBarLayoutBg()
         return binding.root
     }
 
@@ -94,5 +96,20 @@ class HomeFragment : Fragment(), HomeAdapter.Listener {
 
     private fun showProgressBar() {
         progressBar.visibility = View.VISIBLE
+    }
+
+    private fun appBarLayoutBg() {
+        appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
+            if (abs(verticalOffset) == appBarLayout.totalScrollRange) {
+                // AppBarLayout is collapsed
+                appBarLayout.setBackgroundColor(resources.getColor(R.color.white))
+            } else if (verticalOffset == 0) {
+                // AppBarLayout is expanded
+                appBarLayout.setBackgroundColor(resources.getColor(R.color.white))
+            } else {
+                // AppBarLayout is in the middle of collapsing/expanding
+                appBarLayout.setBackgroundColor(resources.getColor(R.color.white))
+            }
+        })
     }
 }
