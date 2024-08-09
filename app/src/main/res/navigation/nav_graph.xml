@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.example.newsapplication.ui.home.HomeFragment"
+        android:name="com.example.newsapplication.view.home.HomeFragment"
         android:label="Home"
         tools:layout="@layout/fragment_home" >
         <action
@@ -29,23 +29,23 @@
             app:popExitAnim="@anim/overlay_to_right"/>
     </fragment>
     <fragment
-        android:id="@+id/userFragment"
-        android:name="com.example.newsapplication.ui.user.UserFragment"
-        android:label="Profile"
-        tools:layout="@layout/fragment_user" />
+        android:id="@+id/moreFragment"
+        android:name="com.example.newsapplication.view.more.MoreFragment"
+        android:label="More"
+        tools:layout="@layout/fragment_more" />
     <fragment
         android:id="@+id/categoriesFragment"
-        android:name="com.example.newsapplication.ui.categories.CategoriesFragment"
+        android:name="com.example.newsapplication.view.categories.CategoriesFragment"
         android:label="Categories"
         tools:layout="@layout/fragment_categories" />
     <fragment
         android:id="@+id/rootFragment"
-        android:name="com.example.newsapplication.ui.favourites.RootFragment"
+        android:name="com.example.newsapplication.view.favourites.RootFragment"
         android:label="Favorites &amp; History"
         tools:layout="@layout/fragment_root" />
     <fragment
         android:id="@+id/searchFragment"
-        android:name="com.example.newsapplication.ui.search.SearchFragment"
+        android:name="com.example.newsapplication.view.search.SearchFragment"
         android:label="Search"
         tools:layout="@layout/fragment_search" >
         <action
@@ -58,20 +58,20 @@
     </fragment>
     <fragment
         android:id="@+id/fullScreenNewsFragment"
-        android:name="com.example.newsapplication.ui.home.full.FullScreenNewsFragment"
+        android:name="com.example.newsapplication.view.home.full.FullScreenNewsFragment"
         android:label=""
         tools:layout="@layout/fragment_full_screen_news" >
         <argument
             android:name="newsData"
-            app:argType="com.example.newsapplication.models.Article" />
+            app:argType="com.example.newsapplication.model.Article" />
     </fragment>
     <fragment
         android:id="@+id/webViewFragment"
-        android:name="com.example.newsapplication.ui.home.full.WebViewFragment"
+        android:name="com.example.newsapplication.view.home.full.WebViewFragment"
         android:label=""
         tools:layout="@layout/fragment_web_view" >
         <argument
             android:name="newsData"
-            app:argType="com.example.newsapplication.models.Article"/>
+            app:argType="com.example.newsapplication.model.Article"/>
     </fragment>
 </navigation>

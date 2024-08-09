@@ -18,7 +18,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:title=""
-        app:titleTextColor="@color/black" />
+        app:titleTextColor="@color/black"
+        android:theme="@style/AppTheme.MaterialToolbar"
+        app:navigationIcon="@null"/>
 
     <fragment
         android:id="@+id/fragmentContainerView"
@@ -49,6 +51,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/bottom_menu" />
+        app:menu="@menu/bottom_menu"
+        app:itemTextAppearanceActive="@style/Widget.BottomNavigationView"
+        app:itemTextAppearanceInactive="@style/Widget.BottomNavigationView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
