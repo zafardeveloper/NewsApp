@@ -1,7 +1,7 @@
 package com.example.newsapplication.repository
 
 import com.example.newsapplication.api.ApiService
-import com.example.newsapplication.models.NewsResponse
+import com.example.newsapplication.model.NewsResponse
 import retrofit2.Response
 import javax.inject.Inject
 import javax.inject.Singleton

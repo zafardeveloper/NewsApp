@@ -22,8 +22,8 @@
         android:icon="@drawable/ic_favorite_selector" />
 
     <item
-        android:id="@+id/userFragment"
-        android:title="Profile"
-        android:icon="@drawable/ic_user_selector" />
+        android:id="@+id/moreFragment"
+        android:title="More"
+        android:icon="@drawable/ic_more_selector" />
 
 </menu>

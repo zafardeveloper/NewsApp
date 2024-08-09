@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        //            window.statusBarColor = resources.getColor(R.color.black)
+//        window.statusBarColor = resources.getColor(R.color.black)
         window.navigationBarColor = ContextCompat.getColor(this, R.color.white)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -40,6 +40,9 @@ class MainActivity : AppCompatActivity() {
 
         val toolbar = binding.materialToolbar
         setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayShowHomeEnabled(false)
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
+
 
         val bottomNavigationView = binding.bottomNavigationView
         val navController = findNavController(R.id.fragmentContainerView)
@@ -53,7 +56,6 @@ class MainActivity : AppCompatActivity() {
                     CoroutineScope(Dispatchers.Main).launch {
                         hideBottomNavigationView(bottomNavigationView)
                     }
-//                    bottomNavigationView.visibility = View.GONE
                 }
 
                 else -> {
