@@ -14,11 +14,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.newsapplication.R
 import com.example.newsapplication.databinding.FragmentHomeBinding
 import com.example.newsapplication.model.Article
-import com.example.newsapplication.view.home.adapter.HomeAdapter
 import com.example.newsapplication.util.Constants
+import com.example.newsapplication.util.NetworkConnectionLiveData
 import com.example.newsapplication.util.Resource
+import com.example.newsapplication.view.home.adapter.HomeAdapter
 import com.google.android.material.appbar.AppBarLayout
 import dagger.hilt.android.AndroidEntryPoint
+import pl.droidsonroids.gif.GifImageView
 import kotlin.math.abs
 
 @AndroidEntryPoint
@@ -32,6 +34,9 @@ class HomeFragment : Fragment(), HomeAdapter.Listener {
     private lateinit var progressBar: ProgressBar
     private lateinit var recyclerView: RecyclerView
     private lateinit var appBarLayout: AppBarLayout
+    private lateinit var noConnectionGif: GifImageView
+
+    private lateinit var connectionLiveData: NetworkConnectionLiveData
 
 
     override fun onCreateView(
@@ -39,15 +44,30 @@ class HomeFragment : Fragment(), HomeAdapter.Listener {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        progressBar = binding.paginationProgressBar
+        myAdapter = HomeAdapter(this)
+        progressBar = binding.progressBar
+        noConnectionGif = binding.noConnectionGif
         appBarLayout = binding.appBarLayout
+        connectionLiveData = NetworkConnectionLiveData(requireContext())
         appBarLayoutBg()
+        Log.d("MyLog", "onCreateView: onCreateView")
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.getAllBreakingNews(Constants.TOP_NEWS)
+        connectionLiveData.observe(viewLifecycleOwner) { isConnected ->
+            if (isConnected) {
+                viewModel.getAllBreakingNews(Constants.TOP_NEWS)
+            }
+        }
+        try {
+            if (!connectionLiveData.isConnected() && myAdapter.differ.currentList.size == 0) {
+                showNoConnectionGif()
+            }
+        } catch (e: Exception) {
+            Log.d("MyLog", "onViewCreated: ${e.message}", e)
+        }
         setupRecyclerView()
         viewModel.breakingNews.observe(viewLifecycleOwner) { response ->
             when (response) {
@@ -66,6 +86,7 @@ class HomeFragment : Fragment(), HomeAdapter.Listener {
                 }
 
                 is Resource.Loading -> {
+                    hideNoConnectionGif()
                     showProgressBar()
                 }
             }
@@ -81,7 +102,6 @@ class HomeFragment : Fragment(), HomeAdapter.Listener {
     }
 
     private fun setupRecyclerView() {
-        myAdapter = HomeAdapter(this)
         recyclerView = binding.rvBreakingNews
         recyclerView.apply {
             adapter = myAdapter
@@ -97,16 +117,21 @@ class HomeFragment : Fragment(), HomeAdapter.Listener {
         progressBar.visibility = View.VISIBLE
     }
 
+    private fun hideNoConnectionGif() {
+        noConnectionGif.visibility = View.GONE
+    }
+
+    private fun showNoConnectionGif() {
+        noConnectionGif.visibility = View.VISIBLE
+    }
+
     private fun appBarLayoutBg() {
         appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
             if (abs(verticalOffset) == appBarLayout.totalScrollRange) {
-                // AppBarLayout is collapsed
                 appBarLayout.setBackgroundColor(resources.getColor(R.color.white))
             } else if (verticalOffset == 0) {
-                // AppBarLayout is expanded
                 appBarLayout.setBackgroundColor(resources.getColor(R.color.white))
             } else {
-                // AppBarLayout is in the middle of collapsing/expanding
                 appBarLayout.setBackgroundColor(resources.getColor(R.color.white))
             }
         })

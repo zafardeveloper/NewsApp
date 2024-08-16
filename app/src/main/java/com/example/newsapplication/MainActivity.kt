@@ -6,6 +6,7 @@ import android.view.View
 import android.view.WindowInsetsController
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
@@ -13,8 +14,6 @@ import com.example.newsapplication.databinding.ActivityMainBinding
 import com.example.newsapplication.util.hideBottomNavigationView
 import com.example.newsapplication.util.showBottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -39,11 +38,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         val toolbar = binding.materialToolbar
+
         setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayShowHomeEnabled(false)
-        supportActionBar?.setDisplayHomeAsUpEnabled(false)
-
-
         val bottomNavigationView = binding.bottomNavigationView
         val navController = findNavController(R.id.fragmentContainerView)
         navController.setGraph(R.navigation.nav_graph)
@@ -53,17 +49,28 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.webViewFragment -> {
-                    CoroutineScope(Dispatchers.Main).launch {
+                    lifecycleScope.launch {
                         hideBottomNavigationView(bottomNavigationView)
                     }
+                    toolbar.setNavigationIconTint(ContextCompat.getColor(this, R.color.blue))
+                    toolbar.setNavigationIcon(R.drawable.ic_back)
+                }
+
+                R.id.homeFragment -> {
+                    showBottomNavigationView(bottomNavigationView)
+                    bottomNavigationView.visibility = View.VISIBLE
+                    toolbar.navigationIcon = null
                 }
 
                 else -> {
                     showBottomNavigationView(bottomNavigationView)
                     bottomNavigationView.visibility = View.VISIBLE
+                    toolbar.setNavigationIconTint(ContextCompat.getColor(this, R.color.blue))
+                    toolbar.setNavigationIcon(R.drawable.ic_back)
                 }
             }
         }
+
     }
 
     override fun onSupportNavigateUp(): Boolean {

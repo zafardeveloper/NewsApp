@@ -1,6 +1,8 @@
 package com.example.newsapplication.util
 
+import android.graphics.Rect
 import android.icu.util.Calendar
+import android.view.TouchDelegate
 import android.view.View
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.delay
@@ -50,4 +52,19 @@ fun showBottomNavigationView(view: BottomNavigationView) {
         .alpha(1f)
         .setDuration(350)
         .start()
+}
+
+fun clickAreaButton(button: View) {
+
+    val parent = button.parent as View
+
+    parent.post {
+        val rect = Rect()
+        button.getHitRect(rect)
+        rect.top -= 15
+        rect.left -= 15
+        rect.bottom += 15
+        rect.right += 15
+        parent.touchDelegate = TouchDelegate(rect, button)
+    }
 }
