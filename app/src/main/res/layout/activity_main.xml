@@ -19,8 +19,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:title=""
         app:titleTextColor="@color/black"
-        android:theme="@style/AppTheme.MaterialToolbar"
-        app:navigationIcon="@null"/>
+        android:theme="@style/AppTheme.MaterialToolbar"/>
 
     <fragment
         android:id="@+id/fragmentContainerView"

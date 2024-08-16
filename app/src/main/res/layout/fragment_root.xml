@@ -18,7 +18,7 @@
         app:tabTextAppearance="@style/MineCustomTabText"
         app:tabIndicatorColor="@null"
         app:tabIndicatorAnimationMode="linear"
-        app:tabIndicator="@drawable/tab_indicator"
+        app:tabIndicator="@drawable/tab_indicator_selected"
         app:tabMode="fixed"
         app:tabIndicatorGravity="stretch"/>
 

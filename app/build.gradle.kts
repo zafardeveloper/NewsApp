@@ -93,7 +93,10 @@ dependencies {
     implementation ("androidx.hilt:hilt-work:1.2.0")
     kapt("com.google.dagger:hilt-android-compiler:2.50")
     kapt("androidx.hilt:hilt-compiler:1.2.0")
-
     implementation ("androidx.work:work-runtime-ktx:2.9.0")
+
+    //Gif
+    implementation("pl.droidsonroids.gif:android-gif-drawable:1.2.23")
+
 
 }
