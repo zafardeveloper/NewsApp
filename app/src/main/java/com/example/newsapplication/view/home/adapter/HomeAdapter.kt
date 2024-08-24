@@ -2,6 +2,7 @@ package com.example.newsapplication.view.home.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -12,7 +13,7 @@ import com.example.newsapplication.model.Article
 import com.example.newsapplication.util.formatDate
 import com.squareup.picasso.Picasso
 
-class HomeAdapter(private val listener: Listener) :
+open class HomeAdapter(private val listener: Listener) :
     RecyclerView.Adapter<HomeAdapter.ArticleViewHolder>() {
 
     inner class ArticleViewHolder(binding: RowItemNewsHomeBinding) :
@@ -22,13 +23,14 @@ class HomeAdapter(private val listener: Listener) :
         private val source = binding.tvSource
         private val publishedAt = binding.tvPublishedAt
         private val image = binding.ivArticleImage
+        val constraintLayout = binding.constraintLayout
         fun bind(article: Article) {
             title.text = article.title
 //            description.text = article.description
             source.text = article.source?.name
 
             publishedAt.text = formatDate(article.publishedAt!!, "yyyy-MM-dd'T'HH:mm:ss'Z'", "dd MMMM")
-            if (article.urlToImage == null) {
+            if (article.urlToImage.isNullOrEmpty()) {
                 image.setImageResource(R.drawable.ic_no_image)
             } else {
                 Picasso.get().load(article.urlToImage).into(image)
@@ -61,6 +63,8 @@ class HomeAdapter(private val listener: Listener) :
     override fun onBindViewHolder(holder: ArticleViewHolder, position: Int) {
         val article = differ.currentList[position]
         holder.bind(article)
+
+        holder.constraintLayout.startAnimation(AnimationUtils.loadAnimation(holder.itemView.context, R.anim.emergence))
 
         holder.itemView.setOnClickListener {
             listener.onClick(article)

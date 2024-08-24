@@ -4,17 +4,45 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".view.categories.CategoriesFragment">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Categories"
-        android:textSize="50sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/categoriesTabLayout"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="40dp"
+        android:background="@android:color/transparent"
+        android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:fontFamily="@font/poppins_regular"/>
+        app:tabIndicatorAnimationMode="linear"
+        app:tabIndicatorColor="@color/blue"
+        app:tabIndicatorFullWidth="true"
+        app:tabMode="scrollable"
+        app:tabSelectedTextColor="@color/black"
+        app:tabTextAppearance="@style/MineCustomTabText"
+        app:tabTextColor="@color/hint" />
+
+    <ImageView
+        android:id="@+id/list"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/gradient_bg"
+        android:padding="5dp"
+        android:src="@drawable/ic_list"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/categoriesViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/categoriesTabLayout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
