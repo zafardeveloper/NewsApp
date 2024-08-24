@@ -13,5 +13,6 @@
         <item name="fontFamily">@font/poppins_regular</item>
     </style>
 
+
     <style name="Theme.NewsApplication" parent="Base.Theme.NewsApplication" />
 </resources>

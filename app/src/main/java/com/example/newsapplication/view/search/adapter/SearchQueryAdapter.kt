@@ -2,6 +2,7 @@ package com.example.newsapplication.view.search.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -21,6 +22,7 @@ class SearchQueryAdapter(private val listener: Listener) :
         private val source = binding.tvSource
         private val publishedAt = binding.tvPublishedAt
         private val image = binding.ivArticleImage
+        val cardView = binding.cardView
         fun bind(article: Article) {
             title.text = article.title
 //            description.text = article.description
@@ -60,7 +62,7 @@ class SearchQueryAdapter(private val listener: Listener) :
     override fun onBindViewHolder(holder: ArticleViewHolder, position: Int) {
         val article = differ.currentList[position]
         holder.bind(article)
-
+        holder.cardView.startAnimation(AnimationUtils.loadAnimation(holder.itemView.context, R.anim.emergence))
         holder.itemView.setOnClickListener {
             listener.onClick(article)
         }
