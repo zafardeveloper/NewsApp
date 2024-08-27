@@ -1,4 +1,4 @@
-package com.example.newsapplication.view.categories.singleFragment
+package com.example.newsapplication.view.categories.tabFragment
 
 import android.util.Log
 import androidx.lifecycle.LiveData

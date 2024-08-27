@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <View
+        android:layout_width="40dp"
+        android:layout_height="6dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_for_slider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="35dp"
+        android:fontFamily="@font/poppins_regular"
+        android:text="Categories option"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chipGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="85dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:singleSelection="true">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipPolitics"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:text="Politics"
+            android:textAppearance="@style/chipText"
+            app:chipCornerRadius="99dp" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipEconomy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:text="Economy"
+            android:textAppearance="@style/chipText"
+            app:chipCornerRadius="99dp" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipTechnologies"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:text="Technologies"
+            android:textAppearance="@style/chipText"
+            app:chipCornerRadius="99dp" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipSport"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:text="Sport"
+            android:textAppearance="@style/chipText"
+            app:chipCornerRadius="99dp" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipCulture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:text="Culture"
+            android:textAppearance="@style/chipText"
+            app:chipCornerRadius="99dp" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipHealth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:text="Health"
+            android:textAppearance="@style/chipText"
+            app:chipCornerRadius="99dp" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipTravel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:text="Travel"
+            android:textAppearance="@style/chipText"
+            app:chipCornerRadius="99dp" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipScience"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:text="Science"
+            android:textAppearance="@style/chipText"
+            app:chipCornerRadius="99dp" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipCars"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:text="Cars"
+            android:textAppearance="@style/chipText"
+            app:chipCornerRadius="99dp" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipSociety"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:text="Society"
+            android:textAppearance="@style/chipText"
+            app:chipCornerRadius="99dp" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipEntertainment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:text="Entertainment"
+            android:textAppearance="@style/chipText"
+            app:chipCornerRadius="99dp" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipIncidents"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:text="Incidents"
+            android:textAppearance="@style/chipText"
+            app:chipCornerRadius="99dp" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipFashion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:text="Fashion"
+            android:textAppearance="@style/chipText"
+            app:chipCornerRadius="99dp" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipWeather"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:text="Weather"
+            android:textAppearance="@style/chipText"
+            app:chipCornerRadius="99dp" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipEducation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:text="Education"
+            android:textAppearance="@style/chipText"
+            app:chipCornerRadius="99dp" />
+
+    </com.google.android.material.chip.ChipGroup>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
