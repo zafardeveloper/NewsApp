@@ -88,7 +88,7 @@
     </fragment>
     <fragment
         android:id="@+id/singleFragment"
-        android:name="com.example.newsapplication.view.categories.singleFragment.SingleFragment"
+        android:name="com.example.newsapplication.view.categories.tabFragment.TabFragment"
         android:label=""
-        tools:layout="@layout/fragment_single" />
+        tools:layout="@layout/fragment_tab" />
 </navigation>

@@ -1,4 +1,4 @@
-package com.example.newsapplication.view.categories.singleFragment
+package com.example.newsapplication.view.categories.tabFragment
 
 import android.os.Bundle
 import android.util.Log
@@ -11,7 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.newsapplication.databinding.FragmentSingleBinding
+import com.example.newsapplication.databinding.FragmentTabBinding
 import com.example.newsapplication.model.Article
 import com.example.newsapplication.util.Constants
 import com.example.newsapplication.util.Resource
@@ -20,9 +20,9 @@ import com.example.newsapplication.view.home.adapter.HomeAdapter
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class SingleFragment : Fragment(), HomeAdapter.Listener {
+class TabFragment : Fragment(), HomeAdapter.Listener {
 
-    private var _binding: FragmentSingleBinding? = null
+    private var _binding: FragmentTabBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel: SingleViewModel by viewModels()
@@ -32,8 +32,8 @@ class SingleFragment : Fragment(), HomeAdapter.Listener {
 
 
     companion object {
-        fun newInstance(data: String): SingleFragment {
-            val fragment = SingleFragment()
+        fun newInstance(data: String): TabFragment {
+            val fragment = TabFragment()
             val args = Bundle()
             args.putString(Constants.CATEGORY_KEY, data)
             fragment.arguments = args
@@ -45,7 +45,7 @@ class SingleFragment : Fragment(), HomeAdapter.Listener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentSingleBinding.inflate(inflater, container, false)
+        _binding = FragmentTabBinding.inflate(inflater, container, false)
         myAdapter = HomeAdapter(this)
         recyclerView = binding.rvBreakingNews
         progressBar = binding.progressBar

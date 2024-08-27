@@ -13,6 +13,23 @@
         <item name="fontFamily">@font/poppins_regular</item>
     </style>
 
+    <style name="BottomSheetDialogTheme" parent="ThemeOverlay.Material3.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/BottomSheetDialogStyle</item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
+
+    <style name="BottomSheetDialogStyle" parent="Widget.MaterialComponents.BottomSheet">
+        <item name="android:backgroundTint">@color/white</item>
+    </style>
+
+    <style name="chipText" parent="TextAppearance.MaterialComponents.Chip">
+        <item name="android:fontFamily">@font/poppins_regular</item>
+    </style>
+
 
     <style name="Theme.NewsApplication" parent="Base.Theme.NewsApplication" />
 </resources>
