@@ -39,11 +39,12 @@
                 android:drawablePadding="10dp"
                 android:drawableTint="@color/blue"
                 android:hint="search"
+                android:imeOptions="actionSearch"
                 android:paddingHorizontal="15dp"
+                android:singleLine="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:singleLine="true"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
                 android:id="@+id/cleanSearchText"
@@ -78,7 +79,7 @@
 
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/searchResultRV"
+        android:id="@+id/searchRV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"

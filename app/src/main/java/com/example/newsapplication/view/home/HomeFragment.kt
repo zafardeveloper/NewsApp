@@ -126,14 +126,9 @@ class HomeFragment : Fragment(), HomeAdapter.Listener {
     }
 
     private fun appBarLayoutBg() {
-        appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
-            if (abs(verticalOffset) == appBarLayout.totalScrollRange) {
-                appBarLayout.setBackgroundColor(resources.getColor(R.color.white))
-            } else if (verticalOffset == 0) {
-                appBarLayout.setBackgroundColor(resources.getColor(R.color.white))
-            } else {
-                appBarLayout.setBackgroundColor(resources.getColor(R.color.white))
-            }
-        })
+        val whiteColor = resources.getColor(R.color.white)
+        appBarLayout.addOnOffsetChangedListener { _, _ ->
+            appBarLayout.setBackgroundColor(whiteColor)
+        }
     }
 }

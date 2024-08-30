@@ -10,11 +10,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -25,40 +27,49 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.newsapplication.MainActivity
 import com.example.newsapplication.R
 import com.example.newsapplication.databinding.FragmentSearchBinding
+import com.example.newsapplication.db.AppDatabase
+import com.example.newsapplication.db.searchHistory.SearchHistoryDao
+import com.example.newsapplication.db.searchHistory.SearchHistoryEntity
+import com.example.newsapplication.db.searchHistory.SearchHistoryRepository
 import com.example.newsapplication.model.Article
 import com.example.newsapplication.util.NetworkConnectionLiveData
 import com.example.newsapplication.util.Resource
 import com.example.newsapplication.util.clickAreaButton
 import com.example.newsapplication.util.hideBottomNavigationView
-import com.example.newsapplication.view.search.adapter.SearchQueryAdapter
+import com.example.newsapplication.view.search.historyAdapter.SearchHistoryAdapter
+import com.example.newsapplication.view.search.queryAdapter.SearchQueryAdapter
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.math.abs
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
-class SearchFragment : Fragment(), SearchQueryAdapter.Listener {
+class SearchFragment : Fragment(), SearchQueryAdapter.Listener, SearchHistoryAdapter.Listener {
 
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var searchQueryAdapter: SearchQueryAdapter
+    private lateinit var searchHistoryAdapter: SearchHistoryAdapter
     private lateinit var recyclerView: RecyclerView
     private lateinit var searchET: EditText
     private lateinit var cleanBtn: ImageView
     private lateinit var progressBar: ProgressBar
     private lateinit var resultTV: TextView
     private lateinit var appBarLayout: AppBarLayout
-
     private lateinit var connectionLiveData: NetworkConnectionLiveData
+    private lateinit var searchHistoryDatabase: AppDatabase
 
-
+    private lateinit var searchHistoryRepository: SearchHistoryRepository
+    private lateinit var searchHistoryDao: SearchHistoryDao
     private val viewModel: SearchViewModel by viewModels()
+
+
+    private var imm: InputMethodManager? = null
+    private var isConnected = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -71,6 +82,11 @@ class SearchFragment : Fragment(), SearchQueryAdapter.Listener {
         resultTV = binding.resultTV
         appBarLayout = binding.appBarLayout
         connectionLiveData = NetworkConnectionLiveData(requireContext())
+
+        searchHistoryDatabase = AppDatabase.getDatabase(requireContext())
+        searchHistoryDao = searchHistoryDatabase.searchHistoryDao()
+        searchHistoryRepository = SearchHistoryRepository(searchHistoryDao)
+
         val bottomNavigationView =
             (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView)
         CoroutineScope(Dispatchers.Main).launch {
@@ -82,28 +98,12 @@ class SearchFragment : Fragment(), SearchQueryAdapter.Listener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        cleanBtn.visibility = View.GONE
-        searchET.requestFocus()
-        val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-        imm?.showSoftInput(binding.searchET, InputMethodManager.SHOW_IMPLICIT)
-        var job: Job? = null
-        searchET.addTextChangedListener { editable ->
-            job?.cancel()
-            editable?.let {
-                cleanBtn.visibility =
-                    if (editable.isEmpty()) View.GONE else View.VISIBLE
-                if (editable.toString().isNotEmpty()) {
-                    job = lifecycleScope.launch {
-                        delay(500L)
-                        connectionLiveData.observe(viewLifecycleOwner) { isConnected ->
-                            if (isConnected) {
-                                viewModel.searchForNews(editable.toString().trim())
-                            }
-                        }
-                    }
-                }
-            }
+
+        connectionLiveData.observe(viewLifecycleOwner) {
+            isConnected = it
         }
+
+        setupSearchField()
         setupRecyclerView()
 
         viewModel.searchNews.observe(viewLifecycleOwner) { response ->
@@ -115,6 +115,7 @@ class SearchFragment : Fragment(), SearchQueryAdapter.Listener {
 
                 is Resource.Success -> {
                     response.data?.let { newsResponse ->
+                        recyclerView.adapter = searchQueryAdapter
                         searchQueryAdapter.differ.submitList(newsResponse.articles)
                     }
                     resultTV.visibility = View.VISIBLE
@@ -146,20 +147,77 @@ class SearchFragment : Fragment(), SearchQueryAdapter.Listener {
             }
         }
 
-        cleanBtn.setOnClickListener {
-            searchET.setText("")
-        }
         clickAreaButton(cleanBtn)
 
     }
 
+    private fun setupSearchField() {
+        cleanBtn.visibility = View.GONE
+        searchET.requestFocus()
+        imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        imm?.showSoftInput(binding.searchET, InputMethodManager.SHOW_IMPLICIT)
+
+        searchET.apply {
+            addTextChangedListener { editable ->
+//                editable?.let {
+//                    cleanBtn.visibility = if (editable.isEmpty()) View.GONE else View.VISIBLE
+//                }
+                updateCleanBtnVisibility()
+            }
+            setOnEditorActionListener { _, actionId, _ ->
+                val editable = this.text
+                val searchHistory = SearchHistoryEntity(
+                    searchQuery = editable.toString().trim()
+                )
+                if (actionId == EditorInfo.IME_ACTION_SEARCH && editable.isNotEmpty()) {
+                    if (isConnected) {
+                        viewModel.searchForNews(editable.toString().trim())
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            searchHistoryRepository.insertSearchHistory(searchHistory)
+                        }
+                    }
+                }
+                imm?.hideSoftInputFromWindow(view?.windowToken, 0)
+                searchET.clearFocus()
+                cleanBtn.visibility = View.GONE
+                true
+            }
+
+            setOnFocusChangeListener { _, hasFocus ->
+                if (hasFocus) {
+                    updateCleanBtnVisibility()
+                    setupRecyclerView()
+                    resultTV.visibility = View.GONE
+                }
+            }
+        }
+
+        cleanBtn.setOnClickListener {
+            searchET.setText("")
+            searchET.requestFocus()
+            imm?.showSoftInput(binding.searchET, InputMethodManager.SHOW_IMPLICIT)
+            updateCleanBtnVisibility()
+        }
+    }
+
     private fun setupRecyclerView() {
+        loadSearchHistory()
         searchQueryAdapter = SearchQueryAdapter(this)
-        recyclerView = binding.searchResultRV
+        searchHistoryAdapter = SearchHistoryAdapter(this)
+        recyclerView = binding.searchRV
         recyclerView.apply {
-            adapter = searchQueryAdapter
+            adapter = searchHistoryAdapter
             layoutManager = LinearLayoutManager(requireContext())
-//            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        }
+
+    }
+
+    private fun loadSearchHistory() {
+        lifecycleScope.launch {
+            val searches = withContext(Dispatchers.IO) {
+                searchHistoryRepository.getAllSearchHistory()
+            }
+            searchHistoryAdapter.differ.submitList(searches)
         }
     }
 
@@ -178,17 +236,53 @@ class SearchFragment : Fragment(), SearchQueryAdapter.Listener {
 
     @Suppress("DEPRECATION")
     private fun appBarLayoutBg() {
-        appBarLayout.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
-            if (abs(verticalOffset) == appBarLayout.totalScrollRange) {
-                // AppBarLayout is collapsed
-                appBarLayout.setBackgroundColor(resources.getColor(R.color.white))
-            } else if (verticalOffset == 0) {
-                // AppBarLayout is expanded
-                appBarLayout.setBackgroundColor(resources.getColor(R.color.white))
-            } else {
-                // AppBarLayout is in the middle of collapsing/expanding
-                appBarLayout.setBackgroundColor(resources.getColor(R.color.white))
-            }
+        val whiteColor = resources.getColor(R.color.white)
+        appBarLayout.addOnOffsetChangedListener { _, _ ->
+            appBarLayout.setBackgroundColor(whiteColor)
         }
+    }
+
+    private fun updateCleanBtnVisibility() {
+        cleanBtn.visibility = if (searchET.text.isEmpty()) View.GONE else View.VISIBLE
+    }
+
+
+    override fun onClickHistory(searchHistory: SearchHistoryEntity) {
+        searchET.setText(searchHistory.searchQuery)
+        if (isConnected) {
+            cleanBtn.visibility = View.GONE
+            viewModel.searchForNews(searchET.text.toString())
+        }
+        imm?.hideSoftInputFromWindow(view?.windowToken, 0)
+        searchET.clearFocus()
+    }
+
+    override fun onLongClickHistory(searchHistory: SearchHistoryEntity) {
+        val dialogView = LayoutInflater.from(requireContext())
+            .inflate(R.layout.custom_dialog_delete, requireView() as ViewGroup, false)
+
+        val buttonYes = dialogView.findViewById<TextView>(R.id.buttonYes)
+        val buttonNo = dialogView.findViewById<TextView>(R.id.buttonNo)
+
+        val alertDialog = AlertDialog.Builder(requireContext())
+            .setCancelable(false)
+            .setView(dialogView)
+            .create()
+        alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        buttonYes.setOnClickListener {
+            lifecycleScope.launch(Dispatchers.IO) {
+                searchHistoryRepository.deleteSearchHistory(searchHistory)
+            }
+            loadSearchHistory()
+            alertDialog.dismiss()
+        }
+
+        buttonNo.setOnClickListener {
+            alertDialog.dismiss()
+        }
+        clickAreaButton(buttonYes)
+        clickAreaButton(buttonNo)
+        alertDialog.show()
     }
 }

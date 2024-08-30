@@ -4,28 +4,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.favourites.RootFragment"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".view.favourites.RootFragment">
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/favoritesTabLayout"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        app:tabSelectedTextColor="@color/white"
-        app:tabTextColor="@color/unchecked"
         android:background="@android:color/transparent"
+        app:tabIndicatorColor="@color/blue"
         app:tabIndicatorFullWidth="true"
+        app:tabSelectedTextColor="@color/black"
         app:tabTextAppearance="@style/MineCustomTabText"
-        app:tabIndicatorColor="@null"
+        app:tabTextColor="@color/hint"
         app:tabIndicatorAnimationMode="linear"
-        app:tabIndicator="@drawable/tab_indicator_selected"
-        app:tabMode="fixed"
-        app:tabIndicatorGravity="stretch"/>
+        android:textAlignment="center"/>
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/favoritesViewPager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1" />
 
 </LinearLayout>
