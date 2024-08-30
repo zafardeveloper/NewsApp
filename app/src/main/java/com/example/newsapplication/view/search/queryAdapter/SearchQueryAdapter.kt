@@ -1,4 +1,4 @@
-package com.example.newsapplication.view.search.adapter
+package com.example.newsapplication.view.search.queryAdapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -18,18 +18,16 @@ class SearchQueryAdapter(private val listener: Listener) :
     inner class ArticleViewHolder(binding: RowItemNewsSearchBinding) :
         RecyclerView.ViewHolder(binding.root) {
         private val title = binding.tvTitle
-        //        private val description = binding.tvDescription
         private val source = binding.tvSource
         private val publishedAt = binding.tvPublishedAt
         private val image = binding.ivArticleImage
         val cardView = binding.cardView
         fun bind(article: Article) {
             title.text = article.title
-//            description.text = article.description
             source.text = article.source?.name
 
             publishedAt.text = formatDate(article.publishedAt!!, "yyyy-MM-dd'T'HH:mm:ss'Z'", "dd MMMM")
-            if (article.urlToImage == null) {
+            if (article.urlToImage.isNullOrEmpty()) {
                 image.setImageResource(R.drawable.ic_no_image)
             } else {
                 Picasso.get().load(article.urlToImage).into(image)
