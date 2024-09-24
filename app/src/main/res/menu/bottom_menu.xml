@@ -16,10 +16,10 @@
         android:title="Search"
         android:icon="@drawable/ic_search_selector" />
 
-    <item
-        android:id="@+id/rootFragment"
-        android:title="Favorites"
-        android:icon="@drawable/ic_favorite_selector" />
+<!--    <item-->
+<!--        android:id="@+id/rootFragment"-->
+<!--        android:title="Favorites"-->
+<!--        android:icon="@drawable/ic_favorite_selector" />-->
 
     <item
         android:id="@+id/moreFragment"

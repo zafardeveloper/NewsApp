@@ -8,7 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.newsapplication.databinding.RowItemSearchHistoryBinding
 import com.example.newsapplication.db.searchHistory.SearchHistoryEntity
 
-class SearchHistoryAdapter(private val listener: Listener) : RecyclerView.Adapter<SearchHistoryAdapter.ViewHolder>() {
+class SearchHistoryAdapter(private val listener: Listener) :
+    RecyclerView.Adapter<SearchHistoryAdapter.ViewHolder>() {
 
     inner class ViewHolder(binding: RowItemSearchHistoryBinding) :
         RecyclerView.ViewHolder(binding.root) {

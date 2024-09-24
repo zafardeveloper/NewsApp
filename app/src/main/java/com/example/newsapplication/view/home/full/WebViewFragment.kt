@@ -2,6 +2,7 @@ package com.example.newsapplication.view.home.full
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.newsapplication.R
 import com.example.newsapplication.databinding.FragmentWebViewBinding
@@ -58,6 +60,12 @@ class WebViewFragment : Fragment() {
                 super.onPageFinished(view, url)
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        findNavController().previousBackStackEntry?.savedStateHandle?.set("returned_from_webview", true)
+        Log.d("MyLog", "onDestroyView called")
     }
 
 }

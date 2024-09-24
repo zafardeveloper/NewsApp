@@ -5,7 +5,9 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SnapHelper
 import com.example.newsapplication.R
 import com.example.newsapplication.databinding.RowItemNewsSearchBinding
 import com.example.newsapplication.model.Article
@@ -22,11 +24,15 @@ class SearchQueryAdapter(private val listener: Listener) :
         private val publishedAt = binding.tvPublishedAt
         private val image = binding.ivArticleImage
         val cardView = binding.cardView
+
         fun bind(article: Article) {
+
+
             title.text = article.title
             source.text = article.source?.name
 
-            publishedAt.text = formatDate(article.publishedAt!!, "yyyy-MM-dd'T'HH:mm:ss'Z'", "dd MMMM")
+            publishedAt.text =
+                formatDate(article.publishedAt!!, "yyyy-MM-dd'T'HH:mm:ss'Z'", "dd MMMM")
             if (article.urlToImage.isNullOrEmpty()) {
                 image.setImageResource(R.drawable.ic_no_image)
             } else {
@@ -60,7 +66,12 @@ class SearchQueryAdapter(private val listener: Listener) :
     override fun onBindViewHolder(holder: ArticleViewHolder, position: Int) {
         val article = differ.currentList[position]
         holder.bind(article)
-        holder.cardView.startAnimation(AnimationUtils.loadAnimation(holder.itemView.context, R.anim.emergence))
+        holder.cardView.startAnimation(
+            AnimationUtils.loadAnimation(
+                holder.itemView.context,
+                R.anim.emergence
+            )
+        )
         holder.itemView.setOnClickListener {
             listener.onClick(article)
         }

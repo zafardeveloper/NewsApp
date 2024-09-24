@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -21,7 +22,6 @@ import com.example.newsapplication.view.home.adapter.HomeAdapter
 import com.google.android.material.appbar.AppBarLayout
 import dagger.hilt.android.AndroidEntryPoint
 import pl.droidsonroids.gif.GifImageView
-import kotlin.math.abs
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(), HomeAdapter.Listener {
@@ -35,6 +35,7 @@ class HomeFragment : Fragment(), HomeAdapter.Listener {
     private lateinit var recyclerView: RecyclerView
     private lateinit var appBarLayout: AppBarLayout
     private lateinit var noConnectionGif: GifImageView
+    private lateinit var headLinesTV : TextView
 
     private lateinit var connectionLiveData: NetworkConnectionLiveData
 
@@ -46,19 +47,22 @@ class HomeFragment : Fragment(), HomeAdapter.Listener {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         myAdapter = HomeAdapter(this)
         progressBar = binding.progressBar
+        headLinesTV = binding.headlinesTV
         noConnectionGif = binding.noConnectionGif
         appBarLayout = binding.appBarLayout
         connectionLiveData = NetworkConnectionLiveData(requireContext())
         appBarLayoutBg()
-        Log.d("MyLog", "onCreateView: onCreateView")
+
+        retainInstance = true
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         connectionLiveData.observe(viewLifecycleOwner) { isConnected ->
-            if (isConnected) {
+            if (isConnected && savedInstanceState == null) {
                 viewModel.getAllBreakingNews(Constants.TOP_NEWS)
+                viewModel.getAllBreakingNewsHorizontal(Constants.TOP_NEWS_HORIZONTAL)
             }
         }
         try {
@@ -69,12 +73,64 @@ class HomeFragment : Fragment(), HomeAdapter.Listener {
             Log.d("MyLog", "onViewCreated: ${e.message}", e)
         }
         setupRecyclerView()
+//        viewModel.recyclerViewState?.let {
+//            recyclerView.layoutManager?.onRestoreInstanceState(it)
+//        }
+        observeViewModel()
+        binding.searchET.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_searchFragment)
+        }
+    }
+
+//    override fun onPause() {
+//        super.onPause()
+//        viewModel.recyclerViewState = recyclerView.layoutManager?.onSaveInstanceState()
+//    }
+
+    override fun onClick(item: Article) {
+        val action = HomeFragmentDirections.actionHomeFragmentToWebViewFragment(item)
+        findNavController().navigate(action)
+    }
+
+    override fun onShowMoreClick() {
+        val action = HomeFragmentDirections.actionHomeFragmentToHeadlinesFragment()
+        findNavController().navigate(action)
+    }
+
+    private fun observeViewModel() {
         viewModel.breakingNews.observe(viewLifecycleOwner) { response ->
             when (response) {
                 is Resource.Success -> {
                     hideProgressBar()
                     response.data?.let { newsResponse ->
-                        myAdapter.differ.submitList(newsResponse.articles)
+                        if (myAdapter.differ.currentList != newsResponse.articles)
+                            myAdapter.differ.submitList(newsResponse.articles)
+                    }
+                    headLinesTV.visibility = View.VISIBLE
+                }
+
+                is Resource.Error -> {
+                    hideProgressBar()
+                    response.message?.let { message ->
+                        Log.e("Mylog", "An error occurred: $message")
+                    }
+                }
+
+                is Resource.Loading -> {
+                    hideNoConnectionGif()
+                    showProgressBar()
+                }
+            }
+        }
+
+        viewModel.breakingNewsHorizontal.observe(viewLifecycleOwner) { response ->
+            when (response) {
+                is Resource.Success -> {
+                    hideProgressBar()
+                    response.data?.let { newsResponse ->
+                        if (myAdapter.horizontalArticles != newsResponse.articles)
+                            myAdapter.setArticles(newsResponse.articles)
+                        Log.d("MyLog", "setArticles")
                     }
                 }
 
@@ -91,14 +147,6 @@ class HomeFragment : Fragment(), HomeAdapter.Listener {
                 }
             }
         }
-        binding.searchET.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_searchFragment)
-        }
-    }
-
-    override fun onClick(item: Article) {
-        val action = HomeFragmentDirections.actionHomeFragmentToWebViewFragment(item)
-        findNavController().navigate(action)
     }
 
     private fun setupRecyclerView() {
@@ -130,5 +178,10 @@ class HomeFragment : Fragment(), HomeAdapter.Listener {
         appBarLayout.addOnOffsetChangedListener { _, _ ->
             appBarLayout.setBackgroundColor(whiteColor)
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
