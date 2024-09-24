@@ -2,11 +2,10 @@ package com.example.newsapplication.util
 
 object Constants {
     const val BASE_URL = "https://newsapi.org/"
-    const val SEARCH_NEWS_TIME_DELAY = 500L
     const val API_KEY = "0250251f16fa42aba8a9bc1c8f3da985"
     const val TOP_NEWS = "bbc.com,skysports.com,cnn.com"
+    const val TOP_NEWS_HORIZONTAL = "vox.com,bloomberg.com,weather.com"
     const val CATEGORY_KEY = "CATEGORY_KEY"
-    const val BBC = "bbc.com"
 
     //Categories
     const val POLITICS = "politico.com,bbc.com,cnn.com,washingtonpost.com"
@@ -24,4 +23,5 @@ object Constants {
     const val FASHION = "elle.com,cnn.com"
     const val WEATHER = "weather.com,cnn.com"
     const val EDUCATION = "bbc.com,cnn.com"
+
 }

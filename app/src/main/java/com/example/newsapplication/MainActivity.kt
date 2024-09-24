@@ -62,6 +62,12 @@ class MainActivity : AppCompatActivity() {
                     toolbar.navigationIcon = null
                 }
 
+                R.id.headlinesFragment -> {
+                    lifecycleScope.launch {
+                        hideBottomNavigationView(bottomNavigationView)
+                    }
+                }
+
                 else -> {
                     showBottomNavigationView(bottomNavigationView)
                     bottomNavigationView.visibility = View.VISIBLE

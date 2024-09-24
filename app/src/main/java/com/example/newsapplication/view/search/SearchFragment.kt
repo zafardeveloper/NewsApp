@@ -43,6 +43,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -81,6 +82,7 @@ class SearchFragment : Fragment(), SearchQueryAdapter.Listener, SearchHistoryAda
         progressBar = binding.progressBar
         resultTV = binding.resultTV
         appBarLayout = binding.appBarLayout
+        recyclerView = binding.searchRV
         connectionLiveData = NetworkConnectionLiveData(requireContext())
 
         searchHistoryDatabase = AppDatabase.getDatabase(requireContext())
@@ -102,6 +104,14 @@ class SearchFragment : Fragment(), SearchQueryAdapter.Listener, SearchHistoryAda
         connectionLiveData.observe(viewLifecycleOwner) {
             isConnected = it
         }
+
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Boolean>("returned_from_webview")
+            ?.observe(viewLifecycleOwner) {
+                if (it == true) {
+                    Log.d("MyLog", "returned_from_webview: true")
+                    updateCleanBtnVisibility()
+                }
+            }
 
         setupSearchField()
         setupRecyclerView()
@@ -159,9 +169,6 @@ class SearchFragment : Fragment(), SearchQueryAdapter.Listener, SearchHistoryAda
 
         searchET.apply {
             addTextChangedListener { editable ->
-//                editable?.let {
-//                    cleanBtn.visibility = if (editable.isEmpty()) View.GONE else View.VISIBLE
-//                }
                 updateCleanBtnVisibility()
             }
             setOnEditorActionListener { _, actionId, _ ->
@@ -186,6 +193,7 @@ class SearchFragment : Fragment(), SearchQueryAdapter.Listener, SearchHistoryAda
             setOnFocusChangeListener { _, hasFocus ->
                 if (hasFocus) {
                     updateCleanBtnVisibility()
+                    loadSearchHistory()
                     setupRecyclerView()
                     resultTV.visibility = View.GONE
                 }
@@ -201,10 +209,8 @@ class SearchFragment : Fragment(), SearchQueryAdapter.Listener, SearchHistoryAda
     }
 
     private fun setupRecyclerView() {
-        loadSearchHistory()
         searchQueryAdapter = SearchQueryAdapter(this)
         searchHistoryAdapter = SearchHistoryAdapter(this)
-        recyclerView = binding.searchRV
         recyclerView.apply {
             adapter = searchHistoryAdapter
             layoutManager = LinearLayoutManager(requireContext())
@@ -271,10 +277,14 @@ class SearchFragment : Fragment(), SearchQueryAdapter.Listener, SearchHistoryAda
         alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         buttonYes.setOnClickListener {
-            lifecycleScope.launch(Dispatchers.IO) {
-                searchHistoryRepository.deleteSearchHistory(searchHistory)
+            lifecycleScope.launch {
+                withContext(Dispatchers.IO) {
+                    searchHistoryRepository.deleteSearchHistory(searchHistory)
+                }
+                delay(300L)
+                loadSearchHistory()
             }
-            loadSearchHistory()
+
             alertDialog.dismiss()
         }
 

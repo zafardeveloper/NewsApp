@@ -1,10 +1,12 @@
 package com.example.newsapplication.view.home
 
+import android.os.Parcelable
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.newsapplication.model.Article
 import com.example.newsapplication.model.NewsResponse
 import com.example.newsapplication.repository.NewsRepository
 import com.example.newsapplication.util.Resource
@@ -20,6 +22,10 @@ class HomeViewModel @Inject constructor(private val newsRepository: NewsReposito
     val breakingNews: LiveData<Resource<NewsResponse>> get() = _breakingNews
     private var breakingNewsPage = 1
 
+    private val _breakingNewsHorizontal: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
+    val breakingNewsHorizontal: LiveData<Resource<NewsResponse>> get() = _breakingNewsHorizontal
+
+//    var recyclerViewState: Parcelable? = null
 
 
     init {
@@ -45,6 +51,18 @@ class HomeViewModel @Inject constructor(private val newsRepository: NewsReposito
                 _breakingNews.postValue(Resource.Loading())
                 val response = newsRepository.getAllBreakingNews(domains)
                 _breakingNews.postValue(handleBrakingNewsResponse(response))
+            } catch (e: Exception) {
+                Log.d("MyLog", "getAllBreakingNews: $e e.message: ${e.message}")
+            }
+        }
+    }
+
+    fun getAllBreakingNewsHorizontal(domains: String) {
+        viewModelScope.launch {
+            try {
+                _breakingNewsHorizontal.postValue(Resource.Loading())
+                val response = newsRepository.getAllBreakingNews(domains)
+                _breakingNewsHorizontal.postValue(handleBrakingNewsResponse(response))
             } catch (e: Exception) {
                 Log.d("MyLog", "getAllBreakingNews: $e e.message: ${e.message}")
             }

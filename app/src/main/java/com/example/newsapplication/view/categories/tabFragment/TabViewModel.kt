@@ -14,7 +14,7 @@ import retrofit2.Response
 import javax.inject.Inject
 
 @HiltViewModel
-class SingleViewModel @Inject constructor(private val newsRepository: NewsRepository) : ViewModel() {
+class TabViewModel @Inject constructor(private val newsRepository: NewsRepository) : ViewModel() {
 
     private val _breakingNews: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
     val breakingNews: LiveData<Resource<NewsResponse>> get() = _breakingNews

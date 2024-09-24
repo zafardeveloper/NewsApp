@@ -1,6 +1,5 @@
-package com.example.newsapplication.view.home.adapter
+package com.example.newsapplication.view.categories.tabFragment
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.ViewGroup
@@ -18,20 +17,12 @@ import com.example.newsapplication.util.StartSnapHelper
 import com.example.newsapplication.util.formatDate
 import com.squareup.picasso.Picasso
 
-open class HomeAdapter(private val listener: Listener) :
+open class TabAdapter(private val listener: Listener) :
     RecyclerView.Adapter<ViewHolder>() {
 
     companion object {
         private const val VIEW_TYPE_VERTICAL = 0
         private const val VIEW_TYPE_HORIZONTAL = 1
-    }
-
-    var horizontalArticles: List<Article> = listOf()
-
-    @SuppressLint("NotifyDataSetChanged")
-    fun setArticles(horizontalList: List<Article>) {
-        this.horizontalArticles = horizontalList
-        notifyDataSetChanged()
     }
 
     inner class VerticalArticleViewHolder(binding: RowItemNewsSearchBinding) :
@@ -66,7 +57,7 @@ open class HomeAdapter(private val listener: Listener) :
         }
 
         fun bind(articleList: List<Article>, listener: Listener) {
-            val childAdapter = ChildAdapter(articleList, listener)
+            val childAdapter = TabChildAdapter(articleList, listener)
             childRecyclerView.apply {
                 adapter = childAdapter
                 layoutManager =
@@ -107,13 +98,7 @@ open class HomeAdapter(private val listener: Listener) :
     val differ = AsyncListDiffer(this, differCallBack)
 
     override fun getItemViewType(position: Int): Int {
-        return when (position) {
-            0 -> {
-                VIEW_TYPE_HORIZONTAL
-            }
-
-            else -> VIEW_TYPE_VERTICAL
-        }
+        return if (position == 0) VIEW_TYPE_HORIZONTAL else VIEW_TYPE_VERTICAL
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -150,7 +135,7 @@ open class HomeAdapter(private val listener: Listener) :
 
             VIEW_TYPE_HORIZONTAL -> {
                 val horizontalHolder = holder as HorizontalArticleViewHolder
-                horizontalHolder.bind(horizontalArticles.take(10), listener)
+                horizontalHolder.bind(differ.currentList.take(10), listener)
                 horizontalHolder.itemView.setOnClickListener {
                     listener.onClick(article)
                 }
@@ -158,7 +143,8 @@ open class HomeAdapter(private val listener: Listener) :
 
             VIEW_TYPE_VERTICAL -> {
                 val verticalHolder = holder as VerticalArticleViewHolder
-                verticalHolder.bind(article)
+                val verticalItems = differ.currentList.drop(10)[position]
+                verticalHolder.bind(verticalItems)
                 verticalHolder.constraintLayout.startAnimation(
                     AnimationUtils.loadAnimation(holder.itemView.context, R.anim.emergence)
                 )
@@ -166,11 +152,11 @@ open class HomeAdapter(private val listener: Listener) :
                     listener.onClick(article)
                 }
             }
+
         }
     }
 
     interface Listener {
         fun onClick(item: Article)
-        fun onShowMoreClick()
     }
 }

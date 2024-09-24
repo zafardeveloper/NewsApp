@@ -16,17 +16,16 @@ import com.example.newsapplication.model.Article
 import com.example.newsapplication.util.Constants
 import com.example.newsapplication.util.Resource
 import com.example.newsapplication.view.categories.CategoriesFragmentDirections
-import com.example.newsapplication.view.home.adapter.HomeAdapter
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class TabFragment : Fragment(), HomeAdapter.Listener {
+class TabFragment : Fragment(), TabAdapter.Listener {
 
     private var _binding: FragmentTabBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: SingleViewModel by viewModels()
-    private lateinit var myAdapter: HomeAdapter
+    private val viewModel: TabViewModel by viewModels()
+    private lateinit var myAdapter: TabAdapter
     private lateinit var recyclerView: RecyclerView
     private lateinit var progressBar: ProgressBar
 
@@ -46,7 +45,7 @@ class TabFragment : Fragment(), HomeAdapter.Listener {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentTabBinding.inflate(inflater, container, false)
-        myAdapter = HomeAdapter(this)
+        myAdapter = TabAdapter(this)
         recyclerView = binding.rvBreakingNews
         progressBar = binding.progressBar
         return binding.root
@@ -54,29 +53,10 @@ class TabFragment : Fragment(), HomeAdapter.Listener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        myAdapter = HomeAdapter(this)
+        myAdapter = TabAdapter(this)
         setupRecyclerView()
-        viewModel.breakingNews.observe(viewLifecycleOwner) { response ->
-            when (response) {
-                is Resource.Success -> {
-                    hideProgressBar()
-                    response.data?.let { newsResponse ->
-                        myAdapter.differ.submitList(newsResponse.articles)
-                    }
-                }
+        observeViewModel()
 
-                is Resource.Error -> {
-                    hideProgressBar()
-                    response.message?.let { message ->
-                        Log.e("Mylog", "An error occurred: $message")
-                    }
-                }
-
-                is Resource.Loading -> {
-                    showProgressBar()
-                }
-            }
-        }
         val data = arguments?.getString(Constants.CATEGORY_KEY)
         when (data) {
 
@@ -143,6 +123,31 @@ class TabFragment : Fragment(), HomeAdapter.Listener {
         }
     }
 
+    private fun observeViewModel() {
+        viewModel.breakingNews.observe(viewLifecycleOwner) { response ->
+            when (response) {
+                is Resource.Success -> {
+                    hideProgressBar()
+                    response.data?.let { newsResponse ->
+                        if (myAdapter.differ.currentList != newsResponse.articles)
+                            myAdapter.differ.submitList(newsResponse.articles)
+                    }
+                }
+
+                is Resource.Error -> {
+                    hideProgressBar()
+                    response.message?.let { message ->
+                        Log.e("Mylog", "An error occurred: $message")
+                    }
+                }
+
+                is Resource.Loading -> {
+                    showProgressBar()
+                }
+            }
+        }
+    }
+
     override fun onClick(item: Article) {
         val action = CategoriesFragmentDirections.actionCategoriesFragmentToWebViewFragment(item)
         findNavController().navigate(action)
@@ -162,5 +167,10 @@ class TabFragment : Fragment(), HomeAdapter.Listener {
 
     private fun showProgressBar() {
         progressBar.visibility = View.VISIBLE
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

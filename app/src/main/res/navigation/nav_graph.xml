@@ -24,6 +24,13 @@
             app:exitAnim="@anim/overlay_to_left"
             app:popEnterAnim="@anim/overlay_from_left"
             app:popExitAnim="@anim/overlay_to_right"/>
+        <action
+            android:id="@+id/action_homeFragment_to_headlinesFragment"
+            app:destination="@id/headlinesFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out"/>
     </fragment>
     <fragment
         android:id="@+id/moreFragment"
@@ -71,8 +78,21 @@
             app:argType="com.example.newsapplication.model.Article"/>
     </fragment>
     <fragment
-        android:id="@+id/singleFragment"
+        android:id="@+id/tabFragment"
         android:name="com.example.newsapplication.view.categories.tabFragment.TabFragment"
         android:label=""
         tools:layout="@layout/fragment_tab" />
+    <fragment
+        android:id="@+id/headlinesFragment"
+        android:name="com.example.newsapplication.view.home.moreHeadlines.HeadlinesFragment"
+        android:label="Headlines"
+        tools:layout="@layout/fragment_headlines" >
+        <action
+            android:id="@+id/action_headlinesFragment_to_webViewFragment"
+            app:destination="@id/webViewFragment"
+            app:enterAnim="@anim/overlay_from_right"
+            app:exitAnim="@anim/overlay_to_left"
+            app:popEnterAnim="@anim/overlay_from_left"
+            app:popExitAnim="@anim/overlay_to_right" />
+    </fragment>
 </navigation>

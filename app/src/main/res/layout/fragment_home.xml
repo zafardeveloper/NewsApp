@@ -24,7 +24,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_scrollFlags="scroll|enterAlways"
+            app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
             app:strokeColor="@color/unchecked"
             app:strokeWidth="0.5dp">
 
@@ -45,6 +45,20 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
         </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:id="@+id/headlinesTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:drawableStart="@drawable/ic_rocket"
+            android:fontFamily="@font/poppins_regular"
+            android:text="Headlines"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
+            android:drawablePadding="5dp"
+            android:visibility="gone"/>
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
