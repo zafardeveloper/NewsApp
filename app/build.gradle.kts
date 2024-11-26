@@ -104,5 +104,6 @@ dependencies {
     kapt("androidx.room:room-testing:2.6.1")
     kapt("androidx.room:room-compiler:2.6.1")
 
+    implementation("androidx.activity:activity-ktx:1.9.3")
 
 }

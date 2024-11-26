@@ -16,14 +16,16 @@
 
     <TextView
         android:id="@+id/searchText"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:text="history"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/imageArrow"
         app:layout_constraintStart_toEndOf="@+id/imageClock"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginEnd="10dp"/>
 
     <ImageView
         android:id="@+id/imageArrow"

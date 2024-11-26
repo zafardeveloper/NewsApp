@@ -1,111 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".view.search.SearchFragment">
+    tools:context=".view.main.search.SearchFragment">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayout"
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/searchCV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white">
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/materialCardView2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp"
-            android:backgroundTint="@color/white"
-            app:cardCornerRadius="99dp"
-            app:cardElevation="0dp"
-            app:layout_collapseMode="pin"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_scrollFlags="scroll|enterAlways"
-            app:strokeColor="@color/blue"
-            app:strokeWidth="1dp">
-
-            <EditText
-                android:id="@+id/searchET"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="30dp"
-                android:backgroundTint="@android:color/transparent"
-                android:drawableStart="@drawable/ic_search_unselected"
-                android:drawablePadding="10dp"
-                android:drawableTint="@color/blue"
-                android:hint="search"
-                android:imeOptions="actionSearch"
-                android:paddingHorizontal="15dp"
-                android:singleLine="true"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/cleanSearchText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end|center_vertical"
-                android:contentDescription="@string/todo"
-                android:paddingHorizontal="15dp"
-                android:src="@drawable/ic_clean" />
-
-        </com.google.android.material.card.MaterialCardView>
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginBottom="10dp"
+        android:backgroundTint="@color/white"
+        app:cardCornerRadius="99dp"
+        app:cardElevation="3dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
+        app:strokeColor="@color/blue"
+        app:strokeWidth="1dp"
+        app:rippleColor="@android:color/transparent">
 
         <TextView
-            android:id="@+id/resultTV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:text="result"
-            android:textColor="@color/blue"
+            android:id="@+id/searchTV"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:backgroundTint="@android:color/transparent"
+            android:gravity="center|start"
+            android:maxLines="1"
+            android:paddingHorizontal="25dp"
+            android:text=""
             android:textSize="18sp"
-            android:visibility="gone"
-            app:layout_anchor="@id/materialCardView2"
-            app:layout_anchorGravity="bottom"
-            app:layout_constraintEnd_toEndOf="@+id/materialCardView2"
-            app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toStartOf="@+id/materialCardView2"
-            app:layout_constraintTop_toBottomOf="@+id/materialCardView2" />
+            app:drawableEndCompat="@drawable/ic_search_unselected"
+            app:drawableTint="@color/blue"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    </com.google.android.material.appbar.AppBarLayout>
-
+    </com.google.android.material.card.MaterialCardView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/searchRV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/resultTV" />
+        app:layout_constraintTop_toBottomOf="@+id/searchCV" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:indeterminate="true"
-            android:indeterminateDrawable="@drawable/custom_progressbar"
-            android:indeterminateDuration="1000"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:indeterminate="true"
+        android:indeterminateDrawable="@drawable/custom_progressbar"
+        android:indeterminateDuration="1000"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
