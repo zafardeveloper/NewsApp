@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".view.favourites.RootFragment">
+    tools:context=".view.main.favourites.RootFragment">
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/favoritesTabLayout"

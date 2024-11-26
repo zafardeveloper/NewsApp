@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".view.home.HomeFragment">
+    tools:context=".view.main.home.HomeFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
@@ -65,7 +65,6 @@
         android:id="@+id/rvBreakingNews"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:clipToPadding="false"
         android:paddingBottom="13dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"

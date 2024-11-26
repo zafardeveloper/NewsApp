@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".MainActivity">
+    tools:context=".view.main.MainActivity">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/materialToolbar"
@@ -17,22 +17,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:title=""
+        app:title="Home"
         app:titleTextColor="@color/black"
         android:theme="@style/AppTheme.MaterialToolbar"/>
 
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentContainerView"
-        android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="-12dp"
-        app:defaultNavHost="true"
-        app:layout_constraintBottom_toTopOf="@id/bottomNavigationView"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/materialToolbar"
-        app:navGraph="@navigation/nav_graph" />
+        app:layout_constraintTop_toBottomOf="@+id/materialToolbar"/>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
