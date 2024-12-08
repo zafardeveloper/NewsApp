@@ -1,5 +1,6 @@
 package com.example.newsapplication.view.main.categories.bottomSheet
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,16 +9,18 @@ import androidx.fragment.app.viewModels
 import com.example.newsapplication.R
 import com.example.newsapplication.databinding.CategoriesBottomSheetBinding
 import com.example.newsapplication.view.main.categories.CategoriesViewModel
+import com.example.newsapplication.view.main.more.common.profile.fragment.bottomSheet.CameraImageBottomSheet.Listener
 import com.fin_group.artelmark.util.BaseBottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 
 
-class CategoriesBottomSheet(private val listener: Listener) : BaseBottomSheetDialogFragment() {
+class CategoriesBottomSheet() : BaseBottomSheetDialogFragment() {
 
     private var _binding: CategoriesBottomSheetBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel: CategoriesViewModel by viewModels()
+    private var listener: Listener? = null
 
     private val chipToViewpagerMap: Map<Int, Int> = mapOf(
         R.id.chipPolitics to 0,
@@ -37,6 +40,15 @@ class CategoriesBottomSheet(private val listener: Listener) : BaseBottomSheetDia
         R.id.chipEducation to 14,
     )
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        listener = when {
+            parentFragment is Listener -> parentFragment as Listener
+            context is Listener -> context
+            else -> throw RuntimeException("$context должен реализовать Listener")
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -54,7 +66,7 @@ class CategoriesBottomSheet(private val listener: Listener) : BaseBottomSheetDia
             chip.setOnClickListener {
                 val viewpagerPosition = chipToViewpagerMap[chip.id]
                 viewpagerPosition?.let { position ->
-                    listener.onChipClicked(position)
+                    listener?.onChipClicked(position)
                 }
                 dismiss()
             }

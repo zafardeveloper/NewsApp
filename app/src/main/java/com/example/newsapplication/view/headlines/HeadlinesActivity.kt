@@ -6,24 +6,36 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.WindowInsetsController
+import android.widget.PopupMenu
 import android.widget.ProgressBar
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.newsapplication.common.OnItemClickListener
 import com.example.newsapplication.R
 import com.example.newsapplication.databinding.ActivityHeadlinesBinding
-import com.example.newsapplication.model.Article
+import com.example.newsapplication.db.AppDatabase
+import com.example.newsapplication.db.article.history.HistoryDao
+import com.example.newsapplication.db.article.history.HistoryRepository
+import com.example.newsapplication.db.article.readLater.ReadLaterDao
+import com.example.newsapplication.db.article.readLater.ReadLaterRepository
+import com.example.newsapplication.db.article.readLater.ReadLaterEntity
+import com.example.newsapplication.model.article.Article
 import com.example.newsapplication.util.Constants
 import com.example.newsapplication.util.Constants.ARTICLE_KEY
 import com.example.newsapplication.util.Resource
+import com.example.newsapplication.util.Util.Companion.showIconPopupMenu
 import com.example.newsapplication.view.main.home.HomeViewModel
+import com.example.newsapplication.view.main.more.common.readLater.ReadLaterActivity
 import com.example.newsapplication.view.main.search.queryAdapter.SearchQueryAdapter
 import com.example.newsapplication.view.webView.WebViewActivity
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.MaterialToolbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class HeadlinesActivity : AppCompatActivity(), OnItemClickListener<Article> {
@@ -38,6 +50,10 @@ class HeadlinesActivity : AppCompatActivity(), OnItemClickListener<Article> {
     private lateinit var myAdapter: SearchQueryAdapter
     private lateinit var progressBar: ProgressBar
     private lateinit var toolbar: MaterialToolbar
+    private lateinit var appBar: AppBarLayout
+    private lateinit var articleDatabase: AppDatabase
+    private lateinit var readLaterRepository: ReadLaterRepository
+    private lateinit var readLaterDao: ReadLaterDao
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,14 +64,6 @@ class HeadlinesActivity : AppCompatActivity(), OnItemClickListener<Article> {
         viewModel.getAllBreakingNewsHorizontal(Constants.TOP_NEWS_HORIZONTAL)
         observeViewModel()
         setupRv()
-
-        window.navigationBarColor = ContextCompat.getColor(this, R.color.white)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            window.insetsController?.setSystemBarsAppearance(
-                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
-                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
-            )
-        }
     }
 
     private fun init() {
@@ -63,6 +71,10 @@ class HeadlinesActivity : AppCompatActivity(), OnItemClickListener<Article> {
         myAdapter = SearchQueryAdapter(this)
         progressBar = binding.progressBar
         toolbar = binding.materialToolbar
+        appBar = binding.appBarLayout
+        articleDatabase = AppDatabase.getDatabase(this)
+        readLaterDao = articleDatabase.articleDao()
+        readLaterRepository = ReadLaterRepository(readLaterDao)
     }
 
     private fun setStatusNavigationBarColor() {
@@ -109,6 +121,7 @@ class HeadlinesActivity : AppCompatActivity(), OnItemClickListener<Article> {
     }
 
     private fun setupToolbar() {
+        appBar.setExpanded(false)
         setSupportActionBar(toolbar)
         toolbar.setNavigationIcon(R.drawable.ic_back)
         toolbar.setNavigationOnClickListener {
@@ -131,6 +144,42 @@ class HeadlinesActivity : AppCompatActivity(), OnItemClickListener<Article> {
         val intent = Intent(this, WebViewActivity::class.java).apply {
             putExtras(bundle)
         }
+        startActivity(intent)
+    }
+
+    override fun onLongClick(view: View, item: Article) {
+        val popupMenu = PopupMenu(this, view)
+        popupMenu.inflate(R.menu.popup_menu)
+        showIconPopupMenu(popupMenu)
+        val readLaterEntity = ReadLaterEntity(
+            author = item.author,
+            content = item.content,
+            description = item.description,
+            publishedAt = item.publishedAt,
+            source = item.source,
+            title = item.title,
+            url = item.url,
+            urlToImage = item.urlToImage
+        )
+        popupMenu.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.addReadLater -> {
+                    lifecycleScope.launch {
+                        readLaterRepository.saveArticle(
+                            view, binding.root, readLaterEntity
+                        ) { snapBarAction() }
+                    }
+                    true
+                }
+
+                else -> false
+            }
+        }
+        popupMenu.show()
+    }
+
+    private fun snapBarAction() {
+        val intent = Intent(this, ReadLaterActivity::class.java)
         startActivity(intent)
     }
 }

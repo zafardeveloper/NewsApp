@@ -2,8 +2,14 @@ package com.example.newsapplication.db.searchHistory
 
 class SearchHistoryRepository(private val searchHistoryDao: SearchHistoryDao) {
 
-    suspend fun insertSearchHistory(searchHistory: SearchHistoryEntity) =
-        searchHistoryDao.insertSearchHistory(searchHistory)
+    suspend fun saveSearchQuery(query: String) {
+        val existingHistory = searchHistoryDao.getSearchHistoryByQuery(query)
+        if (existingHistory != null) {
+            searchHistoryDao.updateTimestamp(query, System.currentTimeMillis())
+        } else {
+            searchHistoryDao.insertSearchHistory(SearchHistoryEntity(searchQuery = query))
+        }
+    }
 
     suspend fun getAllSearchHistory(): List<SearchHistoryEntity> =
         searchHistoryDao.getAllSearchHistory()

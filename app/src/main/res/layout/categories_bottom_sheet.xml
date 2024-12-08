@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginTop="35dp"
-        android:fontFamily="@font/poppins_regular"
+        android:fontFamily="@font/qanelas_medium"
         android:text="Categories option"
         android:textSize="18sp"
         android:textStyle="bold"

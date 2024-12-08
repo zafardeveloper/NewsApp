@@ -2,14 +2,13 @@ package com.example.newsapplication.view.main.home.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.newsapplication.R
 import com.example.newsapplication.databinding.RowItemNewsHomeBinding
 import com.example.newsapplication.databinding.RowItemSeeMoreBinding
-import com.example.newsapplication.model.Article
+import com.example.newsapplication.model.article.Article
 import com.example.newsapplication.util.Util.Companion.formatDate
-import com.squareup.picasso.Picasso
 
 class ChildAdapter(
     private val articleList: List<Article>,
@@ -37,15 +36,19 @@ class ChildAdapter(
             if (article.urlToImage.isNullOrEmpty()) {
                 image.setImageResource(R.drawable.ic_no_image)
             } else {
-                Picasso.get().load(article.urlToImage).into(image)
+                Glide.with(itemView.context).load(article.urlToImage).into(image)
             }
             itemView.setOnClickListener {
                 listener.onClick(article)
             }
+            itemView.setOnLongClickListener {
+                listener.onLongClick(it, article)
+                true
+            }
         }
     }
 
-    inner class SeeMoreViewHolder(private val binding: RowItemSeeMoreBinding) :
+    inner class SeeMoreViewHolder(binding: RowItemSeeMoreBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         private val btnSeeMore = binding.btnSeeMore

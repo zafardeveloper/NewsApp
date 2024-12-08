@@ -1,25 +1,25 @@
 package com.example.newsapplication.view.main
 
-import android.content.Context
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.WindowInsetsController
-import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import com.example.newsapplication.R
 import com.example.newsapplication.databinding.ActivityMainBinding
-import com.example.newsapplication.util.Util.Companion.showBottomNavigationView
+import com.example.newsapplication.util.Constants.SEARCH_QUERY
+import com.example.newsapplication.util.Constants.SEARCH_REQUEST_CODE
 import com.example.newsapplication.view.main.categories.CategoriesFragment
 import com.example.newsapplication.view.main.home.HomeFragment
+import com.example.newsapplication.view.main.home.HomeViewModel
 import com.example.newsapplication.view.main.more.MoreFragment
 import com.example.newsapplication.view.main.search.SearchFragment
 import com.example.newsapplication.view.search.SearchActivity
@@ -30,9 +30,13 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListener {
+
     private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
+
+    private val homeViewModel: HomeViewModel by viewModels()
+
     private lateinit var toolbar: MaterialToolbar
     private lateinit var bottomNavigationView: BottomNavigationView
     private lateinit var homeFragment: HomeFragment
@@ -41,18 +45,32 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
     private lateinit var moreFragment: MoreFragment
     private lateinit var activeFragment: Fragment
     private var containerId: Int? = null
+    private var isQueryExists = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-//        window.statusBarColor = resources.getColor(R.color.black)
         setStatusNavigationBarColor()
         init()
         setupBottomNavigation()
         setupToolbar()
         addFragments()
+        observeHomeViewModel()
     }
+
+    @Suppress("OVERRIDE_DEPRECATION")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == SEARCH_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            val searchQuery = data?.getStringExtra(SEARCH_QUERY)
+            if (!searchQuery.isNullOrEmpty()) {
+                searchFragment.updateSearchQuery(searchQuery)
+                bottomNavigationView.selectedItemId = R.id.searchFragment
+            }
+        }
+    }
+
 
     private fun init() {
         containerId = R.id.fragmentContainerView
@@ -60,6 +78,13 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         categoriesFragment = CategoriesFragment()
         searchFragment = SearchFragment()
         moreFragment = MoreFragment()
+    }
+
+    private fun observeHomeViewModel() {
+        homeViewModel.searchQuery.observe(this) {
+            searchFragment.updateSearchQuery(it)
+            bottomNavigationView.selectedItemId = R.id.searchFragment
+        }
     }
 
     private fun setupBottomNavigation() {
@@ -75,7 +100,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
             if (view is TextView && view.text == toolbar.title) {
                 view.textSize = 26f
                 view.setTypeface(
-                    ResourcesCompat.getFont(this, R.font.poppins_regular),
+                    ResourcesCompat.getFont(this, R.font.qanelas_medium),
                     Typeface.NORMAL
                 )
             }
@@ -93,74 +118,62 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
     }
 
     private fun addFragments() {
-        supportFragmentManager.beginTransaction()
-            .add(R.id.fragmentContainerView, categoriesFragment, "2")
-            .hide(categoriesFragment)
-            .commit()
-        supportFragmentManager.beginTransaction()
-            .add(R.id.fragmentContainerView, searchFragment, "3")
-            .hide(searchFragment)
-            .commit()
-        supportFragmentManager.beginTransaction()
-            .add(R.id.fragmentContainerView, moreFragment, "4")
-            .hide(moreFragment)
-            .commit()
+        addFragment(categoriesFragment, "2")
+        addFragment(searchFragment, "3")
+        addFragment(moreFragment, "4")
         supportFragmentManager.beginTransaction()
             .add(R.id.fragmentContainerView, homeFragment, "1")
             .commit()
         activeFragment = homeFragment
     }
 
+    private fun addFragment(fragment: Fragment, tag: String) {
+        supportFragmentManager.beginTransaction()
+            .add(R.id.fragmentContainerView, fragment, tag)
+            .hide(fragment)
+            .commit()
+    }
+
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.homeFragment -> {
-                supportFragmentManager.beginTransaction().hide(activeFragment).show(homeFragment)
-                    .commit()
-                activeFragment = homeFragment
-                showBottomNavigationView(bottomNavigationView)
-                supportActionBar?.title = getString(R.string.homeFragment)
+                switchFragment(homeFragment, getString(R.string.homeFragment))
             }
 
             R.id.categoriesFragment -> {
-                supportFragmentManager.beginTransaction().hide(activeFragment)
-                    .show(categoriesFragment)
-                    .commit()
-                activeFragment = categoriesFragment
-                showBottomNavigationView(bottomNavigationView)
-                supportActionBar?.title = getString(R.string.categoriesFragment)
+                switchFragment(categoriesFragment, getString(R.string.categoriesFragment))
             }
 
             R.id.searchFragment -> {
-                supportFragmentManager.beginTransaction().hide(activeFragment).show(searchFragment)
-                    .commit()
-                activeFragment = searchFragment
-                supportActionBar?.title = getString(R.string.searchFragment)
-//                showKeyboardForSearchFragment()
+                isQueryExists = searchFragment.checkQueryExist()
+                if (isQueryExists) {
+                    switchFragment(searchFragment, getString(R.string.searchFragment))
+                } else {
+                    val intent = Intent(this, SearchActivity::class.java)
+                    startActivityForResult(intent, SEARCH_REQUEST_CODE)
+                    return false
+                }
             }
 
             R.id.moreFragment -> {
-                supportFragmentManager.beginTransaction().hide(activeFragment).show(moreFragment)
-                    .commit()
-                activeFragment = moreFragment
-                showBottomNavigationView(bottomNavigationView)
-                supportActionBar?.title = getString(R.string.moreFragment)
+                switchFragment(moreFragment, getString(R.string.moreFragment))
             }
         }
         return true
     }
 
-    private fun showKeyboardForSearchFragment() {
-        val searchEditText = searchFragment.view?.findViewById<EditText>(R.id.searchET)
-        searchEditText?.requestFocus()
-        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-        imm?.showSoftInput(searchEditText, InputMethodManager.SHOW_IMPLICIT)
+    private fun switchFragment(fragment: Fragment, title: String) {
+        supportFragmentManager.beginTransaction().hide(activeFragment).show(fragment)
+            .commit()
+        activeFragment = fragment
+        supportActionBar?.title = title
     }
 
+    @Suppress("DEPRECATION")
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (bottomNavigationView.selectedItemId != R.id.homeFragment) {
-            bottomNavigationView.menu[0].isChecked = true
-            onNavigationItemSelected(bottomNavigationView.menu[0])
+            bottomNavigationView.selectedItemId = R.id.homeFragment
             return
         } else {
             super.onBackPressed()

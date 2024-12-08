@@ -2,6 +2,7 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.NewsApplication" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimaryDark">@color/white</item>
+
     </style>
 
     <style name="TransparentActiveIndicatorStyle">
@@ -10,7 +11,7 @@
 
     <style name="MineCustomTabText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse">
         <item name="android:textSize">18sp</item>
-        <item name="fontFamily">@font/poppins_regular</item>
+        <item name="fontFamily">@font/qanelas_medium</item>
     </style>
 
     <style name="BottomSheetDialogTheme" parent="ThemeOverlay.Material3.BottomSheetDialog">
@@ -27,9 +28,17 @@
     </style>
 
     <style name="chipText" parent="TextAppearance.MaterialComponents.Chip">
-        <item name="android:fontFamily">@font/poppins_regular</item>
+        <item name="android:fontFamily">@font/qanelas_medium</item>
     </style>
 
 
-    <style name="Theme.NewsApplication" parent="Base.Theme.NewsApplication" />
+    <style name="Theme.NewsApplication" parent="Base.Theme.NewsApplication" >
+        <item name="android:popupMenuStyle">@style/PopupMenu</item>
+    </style>
+
+    <style name="PopupMenu" parent="@android:style/Widget.PopupMenu">
+        <item name="android:popupBackground">@drawable/rounded_corner_all</item>
+    </style>
+
+
 </resources>

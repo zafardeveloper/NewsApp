@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".view.main.more.common.history.HistoryActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:background="@drawable/toolbar_stroke_bg"
+        android:fitsSystemWindows="true">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/collapsingToolbarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="199.5dp"
+            android:background="@color/white"
+            android:fitsSystemWindows="true"
+            app:collapsedTitleTextAppearance="@style/CustomCollapsedTitle"
+            app:collapsedTitleTextColor="@color/black"
+            app:expandedTitleGravity="center"
+            app:expandedTitleTextAppearance="@style/CustomExpandedTitle"
+            app:expandedTitleTextColor="@color/black"
+            app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
+            app:title="History"
+            app:titleCollapseMode="scale">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/materialToolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?actionBarSize"
+                android:background="@color/white"
+                app:layout_collapseMode="pin" />
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvHistory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+<!--                <com.google.android.material.card.MaterialCardView-->
+<!--                    android:id="@+id/removeBtn"-->
+<!--                    android:layout_width="150dp"-->
+<!--                    android:layout_height="45dp"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toBottomOf="@+id/rvReadLater"-->
+<!--                    android:layout_marginTop="10dp"-->
+<!--                    app:cardElevation="0dp"-->
+<!--                    android:backgroundTint="@color/white"-->
+<!--                    app:strokeWidth="1dp"-->
+<!--                    app:strokeColor="@color/unchecked"-->
+<!--                    app:cardCornerRadius="99dp"-->
+<!--                    android:paddingHorizontal="20dp">-->
+
+<!--                    <TextView-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="@string/clear_list"-->
+<!--                        android:gravity="center"-->
+<!--                        android:layout_gravity="center"-->
+<!--                        android:fontFamily="@font/qanelas_bold"-->
+<!--                        android:textSize="18sp"-->
+<!--                        app:drawableStartCompat="@drawable/ic_trash"/>-->
+
+<!--                </com.google.android.material.card.MaterialCardView>-->
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

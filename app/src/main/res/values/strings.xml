@@ -6,4 +6,6 @@
     <string name="categoriesFragment">Categories</string>
     <string name="searchFragment">Search</string>
     <string name="moreFragment">More</string>
+    <string name="add_read_it_later">Add to \"Read it later\"</string>
+    <string name="clear_list">Clear list</string>
 </resources>

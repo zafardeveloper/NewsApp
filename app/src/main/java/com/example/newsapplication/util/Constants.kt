@@ -4,12 +4,22 @@ object Constants {
     const val BASE_URL = "https://newsapi.org/"
 //    const val API_KEY = "0250251f16fa42aba8a9bc1c8f3da985"
     const val API_KEY = "e4bbc0e39f4a4ad79b74d217181e24cb"
+
     const val TOP_NEWS = "bbc.com,skysports.com,cnn.com"
     const val TOP_NEWS_HORIZONTAL = "vox.com,bloomberg.com,weather.com"
     const val CATEGORY_KEY = "CATEGORY_KEY"
     const val ARTICLE_KEY = "article"
+    const val READ_LATER_KEY = "readLater"
+    const val HISTORY_KEY = "history"
+    const val MODEL_TYPE = "modelType"
     const val CURRENT_SEARCH_TEXT = "currentSearchText"
     const val SEARCH_QUERY = "searchQuery"
+    const val SEARCH_REQUEST_CODE = 1001
+    const val CAMERA_PERMISSION_CODE = 100
+    const val IMAGE_CAPTURE_CODE = 1001
+    const val GALLERY_PICK_CODE = 2001
+    const val AVATAR_IMAGE = "avatarImage"
+    const val SHOW_DELETE = "showDelete"
 
     //Categories
     const val POLITICS = "politico.com,bbc.com,cnn.com,washingtonpost.com"

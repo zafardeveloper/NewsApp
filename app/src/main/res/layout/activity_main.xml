@@ -35,7 +35,7 @@
         android:layout_width="0dp"
         android:layout_height="70dp"
         android:layout_gravity="bottom"
-        android:background="@drawable/rounded_corner"
+        android:background="@drawable/bottom_appbar_stroke_bg"
         app:itemActiveIndicatorStyle="@style/TransparentActiveIndicatorStyle"
         app:itemIconSize="23dp"
         app:itemIconTint="@drawable/color_state_list"
