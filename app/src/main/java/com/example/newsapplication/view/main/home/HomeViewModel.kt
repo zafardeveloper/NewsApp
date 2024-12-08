@@ -1,13 +1,11 @@
 package com.example.newsapplication.view.main.home
 
-import android.os.Parcelable
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.newsapplication.model.Article
-import com.example.newsapplication.model.NewsResponse
+import com.example.newsapplication.model.article.NewsResponse
 import com.example.newsapplication.repository.NewsRepository
 import com.example.newsapplication.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,8 +23,12 @@ class HomeViewModel @Inject constructor(private val newsRepository: NewsReposito
     private val _breakingNewsHorizontal: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
     val breakingNewsHorizontal: LiveData<Resource<NewsResponse>> get() = _breakingNewsHorizontal
 
-//    var recyclerViewState: Parcelable? = null
+    private val _searchQuery: MutableLiveData<String> = MutableLiveData()
+    val searchQuery: LiveData<String> get() = _searchQuery
 
+    fun setSearchQuery(query: String) {
+        _searchQuery.postValue(query)
+    }
 
     init {
 //        getBreakingNews("us")

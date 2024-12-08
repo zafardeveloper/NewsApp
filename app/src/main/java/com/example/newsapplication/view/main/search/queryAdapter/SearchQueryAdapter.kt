@@ -6,12 +6,12 @@ import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.newsapplication.common.OnItemClickListener
 import com.example.newsapplication.R
 import com.example.newsapplication.databinding.RowItemNewsSearchBinding
-import com.example.newsapplication.model.Article
+import com.example.newsapplication.model.article.Article
 import com.example.newsapplication.util.Util.Companion.formatDate
-import com.squareup.picasso.Picasso
 
 class SearchQueryAdapter(private val listener: OnItemClickListener<Article>) :
     RecyclerView.Adapter<SearchQueryAdapter.ArticleViewHolder>() {
@@ -22,7 +22,7 @@ class SearchQueryAdapter(private val listener: OnItemClickListener<Article>) :
         private val source = binding.tvSource
         private val publishedAt = binding.tvPublishedAt
         private val image = binding.ivArticleImage
-        val cardView = binding.cardView
+        val constraintLayout = binding.constraintLayout
 
         fun bind(article: Article) {
 
@@ -34,7 +34,7 @@ class SearchQueryAdapter(private val listener: OnItemClickListener<Article>) :
             if (article.urlToImage.isNullOrEmpty()) {
                 image.setImageResource(R.drawable.ic_no_image)
             } else {
-                Picasso.get().load(article.urlToImage).into(image)
+                Glide.with(itemView.context).load(article.urlToImage).into(image)
             }
         }
     }
@@ -64,7 +64,7 @@ class SearchQueryAdapter(private val listener: OnItemClickListener<Article>) :
     override fun onBindViewHolder(holder: ArticleViewHolder, position: Int) {
         val article = differ.currentList[position]
         holder.bind(article)
-        holder.cardView.startAnimation(
+        holder.constraintLayout.startAnimation(
             AnimationUtils.loadAnimation(
                 holder.itemView.context,
                 R.anim.emergence
@@ -73,6 +73,11 @@ class SearchQueryAdapter(private val listener: OnItemClickListener<Article>) :
 
         holder.itemView.setOnClickListener {
             listener.onClick(article)
+        }
+
+        holder.itemView.setOnLongClickListener {
+            listener.onLongClick(it, article)
+            true
         }
 
     }

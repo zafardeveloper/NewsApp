@@ -3,11 +3,11 @@ package com.example.newsapplication.view.main.categories.tabFragment
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.newsapplication.R
 import com.example.newsapplication.databinding.RowItemNewsCategoriesHorizontalBinding
-import com.example.newsapplication.model.Article
+import com.example.newsapplication.model.article.Article
 import com.example.newsapplication.util.Util.Companion.formatDate
-import com.squareup.picasso.Picasso
 
 class TabChildAdapter(
     private val articleList: List<Article>,
@@ -31,10 +31,14 @@ class TabChildAdapter(
             if (article.urlToImage.isNullOrEmpty()) {
                 image.setImageResource(R.drawable.ic_no_image)
             } else {
-                Picasso.get().load(article.urlToImage).into(image)
+                Glide.with(itemView.context).load(article.urlToImage).into(image)
             }
             itemView.setOnClickListener {
                 listener.onClick(article)
+            }
+            itemView.setOnLongClickListener {
+                listener.onLongClick(it, article)
+                true
             }
         }
     }

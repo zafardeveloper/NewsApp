@@ -35,7 +35,7 @@
             android:paddingHorizontal="25dp"
             android:text=""
             android:textSize="18sp"
-            app:drawableEndCompat="@drawable/ic_search_unselected"
+            app:drawableEndCompat="@drawable/ic_search"
             app:drawableTint="@color/blue"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

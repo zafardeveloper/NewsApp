@@ -2,13 +2,13 @@
 <resources>
 
     <style name="Widget.BottomNavigationView" parent="Widget.Design.BottomNavigationView">
-        <item name="fontFamily">@font/poppins_regular</item>
+        <item name="fontFamily">@font/qanelas_medium</item>
         <item name="android:textSize">12sp</item>
     </style>
 
     <style name="AppTheme.MaterialToolbar" parent="ThemeOverlay.MaterialComponents.Toolbar.Primary">
         <item name="colorOnPrimary">@color/blue</item>
-        <item name="fontFamily">@font/poppins_regular</item>
+        <item name="fontFamily">@font/qanelas_medium</item>
         <item name="titleCentered">true</item>
     </style>
 
@@ -16,13 +16,13 @@
     <style name="CustomCollapsedTitle" parent="TextAppearance.Design.CollapsingToolbar.Expanded">
         <item name="android:textSize">24sp</item>
         <item name="android:textColor">@color/black</item>
-        <item name="fontFamily">@font/poppins_regular</item>
+        <item name="fontFamily">@font/qanelas_medium</item>
     </style>
 
     <style name="CustomExpandedTitle" parent="TextAppearance.Design.CollapsingToolbar.Expanded">
         <item name="android:textSize">34sp</item>
         <item name="android:textColor">@color/black</item>
-        <item name="fontFamily">@font/poppins_regular</item>
+        <item name="fontFamily">@font/qanelas_medium</item>
     </style>
 
 </resources>

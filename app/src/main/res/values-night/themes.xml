@@ -10,7 +10,7 @@
 
     <style name="MineCustomTabText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse">
         <item name="android:textSize">18sp</item>
-        <item name="fontFamily">@font/poppins_regular</item>
+        <item name="fontFamily">@font/qanelas_medium</item>
     </style>
 
     <style name="BottomSheetDialogTheme" parent="ThemeOverlay.Material3.BottomSheetDialog">
@@ -27,7 +27,7 @@
     </style>
 
     <style name="chipText" parent="TextAppearance.MaterialComponents.Chip">
-        <item name="android:fontFamily">@font/poppins_regular</item>
+        <item name="android:fontFamily">@font/qanelas_medium</item>
     </style>
 
 

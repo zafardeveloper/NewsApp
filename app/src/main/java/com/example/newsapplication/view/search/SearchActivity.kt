@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowInsetsController
@@ -97,6 +98,24 @@ class SearchActivity : AppCompatActivity(), SearchHistoryAdapter.Listener {
         }
     }
 
+    private fun filterSearchHistory(query: Editable?) {
+        query?.let { it ->
+            if (it.isNotEmpty()) {
+                val searchQuery = query.toString().lowercase().trim()
+                lifecycleScope.launch {
+                    val filteredSearches = withContext(Dispatchers.IO) {
+                        searchHistoryRepository.getAllSearchHistory().filter {
+                            it.searchQuery.contains(searchQuery)
+                        }
+                    }
+                    searchHistoryAdapter.differ.submitList(filteredSearches)
+                }
+            } else {
+                loadSearchHistory()
+            }
+        }
+    }
+
     private fun updateCleanBtnVisibility() {
         cleanBtn.visibility = if (searchET.text.isEmpty()) View.GONE else View.VISIBLE
     }
@@ -115,14 +134,15 @@ class SearchActivity : AppCompatActivity(), SearchHistoryAdapter.Listener {
         cleanBtn.visibility = View.GONE
 
         searchET.apply {
-            addTextChangedListener { _ ->
+            addTextChangedListener {
                 updateCleanBtnVisibility()
+                lifecycleScope.launch {
+                    delay(500L)
+                    filterSearchHistory(it)
+                }
             }
             setOnEditorActionListener { _, actionId, _ ->
                 val editable = this.text
-                val searchHistory = SearchHistoryEntity(
-                    searchQuery = editable.toString().trim()
-                )
                 if (actionId == EditorInfo.IME_ACTION_SEARCH && editable.isNotEmpty()) {
                     if (isConnected) {
                         val resultIntent = Intent().apply {
@@ -130,7 +150,7 @@ class SearchActivity : AppCompatActivity(), SearchHistoryAdapter.Listener {
                         }
                         setResult(Activity.RESULT_OK, resultIntent)
                         lifecycleScope.launch(Dispatchers.IO) {
-                            searchHistoryRepository.insertSearchHistory(searchHistory)
+                            searchHistoryRepository.saveSearchQuery(editable.toString().trim())
                         }
                         finish()
                     }
@@ -180,6 +200,9 @@ class SearchActivity : AppCompatActivity(), SearchHistoryAdapter.Listener {
             putExtra(SEARCH_QUERY, searchET.text.toString().trim())
         }
         setResult(Activity.RESULT_OK, resultIntent)
+        lifecycleScope.launch(Dispatchers.IO) {
+            searchHistoryRepository.saveSearchQuery(searchET.text.toString().trim())
+        }
         finish()
     }
 

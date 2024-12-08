@@ -2,6 +2,7 @@ package com.example.newsapplication.view.main.categories.tabFragment
 
 import android.view.LayoutInflater
 import android.view.MotionEvent
+import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.AsyncListDiffer
@@ -9,14 +10,13 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.bumptech.glide.Glide
 import com.example.newsapplication.R
 import com.example.newsapplication.databinding.EachItemBinding
 import com.example.newsapplication.databinding.RowItemNewsSearchBinding
-import com.example.newsapplication.model.Article
+import com.example.newsapplication.model.article.Article
 import com.example.newsapplication.util.StartSnapHelper
 import com.example.newsapplication.util.Util.Companion.formatDate
-import com.squareup.picasso.Picasso
-
 open class TabAdapter(private val listener: Listener) :
     RecyclerView.Adapter<ViewHolder>() {
 
@@ -41,7 +41,7 @@ open class TabAdapter(private val listener: Listener) :
             if (article.urlToImage.isNullOrEmpty()) {
                 image.setImageResource(R.drawable.ic_no_image)
             } else {
-                Picasso.get().load(article.urlToImage).into(image)
+                Glide.with(itemView.context).load(article.urlToImage).into(image)
             }
         }
     }
@@ -139,6 +139,10 @@ open class TabAdapter(private val listener: Listener) :
                 horizontalHolder.itemView.setOnClickListener {
                     listener.onClick(article)
                 }
+                horizontalHolder.itemView.setOnLongClickListener {
+                    listener.onLongClick(it, article)
+                    true
+                }
             }
 
             VIEW_TYPE_VERTICAL -> {
@@ -151,6 +155,10 @@ open class TabAdapter(private val listener: Listener) :
                 verticalHolder.itemView.setOnClickListener {
                     listener.onClick(article)
                 }
+                verticalHolder.itemView.setOnLongClickListener {
+                    listener.onLongClick(it, article)
+                    true
+                }
             }
 
         }
@@ -158,5 +166,7 @@ open class TabAdapter(private val listener: Listener) :
 
     interface Listener {
         fun onClick(item: Article)
+
+        fun onLongClick(view: View, item: Article)
     }
 }

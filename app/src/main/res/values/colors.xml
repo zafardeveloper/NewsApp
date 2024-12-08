@@ -5,14 +5,20 @@
     <color name="white">#FFFFFFFF</color>
     <color name="hint">#D8D8D8</color>
     <color name="unchecked">#B3B3B3</color>
+    <color name="gray">#7E7E7E</color>
     <color name="checked">#6E0BDF</color>
 
     <color name="red">#FF0000</color>
     <color name="green">#0F9D58</color>
-    <color name="blue">#0014D1</color>
+<!--    <color name="blue">#0014D1</color>-->
+    <color name="blue">#000D9B</color>
+    <color name="blue_gray">#44547E</color>
     <color name="yellow">#F1D100</color>
     <color name="transparent">#00FFFFFF</color>
     <color name="translucent">#80FFFFFF</color>
+    <color name="screen_bg">#f1f2f6</color>
+
+    <color name="delete">#e46554</color>
 
 
 

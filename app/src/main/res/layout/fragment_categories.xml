@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     android:orientation="vertical"
-    tools:context=".view.categories.CategoriesFragment">
+    tools:context=".view.main.categories.CategoriesFragment">
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/categoriesTabLayout"
@@ -44,6 +44,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/categoriesTabLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/categoriesTabLayout"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

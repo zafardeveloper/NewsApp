@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.newsapplication.model.NewsResponse
+import com.example.newsapplication.model.article.NewsResponse
 import com.example.newsapplication.repository.NewsRepository
 import com.example.newsapplication.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel

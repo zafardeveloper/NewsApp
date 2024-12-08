@@ -79,8 +79,10 @@ dependencies {
     implementation(platform("com.squareup.okhttp3:okhttp-bom:5.0.0-alpha.11"))
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0")
 
-    // Picasso
-    implementation("com.squareup.picasso:picasso:2.71828")
+    //glide
+    implementation ("com.github.bumptech.glide:glide:4.15.1")
+    kapt ("com.github.bumptech.glide:compiler:4.15.1")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.15.1")
 
     //paging
     implementation("androidx.paging:paging-runtime-ktx:3.2.1")
@@ -105,5 +107,13 @@ dependencies {
     kapt("androidx.room:room-compiler:2.6.1")
 
     implementation("androidx.activity:activity-ktx:1.9.3")
+
+    implementation("com.google.android.material:material:1.9.0")
+
+    implementation("com.github.chrisbanes:PhotoView:2.3.0")
+
+
+
+
 
 }
