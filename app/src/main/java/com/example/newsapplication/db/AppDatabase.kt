@@ -23,7 +23,6 @@ abstract class AppDatabase : RoomDatabase() {
 
     abstract fun searchHistoryDao(): SearchHistoryDao
     abstract fun articleDao(): ReadLaterDao
-
     abstract fun historyDao(): HistoryDao
 
     companion object {

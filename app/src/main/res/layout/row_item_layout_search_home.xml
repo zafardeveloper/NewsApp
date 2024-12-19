@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView android:id="@+id/searchCV"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="10dp"
+    android:backgroundTint="@color/item_color_primary"
+    app:cardCornerRadius="99dp"
+    app:cardElevation="0dp"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:strokeColor="@color/unchecked"
+    app:strokeWidth="0.5dp"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/searchTV"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:backgroundTint="@android:color/transparent"
+        android:gravity="center|start"
+        android:hint="@string/search"
+        android:fontFamily="@font/qanelas_medium"
+        android:maxLines="1"
+        android:paddingHorizontal="25dp"
+        android:textSize="18sp"
+        app:drawableEndCompat="@drawable/ic_search"
+        app:drawableTint="@color/unchecked" />
+
+</com.google.android.material.card.MaterialCardView>

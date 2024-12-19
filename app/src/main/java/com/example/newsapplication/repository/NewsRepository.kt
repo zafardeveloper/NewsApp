@@ -23,4 +23,8 @@ class NewsRepository @Inject constructor(private val apiService: ApiService) {
     suspend fun searchForNews(searchQuery: String, pageNumber: Int): Response<NewsResponse> {
         return apiService.searchForNews(searchQuery, pageNumber)
     }
+
+    suspend fun getLocalNews(searchQuery: String): Response<NewsResponse> {
+        return apiService.getLocalNews(searchQuery)
+    }
 }

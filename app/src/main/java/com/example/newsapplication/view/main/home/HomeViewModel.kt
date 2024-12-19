@@ -25,26 +25,8 @@ class HomeViewModel @Inject constructor(private val newsRepository: NewsReposito
 
     private val _searchQuery: MutableLiveData<String> = MutableLiveData()
     val searchQuery: LiveData<String> get() = _searchQuery
-
     fun setSearchQuery(query: String) {
         _searchQuery.postValue(query)
-    }
-
-    init {
-//        getBreakingNews("us")
-    }
-
-    fun getBreakingNews(countryCode: String) = viewModelScope.launch {
-        try {
-            _breakingNews.postValue(Resource.Loading())
-            val response = newsRepository.getBreakingNews(
-                countryCode = countryCode,
-                pageNumber = breakingNewsPage
-            )
-            _breakingNews.postValue(handleBrakingNewsResponse(response))
-        } catch (e: Exception) {
-            Log.d("MyLog", "getBreakingNews: $e e.message: ${e.message}")
-        }
     }
 
     fun getAllBreakingNews(domains: String) {
@@ -70,8 +52,6 @@ class HomeViewModel @Inject constructor(private val newsRepository: NewsReposito
             }
         }
     }
-
-
 
     private fun handleBrakingNewsResponse(response: Response<NewsResponse>): Resource<NewsResponse> {
         if (response.isSuccessful) {

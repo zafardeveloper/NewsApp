@@ -14,6 +14,9 @@ class SearchHistoryRepository(private val searchHistoryDao: SearchHistoryDao) {
     suspend fun getAllSearchHistory(): List<SearchHistoryEntity> =
         searchHistoryDao.getAllSearchHistory()
 
+    suspend fun getPartOfSearchHistory(): List<SearchHistoryEntity> =
+        searchHistoryDao.getPartOfSearchHistory()
+
     suspend fun deleteAllSearchHistory(histories: List<SearchHistoryEntity>) =
         searchHistoryDao.deleteAllSearchHistory(histories)
 

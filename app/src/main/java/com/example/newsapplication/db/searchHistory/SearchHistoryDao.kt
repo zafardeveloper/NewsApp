@@ -21,6 +21,9 @@ interface SearchHistoryDao {
     @Query("SELECT * FROM searchHistory ORDER BY timeStamp DESC")
     suspend fun getAllSearchHistory(): List<SearchHistoryEntity>
 
+    @Query("SELECT * FROM searchHistory ORDER BY timeStamp DESC LIMIT 20")
+    suspend fun getPartOfSearchHistory(): List<SearchHistoryEntity>
+
     @Delete
     suspend fun deleteAllSearchHistory(histories: List<SearchHistoryEntity>)
 

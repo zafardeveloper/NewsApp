@@ -1,10 +1,12 @@
 package com.example.newsapplication.view.main.more
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -13,12 +15,20 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.newsapplication.R
 import com.example.newsapplication.databinding.FragmentMoreBinding
 import com.example.newsapplication.model.setting.SettingLayoutModel
+import com.example.newsapplication.util.Constants.DARK_MODE
+import com.example.newsapplication.util.Constants.LIGHT_MODE
+import com.example.newsapplication.util.Constants.SYSTEM_MODE
+import com.example.newsapplication.util.SharedPreferencesUtils.setLanguageCode
+import com.example.newsapplication.util.SharedPreferencesUtils.setLanguagePosition
+import com.example.newsapplication.util.ThemeHelper
 import com.example.newsapplication.view.main.more.adapter.MoreAdapter
 import com.example.newsapplication.view.main.more.common.history.HistoryActivity
+import com.example.newsapplication.view.main.more.common.language.CountryBottomSheet
 import com.example.newsapplication.view.main.more.common.profile.ProfileActivity
 import com.example.newsapplication.view.main.more.common.readLater.ReadLaterActivity
+import com.example.newsapplication.view.main.more.common.theme.ThemeBottomSheet
 
-class MoreFragment : Fragment(), MoreAdapter.Listener {
+class MoreFragment : Fragment(), MoreAdapter.Listener, CountryBottomSheet.Listener, ThemeBottomSheet.Listener {
 
     private var _binding: FragmentMoreBinding? = null
     private val binding get() = _binding!!
@@ -27,6 +37,7 @@ class MoreFragment : Fragment(), MoreAdapter.Listener {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var moreAdapter: MoreAdapter
+    private lateinit var appInfoTV: TextView
     private lateinit var settingList: List<SettingLayoutModel>
 
     override fun onCreateView(
@@ -38,22 +49,25 @@ class MoreFragment : Fragment(), MoreAdapter.Listener {
         return binding.root
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         moreAdapter.differ.submitList(settingList)
         setupRv()
+        val versionName = requireActivity().packageManager.getPackageInfo(requireActivity().packageName, 0).versionName
+        appInfoTV.text = getString(R.string.appInfo) + versionName
     }
 
     private fun init() {
         recyclerView = binding.rvMore
         moreAdapter = MoreAdapter(this)
+        appInfoTV = binding.appInfoTV
         settingList = listOf(
-            SettingLayoutModel(R.drawable.ic_user, "My profile"),
-            SettingLayoutModel(R.drawable.ic_later, "Read it later"),
-            SettingLayoutModel(R.drawable.ic_history, "History"),
-            SettingLayoutModel(R.drawable.ic_language, "Country & language"),
-            SettingLayoutModel(R.drawable.ic_theme, "Theme"),
-            SettingLayoutModel(R.drawable.ic_info, "About app"),
+            SettingLayoutModel(R.drawable.ic_user, getString(R.string.my_profile)),
+            SettingLayoutModel(R.drawable.ic_later, getString(R.string.read_it_later)),
+            SettingLayoutModel(R.drawable.ic_history, getString(R.string.history)),
+            SettingLayoutModel(R.drawable.ic_language, getString(R.string.country_language)),
+            SettingLayoutModel(R.drawable.ic_theme, getString(R.string.theme))
         )
     }
 
@@ -66,23 +80,81 @@ class MoreFragment : Fragment(), MoreAdapter.Listener {
 
     override fun onClick(item: SettingLayoutModel) {
         when (item.title) {
-            "My profile" -> {
+            getString(R.string.my_profile) -> {
                 val intent = Intent(requireContext(), ProfileActivity::class.java)
                 startActivity(intent)
             }
 
-            "Read it later" -> {
+            getString(R.string.read_it_later) -> {
                 val intent = Intent(requireContext(), ReadLaterActivity::class.java)
                 startActivity(intent)
             }
 
-            "History" -> {
+            getString(R.string.history) -> {
                 val intent = Intent(requireContext(), HistoryActivity::class.java)
                 startActivity(intent)
             }
 
+            getString(R.string.country_language) -> {
+                showCountryBottomSheet()
+            }
+
+            getString(R.string.theme) -> {
+                showThemeBottomSheet()
+            }
+
             else -> {
                 Toast.makeText(requireContext(), "Click", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun showCountryBottomSheet() {
+        val existingDialog =
+            childFragmentManager.findFragmentByTag("CountryBottomSheet")
+        if (existingDialog == null) {
+            val fragment = CountryBottomSheet()
+            fragment.show(childFragmentManager, "CountryBottomSheet")
+        }
+    }
+
+    private fun showThemeBottomSheet() {
+        val existingDialog =
+            childFragmentManager.findFragmentByTag("ThemeBottomSheet")
+        if (existingDialog == null) {
+            val fragment = ThemeBottomSheet()
+            fragment.show(childFragmentManager, "ThemeBottomSheet")
+        }
+    }
+
+    override fun onCountryClick(code: String) {
+        when (code) {
+
+            "en" -> {
+                setLanguageCode(requireContext(), "en")
+                setLanguagePosition(requireContext(), 0)
+            }
+
+            "ru" -> {
+                setLanguageCode(requireContext(), "ru")
+                setLanguagePosition(requireContext(), 1)
+            }
+        }
+        requireActivity().recreate()
+    }
+
+    override fun onThemeClick(theme: String) {
+        when (theme) {
+            "light" -> {
+                ThemeHelper.setThemeMode(requireContext(), LIGHT_MODE)
+            }
+
+            "dark" -> {
+                ThemeHelper.setThemeMode(requireContext(), DARK_MODE)
+            }
+
+            "system" -> {
+                ThemeHelper.setThemeMode(requireContext(), SYSTEM_MODE)
             }
         }
     }

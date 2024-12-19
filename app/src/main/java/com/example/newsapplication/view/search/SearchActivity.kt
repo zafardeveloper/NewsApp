@@ -15,44 +15,43 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.newsapplication.R
+import com.example.newsapplication.common.BaseActivity
 import com.example.newsapplication.databinding.ActivitySearchBinding
 import com.example.newsapplication.db.AppDatabase
 import com.example.newsapplication.db.searchHistory.SearchHistoryDao
 import com.example.newsapplication.db.searchHistory.SearchHistoryEntity
 import com.example.newsapplication.db.searchHistory.SearchHistoryRepository
 import com.example.newsapplication.util.Constants.CURRENT_SEARCH_TEXT
+import com.example.newsapplication.util.Constants.MANAGE_HISTORY
 import com.example.newsapplication.util.Constants.SEARCH_QUERY
-import com.example.newsapplication.util.NetworkConnectionLiveData
 import com.example.newsapplication.util.Util.Companion.clickAreaButton
-import com.example.newsapplication.view.main.search.historyAdapter.SearchHistoryAdapter
+import com.example.newsapplication.view.main.more.common.history.HistoryActivity
+import com.example.newsapplication.view.search.historyAdapter.SearchActivityAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class SearchActivity : AppCompatActivity(), SearchHistoryAdapter.Listener {
+class SearchActivity : BaseActivity(), SearchActivityAdapter.Listener {
 
     private val binding by lazy {
         ActivitySearchBinding.inflate(layoutInflater)
     }
 
-    private lateinit var searchHistoryAdapter: SearchHistoryAdapter
+    private lateinit var searchActivityAdapter: SearchActivityAdapter
     private lateinit var recyclerView: RecyclerView
     private lateinit var searchET: EditText
     private lateinit var cleanBtn: ImageView
     private lateinit var searchHistoryDatabase: AppDatabase
     private lateinit var searchHistoryRepository: SearchHistoryRepository
     private lateinit var searchHistoryDao: SearchHistoryDao
-    private lateinit var connectionLiveData: NetworkConnectionLiveData
     private var imm: InputMethodManager? = null
-    private var isConnected = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,7 +61,6 @@ class SearchActivity : AppCompatActivity(), SearchHistoryAdapter.Listener {
         setupSearchField()
         setupRv()
         loadSearchHistory()
-        checkInternet()
         clickAreaButton(cleanBtn)
         searchET.requestFocus()
         imm?.showSoftInput(searchET, InputMethodManager.SHOW_IMPLICIT)
@@ -73,28 +71,21 @@ class SearchActivity : AppCompatActivity(), SearchHistoryAdapter.Listener {
     }
 
     private fun init() {
-        searchHistoryAdapter = SearchHistoryAdapter(this)
+        searchActivityAdapter = SearchActivityAdapter(this)
         recyclerView = binding.searchRV
         searchET = binding.searchET
         cleanBtn = binding.cleanSearchText
         searchHistoryDatabase = AppDatabase.getDatabase(this)
         searchHistoryDao = searchHistoryDatabase.searchHistoryDao()
         searchHistoryRepository = SearchHistoryRepository(searchHistoryDao)
-        connectionLiveData = NetworkConnectionLiveData(this)
-    }
-
-    private fun checkInternet() {
-        connectionLiveData.observe(this) {
-            isConnected = it
-        }
     }
 
     private fun loadSearchHistory() {
         lifecycleScope.launch {
             val searches = withContext(Dispatchers.IO) {
-                searchHistoryRepository.getAllSearchHistory()
+                searchHistoryRepository.getPartOfSearchHistory()
             }
-            searchHistoryAdapter.differ.submitList(searches)
+            searchActivityAdapter.differ.submitList(searches)
         }
     }
 
@@ -104,11 +95,11 @@ class SearchActivity : AppCompatActivity(), SearchHistoryAdapter.Listener {
                 val searchQuery = query.toString().lowercase().trim()
                 lifecycleScope.launch {
                     val filteredSearches = withContext(Dispatchers.IO) {
-                        searchHistoryRepository.getAllSearchHistory().filter {
+                        searchHistoryRepository.getPartOfSearchHistory().filter {
                             it.searchQuery.contains(searchQuery)
                         }
                     }
-                    searchHistoryAdapter.differ.submitList(filteredSearches)
+                    searchActivityAdapter.differ.submitList(filteredSearches)
                 }
             } else {
                 loadSearchHistory()
@@ -121,7 +112,7 @@ class SearchActivity : AppCompatActivity(), SearchHistoryAdapter.Listener {
     }
 
     private fun setStatusNavigationBarColor() {
-        window.navigationBarColor = ContextCompat.getColor(this, R.color.white)
+        window.navigationBarColor = ContextCompat.getColor(this, R.color.item_color_primary)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.insetsController?.setSystemBarsAppearance(
                 WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
@@ -144,16 +135,14 @@ class SearchActivity : AppCompatActivity(), SearchHistoryAdapter.Listener {
             setOnEditorActionListener { _, actionId, _ ->
                 val editable = this.text
                 if (actionId == EditorInfo.IME_ACTION_SEARCH && editable.isNotEmpty()) {
-                    if (isConnected) {
-                        val resultIntent = Intent().apply {
-                            putExtra(SEARCH_QUERY, editable.toString().trim())
-                        }
-                        setResult(Activity.RESULT_OK, resultIntent)
-                        lifecycleScope.launch(Dispatchers.IO) {
-                            searchHistoryRepository.saveSearchQuery(editable.toString().trim())
-                        }
-                        finish()
+                    val resultIntent = Intent().apply {
+                        putExtra(SEARCH_QUERY, editable.toString().trim())
                     }
+                    setResult(Activity.RESULT_OK, resultIntent)
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        searchHistoryRepository.saveSearchQuery(editable.toString().trim())
+                    }
+                    finish()
                 }
                 searchET.clearFocus()
                 cleanBtn.visibility = View.GONE
@@ -181,7 +170,7 @@ class SearchActivity : AppCompatActivity(), SearchHistoryAdapter.Listener {
         val imm = this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         recyclerView.apply {
             layoutManager = LinearLayoutManager(this@SearchActivity)
-            adapter = searchHistoryAdapter
+            adapter = searchActivityAdapter
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
@@ -212,6 +201,7 @@ class SearchActivity : AppCompatActivity(), SearchHistoryAdapter.Listener {
 
         val buttonYes = dialogView.findViewById<TextView>(R.id.buttonYes)
         val buttonNo = dialogView.findViewById<TextView>(R.id.buttonNo)
+        val title = dialogView.findViewById<TextView>(R.id.textViewTitle)
 
         val alertDialog = AlertDialog.Builder(this)
             .setCancelable(false)
@@ -219,6 +209,7 @@ class SearchActivity : AppCompatActivity(), SearchHistoryAdapter.Listener {
             .create()
         alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
+        title.text = getString(R.string.are_you_sure_you_want_to_delete_this_item)
         buttonYes.setOnClickListener {
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
@@ -236,5 +227,12 @@ class SearchActivity : AppCompatActivity(), SearchHistoryAdapter.Listener {
         clickAreaButton(buttonYes)
         clickAreaButton(buttonNo)
         alertDialog.show()
+        alertDialog.window?.setLayout(800, 1000)
+    }
+
+    override fun onManageHistoryClick() {
+        val intent = Intent(this, HistoryActivity::class.java)
+        intent.putExtra(MANAGE_HISTORY, "manageHistory")
+        startActivity(intent)
     }
 }

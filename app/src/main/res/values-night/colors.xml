@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary_color">#A8C8FB</color>
+    <color name="item_color_primary">#1F1F1F</color>
+    <color name="text_color_primary">#FFFFFF</color>
+    <color name="screen_bg_color">#000000</color>
+    <color name="back_button_color">#A8C8FB</color>
+    <color name="appBar_color">#28292B</color>
+    <color name="profile_color">#000000</color>
+    <color name="ripple_color">#7E7E7E</color>
+    <color name="icon_edit_color">#A8C8FB</color>
+    <color name="profile_text_color">#7E7E7E</color>
+
+    <color name="dark">#80000000</color>
+    <color name="hint">#D8D8D8</color>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="unchecked">#B3B3B3</color>
+    <color name="light_blue">#1AA8C8FB</color>
+
+    <color name="red">#FF0000</color>
+    <color name="green">#0F9D58</color>
+    <color name="yellow">#F1D100</color>
+    <color name="blue_gray">#44547E</color>
+    <color name="transparent">#00FFFFFF</color>
+    <color name="translucentBlack">#80000000</color>
+    <color name="delete">#e46554</color>
+
+    <color name="white_95">#F2FFFFFF</color>
+    <color name="unchecked_95">#F2B3B3B3</color>
+
+
+
+
+
+</resources>

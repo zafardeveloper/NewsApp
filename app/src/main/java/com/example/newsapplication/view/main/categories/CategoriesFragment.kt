@@ -8,6 +8,7 @@ import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.viewpager2.widget.ViewPager2
+import com.example.newsapplication.R
 import com.example.newsapplication.databinding.FragmentCategoriesBinding
 import com.example.newsapplication.view.main.categories.bottomSheet.CategoriesBottomSheet
 import com.example.newsapplication.view.main.categories.tabFragment.TabFragment
@@ -42,21 +43,22 @@ class CategoriesFragment : Fragment(), CategoriesBottomSheet.Listener {
         super.onViewCreated(view, savedInstanceState)
         adapter = PagerAdapter(childFragmentManager, lifecycle)
         adapter.apply {
-            addFragment(TabFragment.newInstance("Politics"), "Politics")
-            addFragment(TabFragment.newInstance("Economy"), "Economy")
-            addFragment(TabFragment.newInstance("Technologies"), "Technologies")
-            addFragment(TabFragment.newInstance("Sport"), "Sport")
-            addFragment(TabFragment.newInstance("Culture"), "Culture")
-            addFragment(TabFragment.newInstance("Health"), "Health")
-            addFragment(TabFragment.newInstance("Travel"), "Travel")
-            addFragment(TabFragment.newInstance("Science"), "Science")
-            addFragment(TabFragment.newInstance("Cars"), "Cars")
-            addFragment(TabFragment.newInstance("Society"), "Society")
-            addFragment(TabFragment.newInstance("Entertainment"), "Entertainment")
-            addFragment(TabFragment.newInstance("Incidents"), "Incidents")
-            addFragment(TabFragment.newInstance("Fashion"), "Fashion")
-            addFragment(TabFragment.newInstance("Weather"), "Weather")
-            addFragment(TabFragment.newInstance("Education"), "Education")
+            addFragment(TabFragment.newInstance(getString(R.string.local)), getString(R.string.local))
+            addFragment(TabFragment.newInstance(getString(R.string.politics)), getString(R.string.politics))
+            addFragment(TabFragment.newInstance(getString(R.string.economy)), getString(R.string.economy))
+            addFragment(TabFragment.newInstance(getString(R.string.technologies)), getString(R.string.technologies))
+            addFragment(TabFragment.newInstance(getString(R.string.sport)), getString(R.string.sport))
+            addFragment(TabFragment.newInstance(getString(R.string.culture)), getString(R.string.culture))
+            addFragment(TabFragment.newInstance(getString(R.string.health)), getString(R.string.health))
+            addFragment(TabFragment.newInstance(getString(R.string.travel)), getString(R.string.travel))
+            addFragment(TabFragment.newInstance(getString(R.string.science)), getString(R.string.science))
+            addFragment(TabFragment.newInstance(getString(R.string.cars)), getString(R.string.cars))
+            addFragment(TabFragment.newInstance(getString(R.string.society)), getString(R.string.society))
+            addFragment(TabFragment.newInstance(getString(R.string.entertainment)), getString(R.string.entertainment))
+            addFragment(TabFragment.newInstance(getString(R.string.incidents)), getString(R.string.incidents))
+            addFragment(TabFragment.newInstance(getString(R.string.fashion)), getString(R.string.fashion))
+            addFragment(TabFragment.newInstance(getString(R.string.weather)), getString(R.string.weather))
+            addFragment(TabFragment.newInstance(getString(R.string.education)), getString(R.string.education))
         }
         viewPager.adapter = adapter
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->

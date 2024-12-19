@@ -1,47 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <View
         android:layout_width="40dp"
         android:layout_height="6dp"
+        android:layout_gravity="center"
         android:layout_marginTop="10dp"
-        android:background="@drawable/bg_for_slider"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:background="@drawable/bg_for_slider" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="35dp"
-        android:fontFamily="@font/qanelas_medium"
-        android:text="Categories option"
+        android:text="@string/categoriesFragment"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:fontFamily="@font/qanelas_medium"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="20dp"/>
 
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/chipGroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="10dp"
-        android:layout_marginTop="85dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:singleSelection="true">
+        android:layout_marginHorizontal="15dp"
+        android:layout_marginTop="20dp"
+        app:singleSelection="true"
+        android:layout_marginBottom="10dp">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipLocal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/item_color_primary"
+            android:text="@string/local"
+            android:textAppearance="@style/chipText"
+            app:chipCornerRadius="99dp" />
 
         <com.google.android.material.chip.Chip
             android:id="@+id/chipPolitics"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
-            android:text="Politics"
+            android:backgroundTint="@color/item_color_primary"
+            android:text="@string/politics"
             android:textAppearance="@style/chipText"
             app:chipCornerRadius="99dp" />
 
@@ -49,8 +53,8 @@
             android:id="@+id/chipEconomy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
-            android:text="Economy"
+            android:backgroundTint="@color/item_color_primary"
+            android:text="@string/economy"
             android:textAppearance="@style/chipText"
             app:chipCornerRadius="99dp" />
 
@@ -58,8 +62,8 @@
             android:id="@+id/chipTechnologies"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
-            android:text="Technologies"
+            android:backgroundTint="@color/item_color_primary"
+            android:text="@string/technologies"
             android:textAppearance="@style/chipText"
             app:chipCornerRadius="99dp" />
 
@@ -67,8 +71,8 @@
             android:id="@+id/chipSport"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
-            android:text="Sport"
+            android:backgroundTint="@color/item_color_primary"
+            android:text="@string/sport"
             android:textAppearance="@style/chipText"
             app:chipCornerRadius="99dp" />
 
@@ -76,8 +80,8 @@
             android:id="@+id/chipCulture"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
-            android:text="Culture"
+            android:backgroundTint="@color/item_color_primary"
+            android:text="@string/culture"
             android:textAppearance="@style/chipText"
             app:chipCornerRadius="99dp" />
 
@@ -85,8 +89,8 @@
             android:id="@+id/chipHealth"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
-            android:text="Health"
+            android:backgroundTint="@color/item_color_primary"
+            android:text="@string/health"
             android:textAppearance="@style/chipText"
             app:chipCornerRadius="99dp" />
 
@@ -94,8 +98,8 @@
             android:id="@+id/chipTravel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
-            android:text="Travel"
+            android:backgroundTint="@color/item_color_primary"
+            android:text="@string/travel"
             android:textAppearance="@style/chipText"
             app:chipCornerRadius="99dp" />
 
@@ -103,8 +107,8 @@
             android:id="@+id/chipScience"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
-            android:text="Science"
+            android:backgroundTint="@color/item_color_primary"
+            android:text="@string/science"
             android:textAppearance="@style/chipText"
             app:chipCornerRadius="99dp" />
 
@@ -112,8 +116,8 @@
             android:id="@+id/chipCars"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
-            android:text="Cars"
+            android:backgroundTint="@color/item_color_primary"
+            android:text="@string/cars"
             android:textAppearance="@style/chipText"
             app:chipCornerRadius="99dp" />
 
@@ -121,8 +125,8 @@
             android:id="@+id/chipSociety"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
-            android:text="Society"
+            android:backgroundTint="@color/item_color_primary"
+            android:text="@string/society"
             android:textAppearance="@style/chipText"
             app:chipCornerRadius="99dp" />
 
@@ -130,8 +134,8 @@
             android:id="@+id/chipEntertainment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
-            android:text="Entertainment"
+            android:backgroundTint="@color/item_color_primary"
+            android:text="@string/entertainment"
             android:textAppearance="@style/chipText"
             app:chipCornerRadius="99dp" />
 
@@ -139,8 +143,8 @@
             android:id="@+id/chipIncidents"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
-            android:text="Incidents"
+            android:backgroundTint="@color/item_color_primary"
+            android:text="@string/incidents"
             android:textAppearance="@style/chipText"
             app:chipCornerRadius="99dp" />
 
@@ -148,8 +152,8 @@
             android:id="@+id/chipFashion"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
-            android:text="Fashion"
+            android:backgroundTint="@color/item_color_primary"
+            android:text="@string/fashion"
             android:textAppearance="@style/chipText"
             app:chipCornerRadius="99dp" />
 
@@ -157,8 +161,8 @@
             android:id="@+id/chipWeather"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
-            android:text="Weather"
+            android:backgroundTint="@color/item_color_primary"
+            android:text="@string/weather"
             android:textAppearance="@style/chipText"
             app:chipCornerRadius="99dp" />
 
@@ -166,11 +170,11 @@
             android:id="@+id/chipEducation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
-            android:text="Education"
+            android:backgroundTint="@color/item_color_primary"
+            android:text="@string/education"
             android:textAppearance="@style/chipText"
             app:chipCornerRadius="99dp" />
 
     </com.google.android.material.chip.ChipGroup>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

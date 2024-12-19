@@ -4,13 +4,14 @@
     android:id="@+id/constraintLayout"
     android:layout_width="300dp"
     android:layout_height="310dp"
-    android:background="@color/white">
+    android:backgroundTint="@color/item_color_primary"
+    style="@style/RowItemStyle">
 
     <View
         android:id="@+id/view"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/screen_bg"
+        android:background="@color/screen_bg_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -44,7 +45,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="SOURCE"
-        android:textColor="@android:color/black"
+        style="@style/SourceTextAppearanceNewsSearch"
         app:layout_constraintStart_toStartOf="@+id/tvTitle"
         app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
 
@@ -57,9 +58,7 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:text="TITLE"
-        android:textColor="@android:color/black"
-        android:textSize="15sp"
-        android:textStyle="bold"
+        style="@style/TitleTextAppearanceNewsSearch"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/materialCardView"
         app:layout_constraintTop_toBottomOf="@+id/materialCardView" />
@@ -71,7 +70,7 @@
         android:layout_marginTop="2dp"
         android:layout_marginBottom="8dp"
         android:text="PUBLISHED AT"
-        android:textColor="@color/unchecked"
+        style="@style/SourceTextAppearanceNewsSearch"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/tvTitle"
         app:layout_constraintTop_toBottomOf="@+id/tvSource" />

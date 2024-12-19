@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".view.main.more.common.profile.fragment.editProfile.EditProfileFragment">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:fitsSystemWindows="true">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/collapsingToolbarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="199.5dp"
+            android:background="@color/profile_color"
+            android:fitsSystemWindows="true"
+            app:collapsedTitleTextAppearance="@style/CustomCollapsedTitle"
+            app:collapsedTitleTextColor="@color/back_button_color"
+            app:expandedTitleGravity="center"
+            app:expandedTitleTextAppearance="@style/CustomExpandedTitle"
+            app:expandedTitleTextColor="@color/back_button_color"
+            app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
+            app:title="@string/edit_profile"
+            app:titleCollapseMode="scale">
+
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/materialToolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?actionBarSize"
+                android:background="@color/profile_color"
+                app:layout_collapseMode="pin"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:title="@string/edit_profile"
+                app:titleTextAppearance="@style/CustomCollapsedTitle" />
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/item_color_primary"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="40dp"
+            android:orientation="vertical"
+            android:paddingHorizontal="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="3dp"
+                android:fontFamily="@font/qanelas_medium"
+                android:text="@string/name"
+                android:textColor="@color/profile_text_color" />
+
+            <EditText
+                android:id="@+id/nameET"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/profile_text_color"
+                style="@style/EditTextStyle"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="3dp"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/qanelas_medium"
+                android:text="@string/username"
+                android:textColor="@color/profile_text_color" />
+
+            <EditText
+                android:id="@+id/usernameET"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/profile_text_color"
+                style="@style/EditTextStyle" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="3dp"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/qanelas_medium"
+                android:text="@string/phone"
+                android:textColor="@color/profile_text_color" />
+
+            <EditText
+                android:id="@+id/phoneET"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/profile_text_color"
+                style="@style/EditTextNumberStyle"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="3dp"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/qanelas_medium"
+                android:text="@string/gender"
+                android:textColor="@color/profile_text_color" />
+
+            <EditText
+                android:id="@+id/genderET"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/profile_text_color"
+                android:fontFamily="@font/qanelas_medium"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="3dp"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/qanelas_medium"
+                android:text="@string/birthday"
+                android:textColor="@color/profile_text_color" />
+
+            <EditText
+                android:id="@+id/birthdayET"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/profile_text_color"
+                android:focusable="false"
+                android:fontFamily="@font/qanelas_medium"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="3dp"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/qanelas_medium"
+                android:text="@string/e_mail"
+                android:textColor="@color/profile_text_color" />
+
+            <EditText
+                android:id="@+id/emailET"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/profile_text_color"
+                android:fontFamily="@font/qanelas_medium"
+                style="@style/EditTextEmailStyle"/>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -22,9 +22,7 @@ class CameraImageAdapter(private val listener: Listener) : RecyclerView.Adapter<
             title.text = settingLayoutModel.title
 
             if (settingLayoutModel.icon == R.drawable.ic_trash) {
-                title.setTextColor(Color.RED)
-            } else {
-                title.setTextColor(Color.BLACK)
+                title.setTextColor(itemView.context.getColor(R.color.delete))
             }
         }
 

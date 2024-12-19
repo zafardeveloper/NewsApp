@@ -23,9 +23,11 @@ import com.example.newsapplication.model.article.Article
 import com.example.newsapplication.util.Constants
 import com.example.newsapplication.util.Constants.ARTICLE_KEY
 import com.example.newsapplication.util.Resource
+import com.example.newsapplication.util.SharedPreferencesUtils.getLanguageCode
 import com.example.newsapplication.util.Util.Companion.showIconPopupMenu
 import com.example.newsapplication.view.main.more.common.readLater.ReadLaterActivity
 import com.example.newsapplication.view.webView.WebViewActivity
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -39,6 +41,7 @@ class TabFragment : Fragment(), TabAdapter.Listener {
     private lateinit var myAdapter: TabAdapter
     private lateinit var recyclerView: RecyclerView
     private lateinit var progressBar: ProgressBar
+    private lateinit var fab: FloatingActionButton
     private lateinit var articleDatabase: AppDatabase
     private lateinit var readLaterRepository: ReadLaterRepository
     private lateinit var readLaterDao: ReadLaterDao
@@ -67,6 +70,7 @@ class TabFragment : Fragment(), TabAdapter.Listener {
         myAdapter = TabAdapter(this)
         recyclerView = binding.rvBreakingNews
         progressBar = binding.progressBar
+        fab = binding.upFloatingActionButton
         articleDatabase = AppDatabase.getDatabase(requireContext())
         readLaterDao = articleDatabase.articleDao()
         readLaterRepository = ReadLaterRepository(readLaterDao)
@@ -77,67 +81,82 @@ class TabFragment : Fragment(), TabAdapter.Listener {
         myAdapter = TabAdapter(this)
         setupRecyclerView()
         observeViewModel()
-
+        fab.setOnClickListener {
+            recyclerView.smoothScrollToPosition(0)
+        }
         val data = arguments?.getString(Constants.CATEGORY_KEY)
+        val countryCode = when (getLanguageCode(requireContext())) {
+            "en" -> {
+                getString(R.string.america)
+            }
+            "ru" -> {
+                getString(R.string.russia)
+            }
+            else -> ""
+        }
         when (data) {
 
-            "Politics" -> {
+            getString(R.string.local) -> {
+                viewModel.getLocalNews(countryCode)
+            }
+
+            getString(R.string.politics) -> {
                 viewModel.getNews(Constants.POLITICS, "politics")
             }
 
-            "Economy" -> {
+            getString(R.string.economy) -> {
                 viewModel.getNews(Constants.ECONOMY, "economy")
             }
 
-            "Technologies" -> {
+            getString(R.string.technologies) -> {
                 viewModel.getNews(Constants.TECHNOLOGIES, "technologies")
             }
 
-            "Sport" -> {
+            getString(R.string.sport) -> {
                 viewModel.getNews(Constants.SPORT, "sport")
             }
 
-            "Culture" -> {
+            getString(R.string.culture) -> {
                 viewModel.getNews(Constants.CULTURE, "culture")
             }
 
-            "Health" -> {
+            getString(R.string.health) -> {
                 viewModel.getNews(Constants.HEALTH, "health")
             }
 
-            "Travel" -> {
+            getString(R.string.travel) -> {
                 viewModel.getNews(Constants.TRAVEL, "travel")
             }
 
-            "Science" -> {
+            getString(R.string.science) -> {
                 viewModel.getNews(Constants.SCIENCE, "science")
             }
 
-            "Cars" -> {
+            getString(R.string.cars) -> {
                 viewModel.getNews(Constants.CARS, "cars")
             }
 
-            "Society" -> {
+            getString(R.string.society) -> {
                 viewModel.getNews(Constants.SOCIETY, "society")
             }
 
-            "Entertainment" -> {
+            getString(R.string.entertainment) -> {
                 viewModel.getNews(Constants.ENTERTAINMENT, "entertainment")
             }
 
-            "Incidents" -> {
+            getString(R.string.incidents) -> {
                 viewModel.getNews(Constants.INCIDENTS, "incidents")
             }
 
-            "Fashion" -> {
+            getString(R.string.fashion) -> {
                 viewModel.getNews(Constants.FASHION, "fashion")
             }
 
-            "Weather" -> {
+            getString(R.string.weather) -> {
                 viewModel.getNews(Constants.WEATHER, "weather")
             }
 
-            "Education" -> {
+            getString(R.string.education) -> {
                 viewModel.getNews(Constants.EDUCATION, "education")
             }
 
@@ -198,6 +217,7 @@ class TabFragment : Fragment(), TabAdapter.Listener {
                 R.id.addReadLater -> {
                     lifecycleScope.launch {
                         readLaterRepository.saveArticle(
+                            requireContext(),
                             view,
                             requireActivity().findViewById(R.id.bottomNavigationView),
                             readLaterEntity
@@ -222,6 +242,18 @@ class TabFragment : Fragment(), TabAdapter.Listener {
         recyclerView.apply {
             adapter = myAdapter
             layoutManager = LinearLayoutManager(requireContext())
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    if (dy < 0 && fab.visibility != View.VISIBLE) {
+                        fab.show()
+                    } else if (dy > 0 && fab.visibility == View.VISIBLE) {
+                        fab.hide()
+                    } else if (!recyclerView.canScrollVertically(-1)) {
+                        fab.hide()
+                    }
+                }
+            })
         }
     }
 

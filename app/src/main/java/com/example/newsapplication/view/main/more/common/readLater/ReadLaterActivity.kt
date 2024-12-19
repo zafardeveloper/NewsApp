@@ -5,20 +5,19 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.Paint
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.view.WindowInsetsController
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.newsapplication.R
+import com.example.newsapplication.common.BaseActivity
 import com.example.newsapplication.databinding.ActivityReadLaterBinding
 import com.example.newsapplication.db.AppDatabase
 import com.example.newsapplication.db.article.readLater.ReadLaterDao
@@ -26,8 +25,6 @@ import com.example.newsapplication.db.article.readLater.ReadLaterEntity
 import com.example.newsapplication.db.article.readLater.ReadLaterRepository
 import com.example.newsapplication.util.Constants.MODEL_TYPE
 import com.example.newsapplication.util.Constants.READ_LATER_KEY
-import com.example.newsapplication.view.main.more.common.history.HistoryActivity
-import com.example.newsapplication.view.main.more.common.history.HistoryAdapter
 import com.example.newsapplication.view.webView.WebViewActivity
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.MaterialToolbar
@@ -37,7 +34,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ReadLaterActivity : AppCompatActivity(), ReadLaterAdapter.Listener {
+class ReadLaterActivity : BaseActivity(), ReadLaterAdapter.Listener {
 
     private val binding by lazy {
         ActivityReadLaterBinding.inflate(layoutInflater)
@@ -80,6 +77,7 @@ class ReadLaterActivity : AppCompatActivity(), ReadLaterAdapter.Listener {
             private val deleteIcon by lazy {
                 ContextCompat.getDrawable(this@ReadLaterActivity, R.drawable.ic_delete)
             }
+            @Suppress("DEPRECATION")
             private val vibrator by lazy {
                 this@ReadLaterActivity.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
             }
@@ -102,6 +100,7 @@ class ReadLaterActivity : AppCompatActivity(), ReadLaterAdapter.Listener {
                 return false
             }
 
+            @Suppress("DEPRECATION")
             @SuppressLint("MissingPermission", "NewApi")
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
@@ -111,10 +110,10 @@ class ReadLaterActivity : AppCompatActivity(), ReadLaterAdapter.Listener {
 
                 Snackbar.make(
                     binding.root,
-                    "Item removed from \"Read it later\"",
+                    getString(R.string.item_removed_from_read_it_later),
                     Snackbar.LENGTH_LONG
                 ).apply {
-                    setAction("Undo") {
+                    setAction(getString(R.string.undo)) {
                         insertArticle(article)
                     }
                     setActionTextColor(Color.LTGRAY)
@@ -182,7 +181,7 @@ class ReadLaterActivity : AppCompatActivity(), ReadLaterAdapter.Listener {
 
 
     private fun setStatusNavigationBarColor() {
-        window.navigationBarColor = ContextCompat.getColor(this, R.color.white)
+        window.navigationBarColor = ContextCompat.getColor(this, R.color.item_color_primary)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.insetsController?.setSystemBarsAppearance(
                 WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,

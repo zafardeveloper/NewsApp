@@ -3,22 +3,22 @@
 
     <item
         android:id="@+id/homeFragment"
-        android:title="Home"
+        android:title="@string/homeFragment"
         android:icon="@drawable/ic_home_selector" />
 
     <item
         android:id="@+id/categoriesFragment"
-        android:title="Categories"
+        android:title="@string/categoriesFragment"
         android:icon="@drawable/ic_categories_selector" />
 
     <item
         android:id="@+id/searchFragment"
-        android:title="Search"
+        android:title="@string/searchFragment"
         android:icon="@drawable/ic_search_selector" />
 
     <item
         android:id="@+id/moreFragment"
-        android:title="More"
+        android:title="@string/moreFragment"
         android:icon="@drawable/ic_more_selector" />
 
 </menu>

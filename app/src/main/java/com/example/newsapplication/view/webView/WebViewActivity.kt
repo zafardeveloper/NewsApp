@@ -8,10 +8,10 @@ import android.view.WindowInsetsController
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.ProgressBar
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.newsapplication.R
+import com.example.newsapplication.common.BaseActivity
 import com.example.newsapplication.databinding.ActivityWebViewBinding
 import com.example.newsapplication.db.AppDatabase
 import com.example.newsapplication.db.article.history.HistoryDao
@@ -28,7 +28,7 @@ import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.appbar.MaterialToolbar
 import kotlinx.coroutines.launch
 
-class WebViewActivity : AppCompatActivity() {
+class WebViewActivity : BaseActivity() {
 
     private val binding by lazy {
         ActivityWebViewBinding.inflate(layoutInflater)
@@ -139,7 +139,7 @@ class WebViewActivity : AppCompatActivity() {
     }
 
     private fun setStatusNavigationBarColor() {
-        window.navigationBarColor = ContextCompat.getColor(this, R.color.white)
+        window.navigationBarColor = ContextCompat.getColor(this, R.color.item_color_primary)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.insetsController?.setSystemBarsAppearance(
                 WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,

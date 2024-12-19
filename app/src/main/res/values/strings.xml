@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">NewsApplication</string>
+    <string name="app_name" translatable="false">NewsApplication</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="todo">TODO</string>
     <string name="homeFragment">Home</string>
@@ -8,4 +8,63 @@
     <string name="moreFragment">More</string>
     <string name="add_read_it_later">Add to \"Read it later\"</string>
     <string name="clear_list">Clear list</string>
+    <string name="manage_history">Manage history</string>
+    <string name="name">Name</string>
+    <string name="username">Username</string>
+    <string name="phone">Phone</string>
+    <string name="birthday">Birthday</string>
+    <string name="e_mail">E-mail</string>
+    <string name="cancel">Cancel</string>
+    <string name="done">Done</string>
+    <string name="search_history">Search history</string>
+    <string name="my_profile">My profile</string>
+    <string name="read_it_later">Read it later</string>
+    <string name="history">History</string>
+    <string name="country_language"><![CDATA[Country & language]]></string>
+    <string name="theme">Theme</string>
+    <string name="about_app">About app</string>
+    <string name="politics">Politics</string>
+    <string name="economy">Economy</string>
+    <string name="technologies">Technologies</string>
+    <string name="sport">Sport</string>
+    <string name="culture">Culture</string>
+    <string name="health">Health</string>
+    <string name="travel">Travel</string>
+    <string name="science">Science</string>
+    <string name="cars">Cars</string>
+    <string name="society">Society</string>
+    <string name="entertainment">Entertainment</string>
+    <string name="incidents">Incidents</string>
+    <string name="fashion">Fashion</string>
+    <string name="weather">Weather</string>
+    <string name="education">Education</string>
+    <string name="headlines">Headlines</string>
+    <string name="search">search</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="show_more">Show more</string>
+    <string name="gender">Gender</string>
+    <string name="take_a_photo">Take a photo</string>
+    <string name="choose_from_gallery">Choose from gallery</string>
+    <string name="delete">Delete</string>
+    <string name="common">Common</string>
+    <string name="english">English</string>
+    <string name="russian">Russian</string>
+    <string name="are_you_sure_you_want_to_delete_all_items">Are you sure you want to delete all items?</string>
+    <string name="are_you_sure_you_want_to_delete_this_item">Are you sure you want to delete this item?</string>
+    <string name="undo">Undo</string>
+    <string name="show_list">Show list</string>
+    <string name="item_removed_from_read_it_later">Item removed from \"Read it later\"</string>
+    <string name="item_added_to_read_it_later">"Item added to \"Read it later\""</string>
+    <string name="local">Local</string>
+    <string name="america" translatable="false">america</string>
+    <string name="russia" translatable="false">россия</string>
+    <string name="choose_language">Choose language</string>
+    <string name="choose_theme">Choose theme</string>
+    <string name="photo_deleted">Photo deleted</string>
+    <string name="light_mode">Light mode</string>
+    <string name="dark_mode">Dark mode</string>
+    <string name="system_default">System default</string>
+    <string name="info">Info</string>
+    <string name="appInfo">News app for Android v</string>
+
 </resources>

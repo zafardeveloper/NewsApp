@@ -1,6 +1,7 @@
 package com.example.newsapplication.view.main.more.common.profile.fragment.profile
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -13,28 +14,28 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.fragment.app.activityViewModels
 import com.bumptech.glide.Glide
 import com.example.newsapplication.R
 import com.example.newsapplication.databinding.FragmentProfileBinding
-import com.example.newsapplication.model.profile.ProfileInfoModel
+import com.example.newsapplication.model.profile.UserInfoModel
 import com.example.newsapplication.model.setting.SettingLayoutModel
 import com.example.newsapplication.util.Constants.AVATAR_IMAGE
 import com.example.newsapplication.util.Constants.CAMERA_PERMISSION_CODE
 import com.example.newsapplication.util.Constants.GALLERY_PICK_CODE
 import com.example.newsapplication.util.Constants.IMAGE_CAPTURE_CODE
 import com.example.newsapplication.util.SessionManager
-import com.example.newsapplication.view.main.more.common.profile.adapter.ProfileAdapter
 import com.example.newsapplication.view.main.more.common.profile.fragment.avatarImage.FullImageFragment
 import com.example.newsapplication.view.main.more.common.profile.fragment.bottomSheet.CameraImageBottomSheet
+import com.example.newsapplication.view.main.more.common.profile.fragment.editProfile.EditProfileFragment
 import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.io.File
@@ -45,24 +46,27 @@ import kotlin.math.abs
 
 class ProfileFragment : Fragment(), CameraImageBottomSheet.Listener {
 
-    private val viewModel: ProfileViewModel by viewModels()
+    private val viewModel: ProfileViewModel by activityViewModels()
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var toolbar: MaterialToolbar
+    private lateinit var collapsingToolbarLayout: CollapsingToolbarLayout
     private lateinit var appBar: AppBarLayout
     private lateinit var avatarImageView: ImageView
     private lateinit var cardImageView: CardView
     private lateinit var floatingActionButton: FloatingActionButton
     private lateinit var avatarFrameLayout: FrameLayout
-    private lateinit var recyclerViewET: RecyclerView
-    private lateinit var profileAdapter: ProfileAdapter
-    private lateinit var editTextList: List<ProfileInfoModel>
     private lateinit var sessionManager: SessionManager
+    private lateinit var usernameET: TextView
+    private lateinit var phoneET: TextView
+    private lateinit var genderET: TextView
+    private lateinit var birthdayET: TextView
+    private lateinit var emailET: TextView
+    private lateinit var user: UserInfoModel
 
     private var showDelete: Int = 0
-
     private var vFilename: String = ""
     private lateinit var file: File
 
@@ -82,41 +86,26 @@ class ProfileFragment : Fragment(), CameraImageBottomSheet.Listener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupToolbar()
-        setupRv()
         listener()
-
-        sessionManager.getShowDeleteLiveData().observe(viewLifecycleOwner) {
-            it?.let {
-                showDelete = it
-            }
-        }
-
-        sessionManager.getAvatarImageLiveData().observe(viewLifecycleOwner) {
-            if (it != null) {
-                Glide.with(requireContext()).load(it).into(avatarImageView)
-            } else {
-                avatarImageView.setImageResource(R.drawable.ic_avatar)
-            }
-        }
-
+        observeLiveData()
+        fillFields(user)
     }
 
     private fun init() {
         toolbar = binding.materialToolbar
+        collapsingToolbarLayout = binding.collapsingToolbarLayout
         appBar = binding.appBarLayout
         avatarImageView = binding.avatarImageView
         cardImageView = binding.cardImageView
         floatingActionButton = binding.floatingActionButton
         avatarFrameLayout = binding.avatarFrameLayout
-        recyclerViewET = binding.recyclerViewET
-        profileAdapter = ProfileAdapter()
+        usernameET = binding.usernameTV
+        phoneET = binding.phoneTV
+        genderET = binding.genderTV
+        birthdayET = binding.birthdayTV
+        emailET = binding.emailTV
         sessionManager = SessionManager(requireContext())
-        editTextList = listOf(
-            ProfileInfoModel("Birthday", "17.11.1985"),
-            ProfileInfoModel("Gender", "Male"),
-            ProfileInfoModel("Phone", "+16584454545"),
-            ProfileInfoModel("E-mail", "johnmark@gmail.com"),
-        )
+        user = sessionManager.loadUserInfo()
     }
 
     private fun listener() {
@@ -134,13 +123,70 @@ class ProfileFragment : Fragment(), CameraImageBottomSheet.Listener {
         }
     }
 
+    private fun observeLiveData() {
+        sessionManager.getShowDeleteLiveData().observe(viewLifecycleOwner) {
+            it?.let {
+                showDelete = it
+            }
+        }
+        sessionManager.getAvatarImageLiveData().observe(viewLifecycleOwner) {
+            if (it != null) {
+                Glide.with(requireContext()).load(it).into(avatarImageView)
+            } else {
+                avatarImageView.setImageResource(R.drawable.ic_avatar)
+            }
+        }
+        sessionManager.refreshUserInfoLiveData().observe(viewLifecycleOwner) {
+            fillFields(it)
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun fillFields(userInfo: UserInfoModel) {
+        if (userInfo.username.isNotEmpty()) {
+            usernameET.text = "@" + userInfo.username
+        }
+        phoneET.text = userInfo.phone
+        genderET.text = userInfo.gender
+        birthdayET.text = userInfo.birthday
+        emailET.text = userInfo.email
+        collapsingToolbarLayout.title = userInfo.name
+    }
+
+
     private fun setupToolbar() {
         toolbar.apply {
+            inflateMenu(R.menu.action_menu)
+            setOnMenuItemClickListener { menuItem ->
+                when (menuItem.itemId) {
+                    R.id.action -> {
+                        val editProfileFragment = EditProfileFragment()
+                        parentFragmentManager.beginTransaction()
+                            .setCustomAnimations(
+                                R.anim.overlay_from_right,
+                                R.anim.overlay_to_left,
+                                R.anim.overlay_from_left,
+                                R.anim.overlay_to_right
+                            )
+                            .replace(R.id.profileFragmentContainerView, editProfileFragment)
+                            .addToBackStack(null)
+                            .commit()
+                        true
+                    }
+
+                    else -> false
+                }
+            }
             setNavigationIcon(R.drawable.ic_back)
             setNavigationOnClickListener {
                 requireActivity().onBackPressedDispatcher.onBackPressed()
             }
-            setNavigationIconTint(ContextCompat.getColor(requireContext(), R.color.white))
+            setNavigationIconTint(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.back_button_color
+                )
+            )
         }
         appBar.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
             val collapseRange = appBarLayout.totalScrollRange
@@ -151,14 +197,6 @@ class ProfileFragment : Fragment(), CameraImageBottomSheet.Listener {
                 scaleY = 1 - collapsePercentage * 0.5f
             }
         }
-    }
-
-    private fun setupRv() {
-        recyclerViewET.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = profileAdapter
-        }
-        profileAdapter.differ.submitList(editTextList)
     }
 
     private fun showBottomSheet() {
@@ -182,8 +220,12 @@ class ProfileFragment : Fragment(), CameraImageBottomSheet.Listener {
         }
         fullImageFragment.arguments = bundle
         parentFragmentManager.beginTransaction()
-            .setReorderingAllowed(true)
-            .addSharedElement(avatarImageView, "shared_image2")
+            .setCustomAnimations(
+                R.anim.fade_in,
+                R.anim.fade_out,
+                R.anim.fade_in,
+                R.anim.fade_out
+            )
             .add(R.id.profileFragmentContainerView, fullImageFragment)
             .hide(this)
             .addToBackStack(null)
@@ -193,19 +235,22 @@ class ProfileFragment : Fragment(), CameraImageBottomSheet.Listener {
     override fun onItemClick(item: SettingLayoutModel) {
         when (item.title) {
 
-            "Take a photo" -> {
+            getString(R.string.take_a_photo) -> {
                 checkCameraPermission()
             }
 
-            "Choose from gallery" -> {
+            getString(R.string.choose_from_gallery) -> {
                 openGallery()
             }
 
-            "Delete" -> {
+            getString(R.string.delete) -> {
                 sessionManager.deleteAvatarImage()
                 deleteImageFile()
                 sessionManager.setShowDelete(0)
-                Toast.makeText(requireContext(), "Photo deleted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.photo_deleted), Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
@@ -248,6 +293,7 @@ class ProfileFragment : Fragment(), CameraImageBottomSheet.Listener {
         startActivityForResult(cameraIntent, IMAGE_CAPTURE_CODE)
     }
 
+    @Suppress("DEPRECATION")
     private fun openGallery() {
         if (::file.isInitialized && file.exists()) {
             val isDeleted = file.delete()
@@ -306,16 +352,17 @@ class ProfileFragment : Fragment(), CameraImageBottomSheet.Listener {
                     val selectedImageUri = data.data
                     if (selectedImageUri != null) {
                         try {
-                            // Создаем целевой файл
-                            val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+                            val timeStamp = SimpleDateFormat(
+                                "yyyyMMdd_HHmmss",
+                                Locale.getDefault()
+                            ).format(Date())
                             vFilename = "FOTO_$timeStamp.jpg"
                             file = File(
                                 requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES),
                                 vFilename
                             )
-
-                            // Копируем данные из URI в файл
-                            val inputStream = requireContext().contentResolver.openInputStream(selectedImageUri)
+                            val inputStream =
+                                requireContext().contentResolver.openInputStream(selectedImageUri)
                             val outputStream = file.outputStream()
 
                             inputStream?.use { input ->
@@ -329,17 +376,25 @@ class ProfileFragment : Fragment(), CameraImageBottomSheet.Listener {
                                 requireContext().applicationContext.packageName + ".provider",
                                 file
                             )
-
                             sessionManager.setAvatarImage(uri)
                             sessionManager.setShowDelete(1)
 
-                            Toast.makeText(requireContext(), "Image saved: $uri", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                requireContext(),
+                                "Image saved: $uri",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         } catch (e: Exception) {
                             e.printStackTrace()
-                            Toast.makeText(requireContext(), "Failed to save image", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                requireContext(),
+                                "Failed to save image",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     } else {
-                        Toast.makeText(requireContext(), "No image selected", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), "No image selected", Toast.LENGTH_SHORT)
+                            .show()
                     }
                 }
             }

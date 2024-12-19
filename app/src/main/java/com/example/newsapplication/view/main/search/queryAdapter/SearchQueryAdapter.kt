@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.newsapplication.common.OnItemClickListener
+import com.example.newsapplication.util.OnItemClickListener
 import com.example.newsapplication.R
 import com.example.newsapplication.databinding.RowItemNewsSearchBinding
 import com.example.newsapplication.model.article.Article

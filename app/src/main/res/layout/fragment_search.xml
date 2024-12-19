@@ -4,9 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/item_color_primary"
     tools:context=".view.main.search.SearchFragment">
 
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/materialToolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/item_color_primary"
+        android:minHeight="?attr/actionBarSize"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="@string/searchFragment"
+        app:titleTextColor="@color/text_color_primary"
+        android:theme="@style/AppTheme.MaterialToolbar"/>
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/searchCV"
@@ -14,14 +26,14 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
         android:layout_marginBottom="10dp"
-        android:backgroundTint="@color/white"
+        android:backgroundTint="@color/item_color_primary"
         app:cardCornerRadius="99dp"
         app:cardElevation="3dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/materialToolbar"
         app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
-        app:strokeColor="@color/blue"
+        app:strokeColor="@color/primary_color"
         app:strokeWidth="1dp"
         app:rippleColor="@android:color/transparent">
 
@@ -35,8 +47,9 @@
             android:paddingHorizontal="25dp"
             android:text=""
             android:textSize="18sp"
+            android:fontFamily="@font/qanelas_medium"
             app:drawableEndCompat="@drawable/ic_search"
-            app:drawableTint="@color/blue"
+            app:drawableTint="@color/primary_color"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -46,10 +59,13 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/searchRV"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchCV" />
+        android:clipToPadding="false"
+        android:paddingBottom="120dp"
+        app:layout_constraintTop_toBottomOf="@+id/searchCV"
+        android:overScrollMode="never" />
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -64,5 +80,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/upFloatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="30dp"
+        android:backgroundTint="@color/appBar_color"
+        android:contentDescription="@string/todo"
+        android:src="@drawable/ic_up"
+        android:visibility="invisible"
+        app:fabCustomSize="48dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:rippleColor="@color/ripple_color"
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
+        app:tint="@color/primary_color" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

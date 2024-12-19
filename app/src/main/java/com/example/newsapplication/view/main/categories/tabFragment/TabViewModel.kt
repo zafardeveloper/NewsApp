@@ -31,6 +31,16 @@ class TabViewModel @Inject constructor(private val newsRepository: NewsRepositor
         }
     }
 
+    fun getLocalNews(query: String) = viewModelScope.launch {
+        try {
+            _breakingNews.postValue(Resource.Loading())
+            val response = newsRepository.getLocalNews(query)
+            _breakingNews.postValue(handleBrakingNewsResponse(response))
+        } catch (e: Exception) {
+            Log.d("MyLog", "searchForNews: $e e.message: ${e.message}")
+        }
+    }
+
     fun getNews(domains: String, q: String) {
         viewModelScope.launch {
             try {

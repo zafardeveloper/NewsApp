@@ -2,34 +2,32 @@ package com.example.newsapplication.view.main
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.WindowInsetsController
-import android.widget.TextView
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import com.example.newsapplication.R
+import com.example.newsapplication.common.BaseActivity
 import com.example.newsapplication.databinding.ActivityMainBinding
 import com.example.newsapplication.util.Constants.SEARCH_QUERY
 import com.example.newsapplication.util.Constants.SEARCH_REQUEST_CODE
+import com.example.newsapplication.util.Constants.SELECTED_ITEM_ID
 import com.example.newsapplication.view.main.categories.CategoriesFragment
 import com.example.newsapplication.view.main.home.HomeFragment
 import com.example.newsapplication.view.main.home.HomeViewModel
 import com.example.newsapplication.view.main.more.MoreFragment
 import com.example.newsapplication.view.main.search.SearchFragment
 import com.example.newsapplication.view.search.SearchActivity
-import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListener {
+class MainActivity : BaseActivity(), NavigationBarView.OnItemSelectedListener {
 
     private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
@@ -37,25 +35,34 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
 
     private val homeViewModel: HomeViewModel by viewModels()
 
-    private lateinit var toolbar: MaterialToolbar
     private lateinit var bottomNavigationView: BottomNavigationView
     private lateinit var homeFragment: HomeFragment
     private lateinit var searchFragment: SearchFragment
     private lateinit var categoriesFragment: CategoriesFragment
     private lateinit var moreFragment: MoreFragment
     private lateinit var activeFragment: Fragment
+    private var searchQuery: String? = ""
     private var containerId: Int? = null
     private var isQueryExists = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-
         setStatusNavigationBarColor()
         init()
         setupBottomNavigation()
-        setupToolbar()
         addFragments()
+        if (savedInstanceState != null) {
+            val selectedItemId = savedInstanceState.getInt(SELECTED_ITEM_ID)
+            bottomNavigationView.selectedItemId = selectedItemId
+            savedInstanceState.getString("searchTV")?.let {
+                if (searchFragment.isAdded && searchFragment.view != null) {
+                    searchFragment.updateSearchQuery(it)
+                } else {
+                    Log.d("MyLog", "onCreate: Empty")
+                }
+            }
+        }
         observeHomeViewModel()
     }
 
@@ -63,9 +70,9 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == SEARCH_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            val searchQuery = data?.getStringExtra(SEARCH_QUERY)
+            searchQuery = data?.getStringExtra(SEARCH_QUERY)
             if (!searchQuery.isNullOrEmpty()) {
-                searchFragment.updateSearchQuery(searchQuery)
+                searchFragment.updateSearchQuery(searchQuery!!)
                 bottomNavigationView.selectedItemId = R.id.searchFragment
             }
         }
@@ -92,23 +99,11 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         bottomNavigationView.setOnItemSelectedListener(this)
     }
 
-    private fun setupToolbar() {
-        toolbar = binding.materialToolbar
-        setSupportActionBar(toolbar)
-        for (i in 0 until toolbar.childCount) {
-            val view = toolbar.getChildAt(i)
-            if (view is TextView && view.text == toolbar.title) {
-                view.textSize = 26f
-                view.setTypeface(
-                    ResourcesCompat.getFont(this, R.font.qanelas_medium),
-                    Typeface.NORMAL
-                )
-            }
-        }
-    }
-
     private fun setStatusNavigationBarColor() {
-        window.navigationBarColor = ContextCompat.getColor(this, R.color.white)
+        window.apply {
+            navigationBarColor = ContextCompat.getColor(this@MainActivity, R.color.appBar_color)
+//            statusBarColor = ContextCompat.getColor(this@MainActivity, R.color.item_color_primary)
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.insetsController?.setSystemBarsAppearance(
                 WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
@@ -134,6 +129,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
             .commit()
     }
 
+    @Suppress("DEPRECATION")
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.homeFragment -> {
@@ -145,7 +141,10 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
             }
 
             R.id.searchFragment -> {
-                isQueryExists = searchFragment.checkQueryExist()
+                if (searchFragment.isAdded && searchFragment.view != null) {
+                    isQueryExists = searchFragment.checkQueryExist()
+                }
+
                 if (isQueryExists) {
                     switchFragment(searchFragment, getString(R.string.searchFragment))
                 } else {
@@ -168,6 +167,13 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         activeFragment = fragment
         supportActionBar?.title = title
     }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(SELECTED_ITEM_ID, bottomNavigationView.selectedItemId)
+        outState.putString("searchTV", searchQuery)
+    }
+
 
     @Suppress("DEPRECATION")
     @Deprecated("Deprecated in Java")

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/item_color_primary"
     tools:context=".view.search.SearchActivity">
 
     <EditText
@@ -15,8 +15,10 @@
         android:backgroundTint="@android:color/transparent"
         android:drawableStart="@drawable/ic_search"
         android:drawablePadding="22dp"
-        android:drawableTint="@color/blue"
-        android:hint="search"
+        android:drawableTint="@color/primary_color"
+        android:fontFamily="@font/qanelas_medium"
+        android:hint="@string/search"
+        android:textSize="18sp"
         android:imeOptions="actionSearch"
         android:paddingHorizontal="15dp"
         android:singleLine="true"
@@ -53,7 +55,10 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/stroke" />
+        app:layout_constraintTop_toBottomOf="@+id/stroke"
+        android:clipToPadding="false"
+        android:paddingBottom="70dp"
+        android:overScrollMode="never"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

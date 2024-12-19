@@ -4,7 +4,8 @@
     android:id="@+id/constraintLayout"
     android:layout_width="300dp"
     android:layout_height="223dp"
-    android:background="@color/white">
+    android:backgroundTint="@color/item_color_primary"
+    style="@style/RowItemStyle">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/materialCardView"

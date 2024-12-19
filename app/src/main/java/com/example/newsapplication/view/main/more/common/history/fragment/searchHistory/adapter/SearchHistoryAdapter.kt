@@ -1,4 +1,4 @@
-package com.example.newsapplication.view.main.search.historyAdapter
+package com.example.newsapplication.view.main.more.common.history.fragment.searchHistory.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -45,11 +45,11 @@ class SearchHistoryAdapter(private val listener: Listener) :
     }
 
     override fun getItemCount(): Int {
-        return differ.currentList.distinct().size
+        return differ.currentList.size
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val searchHistory = differ.currentList.distinct()[position]
+        val searchHistory = differ.currentList[position]
         holder.bind(searchHistory)
         holder.itemView.setOnClickListener {
             listener.onClickHistory(searchHistory)
@@ -64,5 +64,8 @@ class SearchHistoryAdapter(private val listener: Listener) :
         fun onClickHistory(searchHistory: SearchHistoryEntity)
         fun onLongClickHistory(searchHistory: SearchHistoryEntity)
     }
-
 }
+
+
+
+
