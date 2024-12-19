@@ -8,15 +8,18 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.ProgressBar
-import android.widget.TextView
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.newsapplication.R
 import com.example.newsapplication.databinding.FragmentHomeBinding
 import com.example.newsapplication.db.AppDatabase
@@ -27,18 +30,18 @@ import com.example.newsapplication.model.article.Article
 import com.example.newsapplication.util.Constants
 import com.example.newsapplication.util.Constants.ARTICLE_KEY
 import com.example.newsapplication.util.Constants.SEARCH_QUERY
-import com.example.newsapplication.util.NetworkConnectionLiveData
 import com.example.newsapplication.util.Resource
+import com.example.newsapplication.util.SessionManager
 import com.example.newsapplication.util.Util.Companion.showIconPopupMenu
 import com.example.newsapplication.view.headlines.HeadlinesActivity
 import com.example.newsapplication.view.main.home.adapter.HomeAdapter
+import com.example.newsapplication.view.main.more.common.profile.ProfileActivity
 import com.example.newsapplication.view.main.more.common.readLater.ReadLaterActivity
 import com.example.newsapplication.view.search.SearchActivity
 import com.example.newsapplication.view.webView.WebViewActivity
-import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import pl.droidsonroids.gif.GifImageView
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(), HomeAdapter.Listener {
@@ -51,14 +54,13 @@ class HomeFragment : Fragment(), HomeAdapter.Listener {
     private lateinit var myAdapter: HomeAdapter
     private lateinit var progressBar: ProgressBar
     private lateinit var recyclerView: RecyclerView
-    private lateinit var appBarLayout: AppBarLayout
-    private lateinit var noConnectionGif: GifImageView
-    private lateinit var headLinesTV: TextView
+    private lateinit var profileImage: ImageView
     private lateinit var articleDatabase: AppDatabase
     private lateinit var readLaterRepository: ReadLaterRepository
     private lateinit var readLaterDao: ReadLaterDao
-
-    private lateinit var connectionLiveData: NetworkConnectionLiveData
+    private lateinit var searchResultLauncher: ActivityResultLauncher<Intent>
+    private lateinit var sessionManager: SessionManager
+    private lateinit var fab: FloatingActionButton
 
 
     override fun onCreateView(
@@ -67,42 +69,30 @@ class HomeFragment : Fragment(), HomeAdapter.Listener {
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         init()
-        appBarLayoutBg()
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+
+
+        setupRecyclerView()
+        observeViewModel()
+        listener()
+
     }
 
     private fun init() {
         myAdapter = HomeAdapter(this)
         progressBar = binding.progressBar
-        headLinesTV = binding.headlinesTV
-        noConnectionGif = binding.noConnectionGif
-        appBarLayout = binding.appBarLayout
+        profileImage = binding.profileImage
         articleDatabase = AppDatabase.getDatabase(requireContext())
         readLaterDao = articleDatabase.articleDao()
         readLaterRepository = ReadLaterRepository(readLaterDao)
-        connectionLiveData = NetworkConnectionLiveData(requireContext())
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        connectionLiveData.observe(viewLifecycleOwner) { isConnected ->
-            if (isConnected && savedInstanceState == null) {
-                viewModel.getAllBreakingNews(Constants.TOP_NEWS)
-                viewModel.getAllBreakingNewsHorizontal(Constants.TOP_NEWS_HORIZONTAL)
-            }
-        }
-        try {
-            if (!connectionLiveData.isConnected() && myAdapter.differ.currentList.size == 0) {
-                showNoConnectionGif()
-            }
-        } catch (e: Exception) {
-            Log.d("MyLog", "onViewCreated: ${e.message}", e)
-        }
-        setupRecyclerView()
-        observeViewModel()
-
-
-        val searchResultLauncher =
+        sessionManager = SessionManager(requireContext())
+        fab = binding.upFloatingActionButton
+        searchResultLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 if (result.resultCode == Activity.RESULT_OK) {
                     val data = result.data?.getStringExtra(SEARCH_QUERY)
@@ -111,10 +101,28 @@ class HomeFragment : Fragment(), HomeAdapter.Listener {
                     }
                 }
             }
+    }
+    override fun onResume() {
+        super.onResume()
+        val avatarUri = sessionManager.getAvatarImage()
+        if (avatarUri != null) {
+            Glide.with(requireContext())
+                .load(avatarUri)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .into(profileImage)
+        } else {
+            Glide.with(requireContext()).load(R.drawable.ic_avatar).into(profileImage)
+        }
+    }
 
-        binding.searchTV.setOnClickListener {
-            val intent = Intent(requireContext(), SearchActivity::class.java)
-            searchResultLauncher.launch(intent)
+    private fun listener() {
+        profileImage.setOnClickListener {
+            val intent = Intent(requireContext(), ProfileActivity::class.java)
+            startActivity(intent)
+        }
+        fab.setOnClickListener {
+            recyclerView.smoothScrollToPosition(0)
         }
     }
 
@@ -154,6 +162,7 @@ class HomeFragment : Fragment(), HomeAdapter.Listener {
                 R.id.addReadLater -> {
                     lifecycleScope.launch {
                         readLaterRepository.saveArticle(
+                            requireContext(),
                             view,
                             requireActivity().findViewById(R.id.bottomNavigationView),
                             readLaterEntity
@@ -168,12 +177,20 @@ class HomeFragment : Fragment(), HomeAdapter.Listener {
         popupMenu.show()
     }
 
+    override fun onSearchClick() {
+        val intent = Intent(requireContext(), SearchActivity::class.java)
+        searchResultLauncher.launch(intent)
+    }
+
     private fun snapBarAction() {
         val intent = Intent(requireContext(), ReadLaterActivity::class.java)
         startActivity(intent)
     }
 
     private fun observeViewModel() {
+        viewModel.getAllBreakingNews(Constants.TOP_NEWS)
+        viewModel.getAllBreakingNewsHorizontal(Constants.TOP_NEWS_HORIZONTAL)
+
         viewModel.breakingNews.observe(viewLifecycleOwner) { response ->
             when (response) {
                 is Resource.Success -> {
@@ -182,7 +199,6 @@ class HomeFragment : Fragment(), HomeAdapter.Listener {
                         if (myAdapter.differ.currentList != newsResponse.articles)
                             myAdapter.differ.submitList(newsResponse.articles)
                     }
-                    headLinesTV.visibility = View.VISIBLE
                 }
 
                 is Resource.Error -> {
@@ -193,7 +209,6 @@ class HomeFragment : Fragment(), HomeAdapter.Listener {
                 }
 
                 is Resource.Loading -> {
-                    hideNoConnectionGif()
                     showProgressBar()
                 }
             }
@@ -217,7 +232,6 @@ class HomeFragment : Fragment(), HomeAdapter.Listener {
                 }
 
                 is Resource.Loading -> {
-                    hideNoConnectionGif()
                     showProgressBar()
                 }
             }
@@ -229,6 +243,18 @@ class HomeFragment : Fragment(), HomeAdapter.Listener {
         recyclerView.apply {
             adapter = myAdapter
             layoutManager = LinearLayoutManager(requireContext())
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    if (dy < 0 && fab.visibility != View.VISIBLE) {
+                        fab.show()
+                    } else if (dy > 0 && fab.visibility == View.VISIBLE) {
+                        fab.hide()
+                    } else if (!recyclerView.canScrollVertically(-1)) {
+                        fab.hide()
+                    }
+                }
+            })
         }
     }
 
@@ -238,22 +264,6 @@ class HomeFragment : Fragment(), HomeAdapter.Listener {
 
     private fun showProgressBar() {
         progressBar.visibility = View.VISIBLE
-    }
-
-    private fun hideNoConnectionGif() {
-        noConnectionGif.visibility = View.GONE
-    }
-
-    private fun showNoConnectionGif() {
-        noConnectionGif.visibility = View.VISIBLE
-    }
-
-    @Suppress("DEPRECATION")
-    private fun appBarLayoutBg() {
-        val whiteColor = resources.getColor(R.color.white)
-        appBarLayout.addOnOffsetChangedListener { _, _ ->
-            appBarLayout.setBackgroundColor(whiteColor)
-        }
     }
 
     override fun onDestroyView() {

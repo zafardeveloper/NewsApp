@@ -4,9 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/item_color_primary"
     android:orientation="vertical"
     tools:context=".view.main.categories.CategoriesFragment">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/materialToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/item_color_primary"
+        android:minHeight="?attr/actionBarSize"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="@string/categoriesFragment"
+        app:titleTextColor="@color/text_color_primary"
+        android:theme="@style/AppTheme.MaterialToolbar"/>
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/categoriesTabLayout"
@@ -17,12 +30,12 @@
         android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/materialToolbar"
         app:tabIndicatorAnimationMode="linear"
-        app:tabIndicatorColor="@color/blue"
+        app:tabIndicatorColor="@color/primary_color"
         app:tabIndicatorFullWidth="true"
         app:tabMode="scrollable"
-        app:tabSelectedTextColor="@color/black"
+        app:tabSelectedTextColor="@color/text_color_primary"
         app:tabTextAppearance="@style/MineCustomTabText"
         app:tabTextColor="@color/hint" />
 
@@ -34,7 +47,16 @@
         android:padding="5dp"
         android:src="@drawable/ic_list"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/categoriesTabLayout" />
+
+    <View
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:layout_constraintBottom_toBottomOf="@+id/categoriesTabLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/categoriesTabLayout"
+        android:background="@drawable/gradient_bg"
+        android:layout_marginStart="-35dp"/>
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/categoriesViewPager"

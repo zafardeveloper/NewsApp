@@ -1,25 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
+    <color name="primary_color">#000D9B</color>
+    <color name="item_color_primary">#FFFFFFFF</color>
+    <color name="text_color_primary">#FF000000</color>
+    <color name="screen_bg_color">#f1f2f6</color>
+    <color name="back_button_color">#FFFFFF</color>
+    <color name="appBar_color">#FFFFFF</color>
+    <color name="profile_color">#000D9B</color>
+    <color name="ripple_color">#7E7E7E</color>
+    <color name="icon_edit_color">#FFFFFF</color>
+    <color name="profile_text_color">#44547E</color>
+
     <color name="dark">#66000000</color>
-    <color name="white">#FFFFFFFF</color>
     <color name="hint">#D8D8D8</color>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
     <color name="unchecked">#B3B3B3</color>
-    <color name="gray">#7E7E7E</color>
-    <color name="checked">#6E0BDF</color>
+    <color name="light_blue">#1A000D9B</color>
 
     <color name="red">#FF0000</color>
     <color name="green">#0F9D58</color>
-<!--    <color name="blue">#0014D1</color>-->
-    <color name="blue">#000D9B</color>
-    <color name="blue_gray">#44547E</color>
     <color name="yellow">#F1D100</color>
+    <color name="blue_gray">#44547E</color>
     <color name="transparent">#00FFFFFF</color>
-    <color name="translucent">#80FFFFFF</color>
-    <color name="screen_bg">#f1f2f6</color>
-
+    <color name="translucentBlack">#80000000</color>
+    <color name="translucentWhite">#E6FFFFFF</color>
     <color name="delete">#e46554</color>
 
+    <color name="white_95">#F2FFFFFF</color>
+    <color name="unchecked_95">#F2B3B3B3</color>
 
 
 

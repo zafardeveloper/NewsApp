@@ -9,23 +9,21 @@ import android.view.WindowInsetsController
 import android.widget.PopupMenu
 import android.widget.ProgressBar
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.newsapplication.common.OnItemClickListener
 import com.example.newsapplication.R
+import com.example.newsapplication.common.BaseActivity
 import com.example.newsapplication.databinding.ActivityHeadlinesBinding
 import com.example.newsapplication.db.AppDatabase
-import com.example.newsapplication.db.article.history.HistoryDao
-import com.example.newsapplication.db.article.history.HistoryRepository
 import com.example.newsapplication.db.article.readLater.ReadLaterDao
-import com.example.newsapplication.db.article.readLater.ReadLaterRepository
 import com.example.newsapplication.db.article.readLater.ReadLaterEntity
+import com.example.newsapplication.db.article.readLater.ReadLaterRepository
 import com.example.newsapplication.model.article.Article
 import com.example.newsapplication.util.Constants
 import com.example.newsapplication.util.Constants.ARTICLE_KEY
+import com.example.newsapplication.util.OnItemClickListener
 import com.example.newsapplication.util.Resource
 import com.example.newsapplication.util.Util.Companion.showIconPopupMenu
 import com.example.newsapplication.view.main.home.HomeViewModel
@@ -34,11 +32,12 @@ import com.example.newsapplication.view.main.search.queryAdapter.SearchQueryAdap
 import com.example.newsapplication.view.webView.WebViewActivity
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class HeadlinesActivity : AppCompatActivity(), OnItemClickListener<Article> {
+class HeadlinesActivity : BaseActivity(), OnItemClickListener<Article> {
 
     private val binding by lazy {
         ActivityHeadlinesBinding.inflate(layoutInflater)
@@ -51,6 +50,7 @@ class HeadlinesActivity : AppCompatActivity(), OnItemClickListener<Article> {
     private lateinit var progressBar: ProgressBar
     private lateinit var toolbar: MaterialToolbar
     private lateinit var appBar: AppBarLayout
+    private lateinit var fab: FloatingActionButton
     private lateinit var articleDatabase: AppDatabase
     private lateinit var readLaterRepository: ReadLaterRepository
     private lateinit var readLaterDao: ReadLaterDao
@@ -59,26 +59,33 @@ class HeadlinesActivity : AppCompatActivity(), OnItemClickListener<Article> {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         init()
+        listener()
         setupToolbar()
         setStatusNavigationBarColor()
         viewModel.getAllBreakingNewsHorizontal(Constants.TOP_NEWS_HORIZONTAL)
         observeViewModel()
         setupRv()
     }
-
     private fun init() {
         recyclerView = binding.rvHeadlines
         myAdapter = SearchQueryAdapter(this)
         progressBar = binding.progressBar
         toolbar = binding.materialToolbar
         appBar = binding.appBarLayout
+        fab = binding.upFloatingActionButton
         articleDatabase = AppDatabase.getDatabase(this)
         readLaterDao = articleDatabase.articleDao()
         readLaterRepository = ReadLaterRepository(readLaterDao)
     }
 
+    private fun listener() {
+        fab.setOnClickListener {
+            recyclerView.smoothScrollToPosition(0)
+        }
+    }
+
     private fun setStatusNavigationBarColor() {
-        window.navigationBarColor = ContextCompat.getColor(this, R.color.white)
+        window.navigationBarColor = ContextCompat.getColor(this, R.color.item_color_primary)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.insetsController?.setSystemBarsAppearance(
                 WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
@@ -117,6 +124,18 @@ class HeadlinesActivity : AppCompatActivity(), OnItemClickListener<Article> {
         recyclerView.apply {
             adapter = myAdapter
             layoutManager = LinearLayoutManager(this@HeadlinesActivity)
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    if (dy < 0 && fab.visibility != View.VISIBLE) {
+                        fab.show()
+                    } else if (dy > 0 && fab.visibility == View.VISIBLE) {
+                        fab.hide()
+                    } else if (!recyclerView.canScrollVertically(-1)) {
+                        fab.hide()
+                    }
+                }
+            })
         }
     }
 
@@ -166,7 +185,7 @@ class HeadlinesActivity : AppCompatActivity(), OnItemClickListener<Article> {
                 R.id.addReadLater -> {
                     lifecycleScope.launch {
                         readLaterRepository.saveArticle(
-                            view, binding.root, readLaterEntity
+                            this@HeadlinesActivity, view, binding.root, readLaterEntity
                         ) { snapBarAction() }
                     }
                     true

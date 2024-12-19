@@ -8,14 +8,14 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.newsapplication.R
-import com.example.newsapplication.databinding.CameraImageBottomSheetBinding
+import com.example.newsapplication.databinding.BottomSheetListBinding
 import com.example.newsapplication.model.setting.SettingLayoutModel
 import com.example.newsapplication.view.main.more.common.profile.fragment.bottomSheet.adapter.CameraImageAdapter
 import com.fin_group.artelmark.util.BaseBottomSheetDialogFragment
 
 class CameraImageBottomSheet : BaseBottomSheetDialogFragment(), CameraImageAdapter.Listener {
 
-    private var _binding: CameraImageBottomSheetBinding? = null
+    private var _binding: BottomSheetListBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var recyclerView: RecyclerView
@@ -37,7 +37,7 @@ class CameraImageBottomSheet : BaseBottomSheetDialogFragment(), CameraImageAdapt
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = CameraImageBottomSheetBinding.inflate(inflater, container, false)
+        _binding = BottomSheetListBinding.inflate(inflater, container, false)
         init()
         setupRv()
         return binding.root
@@ -49,14 +49,14 @@ class CameraImageBottomSheet : BaseBottomSheetDialogFragment(), CameraImageAdapt
         val showDelete = arguments?.getInt("Avatar")
         bottomSheetItems = if (showDelete != 0) {
             listOf(
-                SettingLayoutModel(R.drawable.ic_camera, "Take a photo"),
-                SettingLayoutModel(R.drawable.ic_image, "Choose from gallery"),
-                SettingLayoutModel(R.drawable.ic_trash, "Delete")
+                SettingLayoutModel(R.drawable.ic_camera, getString(R.string.take_a_photo)),
+                SettingLayoutModel(R.drawable.ic_image, getString(R.string.choose_from_gallery)),
+                SettingLayoutModel(R.drawable.ic_trash, getString(R.string.delete))
             )
         } else {
             listOf(
-                SettingLayoutModel(R.drawable.ic_camera, "Take a photo"),
-                SettingLayoutModel(R.drawable.ic_image, "Choose from gallery")
+                SettingLayoutModel(R.drawable.ic_camera, getString(R.string.take_a_photo)),
+                SettingLayoutModel(R.drawable.ic_image, getString(R.string.choose_from_gallery))
             )
         }
     }

@@ -2,6 +2,7 @@ package com.example.newsapplication.api
 
 import com.example.newsapplication.util.Constants.API_KEY
 import com.example.newsapplication.model.article.NewsResponse
+import com.example.newsapplication.util.Constants.LENTA
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -23,6 +24,16 @@ interface ApiService {
         searchQuery: String,
         @Query("page")
         pageNumber: Int = 1,
+        @Query("apiKey")
+        apiKey: String = API_KEY
+    ): Response<NewsResponse>
+
+    @GET("v2/everything")
+    suspend fun getLocalNews(
+        @Query("q")
+        searchQuery: String,
+        @Query("excludeDomains")
+        excludeDomains: String = LENTA,
         @Query("apiKey")
         apiKey: String = API_KEY
     ): Response<NewsResponse>

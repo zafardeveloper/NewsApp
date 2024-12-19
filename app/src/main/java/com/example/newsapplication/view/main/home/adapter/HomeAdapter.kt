@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bumptech.glide.Glide
 import com.example.newsapplication.R
 import com.example.newsapplication.databinding.EachItemBinding
+import com.example.newsapplication.databinding.RowItemLayoutHeadlinesHomeBinding
+import com.example.newsapplication.databinding.RowItemLayoutSearchHomeBinding
 import com.example.newsapplication.databinding.RowItemNewsSearchBinding
 import com.example.newsapplication.model.article.Article
 import com.example.newsapplication.util.StartSnapHelper
@@ -24,8 +26,10 @@ open class HomeAdapter(private val listener: Listener) :
     RecyclerView.Adapter<ViewHolder>() {
 
     companion object {
-        private const val VIEW_TYPE_VERTICAL = 0
-        private const val VIEW_TYPE_HORIZONTAL = 1
+        private const val VIEW_TYPE_SEARCH = 0
+        private const val VIEW_TYPE_HEADLINES = 1
+        private const val VIEW_TYPE_VERTICAL = 2
+        private const val VIEW_TYPE_HORIZONTAL = 3
     }
 
     var horizontalArticles: List<Article> = listOf()
@@ -35,6 +39,9 @@ open class HomeAdapter(private val listener: Listener) :
         this.horizontalArticles = horizontalList
         notifyDataSetChanged()
     }
+
+    inner class SearchViewHolder(binding: RowItemLayoutSearchHomeBinding): ViewHolder(binding.root)
+    inner class HeadlinesViewHolder(binding: RowItemLayoutHeadlinesHomeBinding): ViewHolder(binding.root)
 
     inner class VerticalArticleViewHolder(binding: RowItemNewsSearchBinding) :
         ViewHolder(binding.root) {
@@ -111,15 +118,39 @@ open class HomeAdapter(private val listener: Listener) :
     override fun getItemViewType(position: Int): Int {
         return when (position) {
             0 -> {
+                VIEW_TYPE_SEARCH
+            }
+            1 -> {
+                VIEW_TYPE_HEADLINES
+            }
+            2 -> {
                 VIEW_TYPE_HORIZONTAL
             }
-
             else -> VIEW_TYPE_VERTICAL
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return when (viewType) {
+
+            VIEW_TYPE_SEARCH -> {
+                val binding = RowItemLayoutSearchHomeBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+                SearchViewHolder(binding)
+            }
+
+            VIEW_TYPE_HEADLINES -> {
+                val binding = RowItemLayoutHeadlinesHomeBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+                HeadlinesViewHolder(binding)
+            }
+
             VIEW_TYPE_VERTICAL -> {
                 val binding = RowItemNewsSearchBinding.inflate(
                     LayoutInflater.from(parent.context),
@@ -149,6 +180,13 @@ open class HomeAdapter(private val listener: Listener) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val article = differ.currentList[position]
         when (holder.itemViewType) {
+
+            VIEW_TYPE_SEARCH -> {
+                val searchHolder = holder as SearchViewHolder
+                searchHolder.itemView.setOnClickListener {
+                    listener.onSearchClick()
+                }
+            }
 
             VIEW_TYPE_HORIZONTAL -> {
                 val horizontalHolder = holder as HorizontalArticleViewHolder
@@ -187,5 +225,6 @@ open class HomeAdapter(private val listener: Listener) :
         fun onClick(item: Article)
         fun onShowMoreClick()
         fun onLongClick(view: View, item: Article)
+        fun onSearchClick()
     }
 }

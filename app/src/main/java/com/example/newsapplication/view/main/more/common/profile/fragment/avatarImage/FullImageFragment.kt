@@ -7,11 +7,12 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.transition.TransitionInflater
 import com.bumptech.glide.Glide
 import com.example.newsapplication.R
 import com.example.newsapplication.databinding.FragmentFullImageBinding
 import com.example.newsapplication.util.Constants.AVATAR_IMAGE
+import com.example.newsapplication.util.Util.Companion.hideToolbar
+import com.example.newsapplication.util.Util.Companion.showToolbar
 import com.google.android.material.appbar.MaterialToolbar
 
 class FullImageFragment : Fragment() {
@@ -21,6 +22,7 @@ class FullImageFragment : Fragment() {
 
     private lateinit var fullAvatarImageView: ImageView
     private lateinit var toolbar: MaterialToolbar
+    private var toolbarVisibility = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,15 +40,14 @@ class FullImageFragment : Fragment() {
         avatarImage?.let {
             Glide.with(requireContext()).load(it).dontAnimate().into(fullAvatarImageView)
         }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        val animation = TransitionInflater.from(requireContext())
-            .inflateTransition(android.R.transition.move)
-
-        sharedElementEnterTransition = animation
-        sharedElementReturnTransition = animation
+        fullAvatarImageView.setOnClickListener {
+            toolbarVisibility = ! toolbarVisibility
+            if (toolbarVisibility) {
+                showToolbar(toolbar)
+            } else {
+                hideToolbar(toolbar)
+            }
+        }
     }
 
     private fun init() {

@@ -18,12 +18,12 @@
             android:id="@+id/collapsingToolbarLayout"
             android:layout_width="match_parent"
             android:layout_height="199.5dp"
-            android:background="@color/white"
+            android:background="@color/item_color_primary"
             android:fitsSystemWindows="true"
-            app:collapsedTitleTextColor="@color/black"
+            app:collapsedTitleTextColor="@color/text_color_primary"
             app:expandedTitleTextAppearance="@style/CustomExpandedTitle"
             app:collapsedTitleTextAppearance="@style/CustomCollapsedTitle"
-            app:expandedTitleTextColor="@color/black"
+            app:expandedTitleTextColor="@color/text_color_primary"
             app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
             app:title="WebView"
             app:titleCollapseMode="scale"
@@ -33,7 +33,7 @@
                 android:id="@+id/materialToolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?actionBarSize"
-                android:background="@color/white"
+                android:background="@color/item_color_primary"
                 app:layout_collapseMode="pin" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
@@ -43,7 +43,8 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
+        android:background="@color/item_color_primary"
+        android:overScrollMode="never"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
         <LinearLayout
@@ -57,13 +58,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="10dp"
                 android:indeterminate="true"
-                android:indeterminateTint="@color/blue"
+                android:indeterminateTint="@color/primary_color"
                 android:visibility="gone" />
 
             <WebView
                 android:id="@+id/webView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"/>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

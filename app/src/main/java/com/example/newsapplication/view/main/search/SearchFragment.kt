@@ -17,17 +17,16 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.newsapplication.R
-import com.example.newsapplication.common.OnItemClickListener
 import com.example.newsapplication.databinding.FragmentSearchBinding
 import com.example.newsapplication.db.AppDatabase
 import com.example.newsapplication.db.article.readLater.ReadLaterDao
-import com.example.newsapplication.db.article.readLater.ReadLaterRepository
 import com.example.newsapplication.db.article.readLater.ReadLaterEntity
+import com.example.newsapplication.db.article.readLater.ReadLaterRepository
 import com.example.newsapplication.model.article.Article
 import com.example.newsapplication.util.Constants.ARTICLE_KEY
 import com.example.newsapplication.util.Constants.CURRENT_SEARCH_TEXT
 import com.example.newsapplication.util.Constants.SEARCH_QUERY
-import com.example.newsapplication.util.NetworkConnectionLiveData
+import com.example.newsapplication.util.OnItemClickListener
 import com.example.newsapplication.util.Resource
 import com.example.newsapplication.util.Util.Companion.showIconPopupMenu
 import com.example.newsapplication.view.main.more.common.readLater.ReadLaterActivity
@@ -35,6 +34,7 @@ import com.example.newsapplication.view.main.search.queryAdapter.SearchQueryAdap
 import com.example.newsapplication.view.search.SearchActivity
 import com.example.newsapplication.view.webView.WebViewActivity
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -52,9 +52,8 @@ class SearchFragment : Fragment(), OnItemClickListener<Article> {
     private lateinit var articleDatabase: AppDatabase
     private lateinit var readLaterRepository: ReadLaterRepository
     private lateinit var readLaterDao: ReadLaterDao
-    private lateinit var connectionLiveData: NetworkConnectionLiveData
+    private lateinit var fab: FloatingActionButton
     private val viewModel: SearchViewModel by activityViewModels()
-    private var isConnected = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -73,15 +72,11 @@ class SearchFragment : Fragment(), OnItemClickListener<Article> {
         articleDatabase = AppDatabase.getDatabase(requireContext())
         readLaterDao = articleDatabase.articleDao()
         readLaterRepository = ReadLaterRepository(readLaterDao)
-        connectionLiveData = NetworkConnectionLiveData(requireContext())
+        fab = binding.upFloatingActionButton
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        connectionLiveData.observe(viewLifecycleOwner) {
-            isConnected = it
-        }
 
         setupRecyclerView()
         observeViewModel()
@@ -100,6 +95,9 @@ class SearchFragment : Fragment(), OnItemClickListener<Article> {
             }
             searchResultLauncher.launch(intent)
         }
+        fab.setOnClickListener {
+            recyclerView.smoothScrollToPosition(0)
+        }
     }
 
     private fun setupRecyclerView() {
@@ -107,6 +105,18 @@ class SearchFragment : Fragment(), OnItemClickListener<Article> {
         recyclerView.apply {
             adapter = searchQueryAdapter
             layoutManager = LinearLayoutManager(requireContext())
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    if (dy < 0 && fab.visibility != View.VISIBLE) {
+                        fab.show()
+                    } else if (dy > 0 && fab.visibility == View.VISIBLE) {
+                        fab.hide()
+                    } else if (!recyclerView.canScrollVertically(-1)) {
+                        fab.hide()
+                    }
+                }
+            })
         }
     }
 
@@ -184,6 +194,7 @@ class SearchFragment : Fragment(), OnItemClickListener<Article> {
                 R.id.addReadLater -> {
                     lifecycleScope.launch {
                         readLaterRepository.saveArticle(
+                            requireContext(),
                             view,
                             requireActivity().findViewById(R.id.bottomNavigationView),
                             readLaterEntity
@@ -197,8 +208,14 @@ class SearchFragment : Fragment(), OnItemClickListener<Article> {
         }
         popupMenu.show()
     }
+
     private fun snapBarAction() {
         val intent = Intent(requireContext(), ReadLaterActivity::class.java)
         startActivity(intent)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".view.categories.tabFragment.TabFragment">
+    tools:context=".view.main.categories.tabFragment.TabFragment">
 
 
     <androidx.recyclerview.widget.RecyclerView
@@ -15,7 +15,8 @@
         android:paddingBottom="13dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:overScrollMode="never"/>
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -29,5 +30,21 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/upFloatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="30dp"
+        android:backgroundTint="@color/appBar_color"
+        android:contentDescription="@string/todo"
+        android:src="@drawable/ic_up"
+        android:visibility="invisible"
+        app:fabCustomSize="48dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:rippleColor="@color/ripple_color"
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
+        app:tint="@color/primary_color" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

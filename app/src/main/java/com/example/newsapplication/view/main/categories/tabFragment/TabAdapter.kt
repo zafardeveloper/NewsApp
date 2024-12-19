@@ -17,6 +17,7 @@ import com.example.newsapplication.databinding.RowItemNewsSearchBinding
 import com.example.newsapplication.model.article.Article
 import com.example.newsapplication.util.StartSnapHelper
 import com.example.newsapplication.util.Util.Companion.formatDate
+
 open class TabAdapter(private val listener: Listener) :
     RecyclerView.Adapter<ViewHolder>() {
 
@@ -130,10 +131,10 @@ open class TabAdapter(private val listener: Listener) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val article = differ.currentList[position]
         when (holder.itemViewType) {
 
             VIEW_TYPE_HORIZONTAL -> {
+                val article = differ.currentList[position]
                 val horizontalHolder = holder as HorizontalArticleViewHolder
                 horizontalHolder.bind(differ.currentList.take(10), listener)
                 horizontalHolder.itemView.setOnClickListener {
@@ -146,6 +147,7 @@ open class TabAdapter(private val listener: Listener) :
             }
 
             VIEW_TYPE_VERTICAL -> {
+                val article = differ.currentList[position]
                 val verticalHolder = holder as VerticalArticleViewHolder
                 val verticalItems = differ.currentList.drop(10)[position]
                 verticalHolder.bind(verticalItems)

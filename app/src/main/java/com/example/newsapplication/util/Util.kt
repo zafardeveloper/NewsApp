@@ -1,5 +1,6 @@
 package com.example.newsapplication.util
 
+import android.content.Context
 import android.graphics.Color
 import android.graphics.Rect
 import android.os.Bundle
@@ -9,9 +10,7 @@ import android.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import com.example.newsapplication.R
 import com.google.android.material.appbar.MaterialToolbar
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.delay
 import java.lang.reflect.Field
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -42,23 +41,21 @@ class Util {
             }
         }
 
-        suspend fun hideBottomNavigationView(view: BottomNavigationView) {
-            view.clearAnimation()
-            view.animate()
-                .translationY(view.height.toFloat())
-                .scaleX(0.8f)
-                .alpha(0.0f)
-                .setDuration(350)
-                .start()
-            delay(350L)
-        }
-        fun showBottomNavigationView(view: BottomNavigationView) {
+        fun showToolbar(view: MaterialToolbar) {
             view.clearAnimation()
             view.animate()
                 .translationY(0f)
-                .scaleX(1f)
                 .alpha(1f)
-                .setDuration(350)
+                .setDuration(150)
+                .start()
+        }
+
+        fun hideToolbar(view: MaterialToolbar) {
+            view.clearAnimation()
+            view.animate()
+                .translationY(0f - view.height.toFloat())
+                .alpha(0.0f)
+                .setDuration(150)
                 .start()
         }
 
@@ -117,24 +114,19 @@ class Util {
             }
         }
 
-        fun showSnackBar(view: View, anchor: View?, text: String, textColor: Int, action:() -> Unit) {
+        fun showSnackBar(context: Context, view: View, anchor: View?, text: String, textColor: Int, action:() -> Unit) {
             Snackbar.make(view, text, Snackbar.LENGTH_SHORT).apply {
                 anchorView = anchor
                 setTextColor(textColor)
                 setActionTextColor(Color.LTGRAY)
-                setAction("Show list") {
+                setAction(context.getString(R.string.show_list)) {
                     action()
                 }
                 show()
             }
         }
 
-        fun showSnackBarNoAction(view: View, anchor: View?, text: String, textColor: Int) {
-            Snackbar.make(view, text, Snackbar.LENGTH_SHORT).apply {
-                anchorView = anchor
-                setTextColor(textColor)
-                show()
-            }
-        }
+
+
     }
 }

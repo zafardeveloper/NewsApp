@@ -18,22 +18,22 @@
             android:id="@+id/collapsingToolbarLayout"
             android:layout_width="match_parent"
             android:layout_height="199.5dp"
-            android:background="@color/white"
+            android:background="@color/item_color_primary"
             android:fitsSystemWindows="true"
             app:collapsedTitleTextAppearance="@style/CustomCollapsedTitle"
-            app:collapsedTitleTextColor="@color/black"
+            app:collapsedTitleTextColor="@color/text_color_primary"
             app:expandedTitleGravity="center"
             app:expandedTitleTextAppearance="@style/CustomExpandedTitle"
-            app:expandedTitleTextColor="@color/black"
+            app:expandedTitleTextColor="@color/text_color_primary"
             app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
-            app:title="Read it later"
+            app:title="@string/read_it_later"
             app:titleCollapseMode="scale">
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/materialToolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?actionBarSize"
-                android:background="@color/white"
+                android:background="@color/item_color_primary"
                 app:layout_collapseMode="pin" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
@@ -43,7 +43,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
+        android:background="@color/item_color_primary"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
         <androidx.recyclerview.widget.RecyclerView
@@ -52,7 +52,8 @@
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:overScrollMode="never" />
 
 <!--        <com.google.android.material.card.MaterialCardView-->
 <!--            android:id="@+id/removeBtn"-->

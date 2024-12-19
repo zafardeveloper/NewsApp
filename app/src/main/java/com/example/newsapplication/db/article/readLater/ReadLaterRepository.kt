@@ -1,12 +1,15 @@
 package com.example.newsapplication.db.article.readLater
 
+import android.content.Context
 import android.graphics.Color
 import android.view.View
+import com.example.newsapplication.R
 import com.example.newsapplication.util.Util.Companion.showSnackBar
 
 class ReadLaterRepository(private val readLaterDao: ReadLaterDao) {
 
     suspend fun saveArticle(
+        context: Context,
         view: View,
         anchor: View?,
         article: ReadLaterEntity,
@@ -16,18 +19,20 @@ class ReadLaterRepository(private val readLaterDao: ReadLaterDao) {
         if (existingUrl != null) {
             readLaterDao.updateTimestamp(article.url, System.currentTimeMillis())
             showSnackBar(
+                context,
                 view,
                 anchor,
-                "Item added to \"Read it later\"",
+                context.getString(R.string.item_added_to_read_it_later),
                 Color.WHITE,
                 action
             )
         } else {
             readLaterDao.insertArticle(article)
             showSnackBar(
+                context,
                 view,
                 anchor,
-                "Item added to \"Read it later\"",
+                context.getString(R.string.item_added_to_read_it_later),
                 Color.WHITE,
                 action
             )

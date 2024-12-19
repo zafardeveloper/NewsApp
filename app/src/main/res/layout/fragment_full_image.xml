@@ -7,23 +7,22 @@
     android:background="@color/black"
     tools:context=".view.main.more.common.profile.fragment.avatarImage.FullImageFragment">
 
+    <com.github.chrisbanes.photoview.PhotoView
+        android:id="@+id/fullAvatarImageView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/materialToolbar"
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-
-    <com.github.chrisbanes.photoview.PhotoView
-        android:id="@+id/fullAvatarImageView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:transitionName="shared_image2"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/materialToolbar" />
-
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/translucentBlack"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

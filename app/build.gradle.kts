@@ -16,7 +16,7 @@ android {
         minSdk = 24
         targetSdk = 34
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.7"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -60,12 +60,6 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
-
-    //navigation
-    implementation("androidx.navigation:navigation-fragment-ktx:2.7.6")
-    implementation("androidx.navigation:navigation-ui-ktx:2.7.6")
-    implementation("androidx.navigation:navigation-dynamic-features-fragment:2.7.6")
-    androidTestImplementation("androidx.navigation:navigation-testing:2.7.6")
 
     //coroutines
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.10")
@@ -111,8 +105,6 @@ dependencies {
     implementation("com.google.android.material:material:1.9.0")
 
     implementation("com.github.chrisbanes:PhotoView:2.3.0")
-
-
 
 
 
