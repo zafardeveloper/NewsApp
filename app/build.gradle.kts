@@ -8,11 +8,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.newsapplication"
+    namespace = "com.example.quicknews"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.newsapplication"
+        applicationId = "com.example.quicknews"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

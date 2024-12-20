@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">NewsApplication</string>
+    <string name="app_name" translatable="false">QuickNews</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="todo">TODO</string>
     <string name="homeFragment">Home</string>
