@@ -7,6 +7,13 @@
     android:background="@color/item_color_primary"
     tools:context=".view.main.search.SearchFragment">
 
+    <include
+        android:id="@+id/noConnectionLayout"
+        layout="@layout/no_connection_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/materialToolbar"
         android:layout_width="0dp"
@@ -47,6 +54,7 @@
             android:paddingHorizontal="25dp"
             android:text=""
             android:textSize="18sp"
+            android:textColor="@color/text_color_primary"
             android:fontFamily="@font/qanelas_medium"
             app:drawableEndCompat="@drawable/ic_search"
             app:drawableTint="@color/primary_color"
@@ -65,20 +73,7 @@
         android:clipToPadding="false"
         android:paddingBottom="120dp"
         app:layout_constraintTop_toBottomOf="@+id/searchCV"
-        android:overScrollMode="never" />
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:indeterminate="true"
-        android:indeterminateDrawable="@drawable/custom_progressbar"
-        android:indeterminateDuration="1000"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:visibility="visible"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/upFloatingActionButton"
@@ -94,6 +89,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:rippleColor="@color/ripple_color"
         app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
-        app:tint="@color/primary_color" />
+        app:tint="@color/primary_color"
+        android:theme="@style/FloatingActionButtonTheme" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

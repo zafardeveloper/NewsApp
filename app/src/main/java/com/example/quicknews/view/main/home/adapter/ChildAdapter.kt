@@ -32,7 +32,7 @@ class ChildAdapter(
             source.text = article.source?.name
 
             publishedAt.text =
-                formatDate(article.publishedAt!!, "yyyy-MM-dd'T'HH:mm:ss'Z'", "dd MMMM")
+                formatDate(article.publishedAt!!, "yyyy-MM-dd'T'HH:mm:ss'Z'")
             if (article.urlToImage.isNullOrEmpty()) {
                 image.setImageResource(R.drawable.ic_no_image)
             } else {

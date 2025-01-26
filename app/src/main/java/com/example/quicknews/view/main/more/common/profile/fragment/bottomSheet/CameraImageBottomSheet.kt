@@ -8,10 +8,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.quicknews.R
+import com.example.quicknews.common.BaseBottomSheetDialogFragment
 import com.example.quicknews.databinding.BottomSheetListBinding
 import com.example.quicknews.model.setting.SettingLayoutModel
 import com.example.quicknews.view.main.more.common.profile.fragment.bottomSheet.adapter.CameraImageAdapter
-import com.fin_group.artelmark.util.BaseBottomSheetDialogFragment
 
 class CameraImageBottomSheet : BaseBottomSheetDialogFragment(), CameraImageAdapter.Listener {
 

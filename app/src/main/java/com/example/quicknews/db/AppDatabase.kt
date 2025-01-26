@@ -16,13 +16,13 @@ import com.example.quicknews.db.searchHistory.SearchHistoryEntity
 @Database(
     entities = [SearchHistoryEntity::class, ReadLaterEntity::class, HistoryEntity::class],
     version = 1,
-    exportSchema = false
+    exportSchema = true
 )
 @TypeConverters(ArticleSourceConverter::class)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun searchHistoryDao(): SearchHistoryDao
-    abstract fun articleDao(): ReadLaterDao
+    abstract fun readLaterDao(): ReadLaterDao
     abstract fun historyDao(): HistoryDao
 
     companion object {

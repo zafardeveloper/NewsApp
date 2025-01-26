@@ -1,12 +1,14 @@
 package com.example.quicknews.util
 
 import android.content.Context
-import android.graphics.Color
 import android.graphics.Rect
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.view.TouchDelegate
 import android.view.View
 import android.widget.PopupMenu
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.quicknews.R
 import com.google.android.material.appbar.MaterialToolbar
@@ -14,27 +16,52 @@ import com.google.android.material.snackbar.Snackbar
 import java.lang.reflect.Field
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
 class Util {
     companion object {
-        fun formatDate(inputDate: String, inputFormat: String, outputFormat: String): String {
-            val inputSdf = SimpleDateFormat(inputFormat, Locale("ru"))
-            val outputSdf = SimpleDateFormat(outputFormat, Locale("ru"))
+
+        fun isConnected(context: Context): Boolean {
+            val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val network = connectivityManager.activeNetwork ?: return false
+            val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
+
+            return when {
+                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+                else -> false
+            }
+        }
+
+        fun getFormattedTime(rowTime: Long): String {
+            val dateFormatter = SimpleDateFormat("hh:mm a", Locale.getDefault())
+            val time = Date(rowTime)
+            return dateFormatter.format(time)
+        }
+
+        fun formatDate(inputDate: String, inputFormat: String): String? {
+            val inputSdf = SimpleDateFormat(inputFormat, Locale.getDefault())
+            val outputSdf = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
 
             return try {
                 val date = inputSdf.parse(inputDate)
                 val currentYear = Calendar.getInstance().get(Calendar.YEAR)
                 val parsedYear = Calendar.getInstance()
-                parsedYear.time = date
-
-                val finalFormat = if (currentYear != parsedYear.get(Calendar.YEAR)) {
-                    "dd MMM, yyyy"
-                } else {
-                    outputFormat
+                if (date != null) {
+                    parsedYear.time = date
                 }
 
-                SimpleDateFormat(finalFormat, Locale("ru")).format(date)
+                val finalFormat = if (currentYear != parsedYear.get(Calendar.YEAR)) {
+                    "dd MMM yyyy"
+                } else {
+                    "dd MMM"
+                }
+
+                date?.let {
+                    SimpleDateFormat(finalFormat, Locale.getDefault()).format(it)
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
                 inputDate
@@ -114,12 +141,13 @@ class Util {
             }
         }
 
-        fun showSnackBar(context: Context, view: View, anchor: View?, text: String, textColor: Int, action:() -> Unit) {
+        fun showSnackBar(context: Context, view: View, anchor: View?, text: String, textColor: Int, actionText: String, action:() -> Unit) {
             Snackbar.make(view, text, Snackbar.LENGTH_SHORT).apply {
                 anchorView = anchor
                 setTextColor(textColor)
-                setActionTextColor(Color.LTGRAY)
-                setAction(context.getString(R.string.show_list)) {
+                setBackgroundTint(ContextCompat.getColor(context, R.color.dark_gray_95))
+                setActionTextColor(ContextCompat.getColor(context, R.color.item_color_primary))
+                setAction(actionText) {
                     action()
                 }
                 show()

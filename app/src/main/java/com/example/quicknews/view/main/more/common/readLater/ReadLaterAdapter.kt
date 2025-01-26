@@ -8,14 +8,15 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.quicknews.R
-import com.example.quicknews.databinding.RowItemNewsSearchBinding
+import com.example.quicknews.databinding.RowItemNewsArticleBinding
 import com.example.quicknews.db.article.readLater.ReadLaterEntity
+import com.example.quicknews.util.OnItemClickListener
 import com.example.quicknews.util.Util.Companion.formatDate
 
-class ReadLaterAdapter(private val listener: Listener) :
+class ReadLaterAdapter(private val listener: OnItemClickListener<ReadLaterEntity>) :
     RecyclerView.Adapter<ReadLaterAdapter.ViewHolder>() {
 
-    inner class ViewHolder(binding: RowItemNewsSearchBinding) :
+    inner class ViewHolder(binding: RowItemNewsArticleBinding) :
         RecyclerView.ViewHolder(binding.root) {
         private val title = binding.tvTitle
         private val source = binding.tvSource
@@ -29,12 +30,18 @@ class ReadLaterAdapter(private val listener: Listener) :
             source.text = readLaterEntity.source?.name
 
             publishedAt.text =
-                formatDate(readLaterEntity.publishedAt!!, "yyyy-MM-dd'T'HH:mm:ss'Z'", "dd MMMM")
+                formatDate(readLaterEntity.publishedAt!!, "yyyy-MM-dd'T'HH:mm:ss'Z'")
             if (readLaterEntity.urlToImage.isNullOrEmpty()) {
                 image.setImageResource(R.drawable.ic_no_image)
             } else {
                 Glide.with(itemView.context).load(readLaterEntity.urlToImage).into(image)
             }
+
+
+            itemView.setOnClickListener {
+                listener.onClick(readLaterEntity)
+            }
+
         }
     }
 
@@ -58,7 +65,7 @@ class ReadLaterAdapter(private val listener: Listener) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
-            RowItemNewsSearchBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            RowItemNewsArticleBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
@@ -75,12 +82,5 @@ class ReadLaterAdapter(private val listener: Listener) :
                 R.anim.emergence
             )
         )
-        holder.itemView.setOnClickListener {
-            listener.onClickHistory(articleEntity)
-        }
-    }
-
-    interface Listener {
-        fun onClickHistory(item: ReadLaterEntity)
     }
 }

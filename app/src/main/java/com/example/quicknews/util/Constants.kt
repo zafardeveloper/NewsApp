@@ -2,11 +2,11 @@ package com.example.quicknews.util
 
 object Constants {
     const val BASE_URL = "https://newsapi.org/"
-    const val API_KEY = "0250251f16fa42aba8a9bc1c8f3da985"
-//    const val API_KEY = "e4bbc0e39f4a4ad79b74d217181e24cb"
+//    const val API_KEY = "0250251f16fa42aba8a9bc1c8f3da985"
+    const val API_KEY = "e4bbc0e39f4a4ad79b74d217181e24cb"
 
-    const val TOP_NEWS = "bbc.com,skysports.com,cnn.com"
-    const val TOP_NEWS_HORIZONTAL = "vox.com,bloomberg.com,weather.com"
+    const val TOP_NEWS = "vox.com,bloomberg.com,weather.com,bbc.com"
+    const val TOP_NEWS_SHOW_MORE = "weather.com,bbc.com,washingtonpost.com"
     const val CATEGORY_KEY = "CATEGORY_KEY"
     const val ARTICLE_KEY = "article"
     const val READ_LATER_KEY = "readLater"

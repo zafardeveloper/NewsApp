@@ -1,11 +1,12 @@
 package com.example.quicknews.view.main.home.adapter
 
 import android.annotation.SuppressLint
+import android.util.Log
+import android.util.SparseIntArray
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
@@ -17,49 +18,63 @@ import com.example.quicknews.R
 import com.example.quicknews.databinding.EachItemBinding
 import com.example.quicknews.databinding.RowItemLayoutHeadlinesHomeBinding
 import com.example.quicknews.databinding.RowItemLayoutSearchHomeBinding
-import com.example.quicknews.databinding.RowItemNewsSearchBinding
+import com.example.quicknews.databinding.RowItemNewsArticleBinding
+import com.example.quicknews.databinding.RowItemNewsArticleShimmerBinding
+import com.example.quicknews.databinding.RowItemNewsHomeShimmerBinding
 import com.example.quicknews.model.article.Article
 import com.example.quicknews.util.StartSnapHelper
 import com.example.quicknews.util.Util.Companion.formatDate
 
-open class HomeAdapter(private val listener: Listener) :
+class HomeAdapter(private val listener: Listener) :
     RecyclerView.Adapter<ViewHolder>() {
+
+    private var isLoading = true
+    private val shimmerItemsCount = 7
 
     companion object {
         private const val VIEW_TYPE_SEARCH = 0
         private const val VIEW_TYPE_HEADLINES = 1
         private const val VIEW_TYPE_VERTICAL = 2
         private const val VIEW_TYPE_HORIZONTAL = 3
+        private const val VIEW_TYPE_SHIMMER = 4
+        private const val VIEW_TYPE_SHIMMER_HORIZONTAL = 5
     }
 
-    var horizontalArticles: List<Article> = listOf()
+    private val horizontalScrollPositions = SparseIntArray()
 
-    @SuppressLint("NotifyDataSetChanged")
-    fun setArticles(horizontalList: List<Article>) {
-        this.horizontalArticles = horizontalList
-        notifyDataSetChanged()
-    }
 
-    inner class SearchViewHolder(binding: RowItemLayoutSearchHomeBinding): ViewHolder(binding.root)
-    inner class HeadlinesViewHolder(binding: RowItemLayoutHeadlinesHomeBinding): ViewHolder(binding.root)
+    inner class SearchViewHolder(binding: RowItemLayoutSearchHomeBinding) : ViewHolder(binding.root)
+    inner class HeadlinesViewHolder(binding: RowItemLayoutHeadlinesHomeBinding) :
+        ViewHolder(binding.root)
 
-    inner class VerticalArticleViewHolder(binding: RowItemNewsSearchBinding) :
+    inner class VerticalArticleViewHolder(binding: RowItemNewsArticleBinding) :
         ViewHolder(binding.root) {
         private val title = binding.tvTitle
         private val source = binding.tvSource
         private val publishedAt = binding.tvPublishedAt
         private val image = binding.ivArticleImage
-        val constraintLayout = binding.constraintLayout
-        fun bind(article: Article) {
+        fun bind(article: Article, listener: Listener) {
             title.text = article.title
             source.text = article.source?.name
 
             publishedAt.text =
-                formatDate(article.publishedAt!!, "yyyy-MM-dd'T'HH:mm:ss'Z'", "dd MMMM")
+                formatDate(article.publishedAt!!, "yyyy-MM-dd'T'HH:mm:ss'Z'")
             if (article.urlToImage.isNullOrEmpty()) {
                 image.setImageResource(R.drawable.ic_no_image)
             } else {
                 Glide.with(itemView.context).load(article.urlToImage).into(image)
+            }
+            itemView.setOnClickListener {
+                listener.onClick(article)
+            }
+            itemView.setOnLongClickListener {
+                try {
+                    listener.onLongClick(it, article)
+                } catch (e: Exception) {
+                    Toast.makeText(itemView.context, "Error", Toast.LENGTH_SHORT)
+                        .show()
+                }
+                true
             }
         }
     }
@@ -74,7 +89,7 @@ open class HomeAdapter(private val listener: Listener) :
             snapHelper.attachToRecyclerView(childRecyclerView)
         }
 
-        fun bind(articleList: List<Article>, listener: Listener) {
+        fun bind(articleList: List<Article>, listener: Listener, position: Int) {
             val childAdapter = ChildAdapter(articleList, listener)
             childRecyclerView.apply {
                 adapter = childAdapter
@@ -82,6 +97,22 @@ open class HomeAdapter(private val listener: Listener) :
                     LinearLayoutManager(binding.root.context, LinearLayoutManager.HORIZONTAL, false)
                 setHasFixedSize(true)
                 isNestedScrollingEnabled = true
+
+                val savedPosition = horizontalScrollPositions[position]
+                (layoutManager as LinearLayoutManager).scrollToPositionWithOffset(savedPosition, 0)
+
+                addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                    override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                        super.onScrollStateChanged(recyclerView, newState)
+                        if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                            val currentPosition =
+                                (layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                            horizontalScrollPositions.put(position, currentPosition)
+                        }
+                    }
+                })
+
+
                 addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
                     override fun onInterceptTouchEvent(
                         rv: RecyclerView,
@@ -103,6 +134,16 @@ open class HomeAdapter(private val listener: Listener) :
         }
     }
 
+    inner class ShimmerViewHolder(binding: RowItemNewsArticleShimmerBinding) :
+        ViewHolder(binding.root) {
+        val shimmerLayout = binding.shimmerLayout
+    }
+
+    inner class ShimmerViewHolderHorizontal(binding: RowItemNewsHomeShimmerBinding) :
+        ViewHolder(binding.root) {
+        val shimmerLayout = binding.shimmerLayout
+    }
+
     private val differCallBack = object : DiffUtil.ItemCallback<Article>() {
         override fun areItemsTheSame(oldItem: Article, newItem: Article): Boolean {
             return oldItem.url == newItem.url
@@ -115,18 +156,26 @@ open class HomeAdapter(private val listener: Listener) :
 
     val differ = AsyncListDiffer(this, differCallBack)
 
+
     override fun getItemViewType(position: Int): Int {
         return when (position) {
-            0 -> {
-                VIEW_TYPE_SEARCH
-            }
-            1 -> {
-                VIEW_TYPE_HEADLINES
-            }
+            0 -> VIEW_TYPE_SEARCH
+            1 -> VIEW_TYPE_HEADLINES
             2 -> {
-                VIEW_TYPE_HORIZONTAL
+                if (isLoading) {
+                    VIEW_TYPE_SHIMMER_HORIZONTAL
+                } else {
+                    VIEW_TYPE_HORIZONTAL
+                }
             }
-            else -> VIEW_TYPE_VERTICAL
+
+            else -> {
+                if (isLoading) {
+                    VIEW_TYPE_SHIMMER
+                } else {
+                    VIEW_TYPE_VERTICAL
+                }
+            }
         }
     }
 
@@ -152,7 +201,7 @@ open class HomeAdapter(private val listener: Listener) :
             }
 
             VIEW_TYPE_VERTICAL -> {
-                val binding = RowItemNewsSearchBinding.inflate(
+                val binding = RowItemNewsArticleBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
                     false
@@ -169,18 +218,34 @@ open class HomeAdapter(private val listener: Listener) :
                 HorizontalArticleViewHolder(binding)
             }
 
+            VIEW_TYPE_SHIMMER -> {
+                val binding = RowItemNewsArticleShimmerBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+                ShimmerViewHolder(binding)
+            }
+
+            VIEW_TYPE_SHIMMER_HORIZONTAL -> {
+                val binding = RowItemNewsHomeShimmerBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+                ShimmerViewHolderHorizontal(binding)
+            }
+
             else -> throw IllegalArgumentException("Invalid view type")
         }
     }
 
     override fun getItemCount(): Int {
-        return differ.currentList.size
+        return if (isLoading) shimmerItemsCount else differ.currentList.size
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val article = differ.currentList[position]
         when (holder.itemViewType) {
-
             VIEW_TYPE_SEARCH -> {
                 val searchHolder = holder as SearchViewHolder
                 searchHolder.itemView.setOnClickListener {
@@ -190,35 +255,47 @@ open class HomeAdapter(private val listener: Listener) :
 
             VIEW_TYPE_HORIZONTAL -> {
                 val horizontalHolder = holder as HorizontalArticleViewHolder
-                horizontalHolder.bind(horizontalArticles.take(10), listener)
-                horizontalHolder.itemView.setOnClickListener {
-                    listener.onClick(article)
-                }
-                horizontalHolder.itemView.setOnLongClickListener {
-                    listener.onLongClick(it, article)
-                    true
-                }
+                horizontalHolder.bind(differ.currentList.take(10), listener, position)
             }
 
             VIEW_TYPE_VERTICAL -> {
                 val verticalHolder = holder as VerticalArticleViewHolder
-                verticalHolder.bind(article)
-                verticalHolder.constraintLayout.startAnimation(
-                    AnimationUtils.loadAnimation(holder.itemView.context, R.anim.emergence)
-                )
-                verticalHolder.itemView.setOnClickListener {
-                    listener.onClick(article)
+                val adjustedPosition = position - 1
+                if (adjustedPosition in 0 until differ.currentList.size) {
+                    val article = differ.currentList[adjustedPosition + 1]
+                    verticalHolder.bind(article, listener)
+                } else {
+                    Log.e("TabAdapter", "Invalid position: $adjustedPosition")
                 }
-                verticalHolder.itemView.setOnLongClickListener {
-                    try {
-                        listener.onLongClick(it, article)
-                    } catch (e: Exception) {
-                        Toast.makeText(holder.itemView.context, "Error", Toast.LENGTH_SHORT).show()
-                    }
-                    true
-                }
+
+            }
+
+            VIEW_TYPE_SHIMMER -> {
+                val shimmerHolder = holder as ShimmerViewHolder
+                shimmerHolder.shimmerLayout.startShimmer()
+            }
+
+            VIEW_TYPE_SHIMMER_HORIZONTAL -> {
+                val shimmerHolder = holder as ShimmerViewHolderHorizontal
+                shimmerHolder.shimmerLayout.startShimmer()
             }
         }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun setData(newMovieList: List<Article>) {
+        isLoading = false
+        differ.submitList(newMovieList) {
+            notifyDataSetChanged()
+        }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun showLoading() {
+        if (!isLoading) {
+            isLoading = true
+        }
+        notifyDataSetChanged()
     }
 
     interface Listener {

@@ -5,10 +5,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import com.example.quicknews.model.article.Article
 import com.example.quicknews.model.article.NewsResponse
 import com.example.quicknews.repository.NewsRepository
 import com.example.quicknews.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import javax.inject.Inject
@@ -18,10 +24,9 @@ class HomeViewModel @Inject constructor(private val newsRepository: NewsReposito
 
     private val _breakingNews: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
     val breakingNews: LiveData<Resource<NewsResponse>> get() = _breakingNews
-    private var breakingNewsPage = 1
 
-    private val _breakingNewsHorizontal: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
-    val breakingNewsHorizontal: LiveData<Resource<NewsResponse>> get() = _breakingNewsHorizontal
+    private val _breakingNewsShowMore: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
+    val breakingNewsShowMore: LiveData<Resource<NewsResponse>> get() = _breakingNewsShowMore
 
     private val _searchQuery: MutableLiveData<String> = MutableLiveData()
     val searchQuery: LiveData<String> get() = _searchQuery
@@ -31,34 +36,47 @@ class HomeViewModel @Inject constructor(private val newsRepository: NewsReposito
 
     fun getAllBreakingNews(domains: String) {
         viewModelScope.launch {
+            _breakingNews.postValue(Resource.Loading())
             try {
-                _breakingNews.postValue(Resource.Loading())
                 val response = newsRepository.getAllBreakingNews(domains)
                 _breakingNews.postValue(handleBrakingNewsResponse(response))
             } catch (e: Exception) {
+                _breakingNews.postValue(Resource.Error(e.message))
                 Log.d("MyLog", "getAllBreakingNews: $e e.message: ${e.message}")
             }
         }
     }
 
-    fun getAllBreakingNewsHorizontal(domains: String) {
+    fun getAllBreakingNewsShowMore(domains: String) {
         viewModelScope.launch {
+            _breakingNewsShowMore.postValue(Resource.Loading())
             try {
-                _breakingNewsHorizontal.postValue(Resource.Loading())
                 val response = newsRepository.getAllBreakingNews(domains)
-                _breakingNewsHorizontal.postValue(handleBrakingNewsResponse(response))
+                _breakingNewsShowMore.postValue(handleBrakingNewsResponse(response))
             } catch (e: Exception) {
+                _breakingNewsShowMore.postValue(Resource.Error(e.message))
                 Log.d("MyLog", "getAllBreakingNews: $e e.message: ${e.message}")
             }
         }
+    }
+
+    fun getAllBreakingNewsWithPaging(domains: String): Flow<PagingData<Article>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = 20,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = { newsRepository.getAllBreakingNewsWithPaging(domains) }
+        ).flow.cachedIn(viewModelScope)
     }
 
     private fun handleBrakingNewsResponse(response: Response<NewsResponse>): Resource<NewsResponse> {
-        if (response.isSuccessful) {
+        return if (response.isSuccessful) {
             response.body()?.let { resultResponse ->
-                return Resource.Success(resultResponse)
-            }
+                Resource.Success(resultResponse)
+            } ?: Resource.Error("Response body is null")
+        } else {
+            Resource.Error(response.message())
         }
-        return Resource.Error(response.message())
     }
 }

@@ -7,13 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.example.quicknews.R
+import com.example.quicknews.common.BaseBottomSheetDialogFragment
 import com.example.quicknews.databinding.CategoriesBottomSheetBinding
 import com.example.quicknews.view.main.categories.CategoriesViewModel
-import com.fin_group.artelmark.util.BaseBottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 
 
-class CategoriesBottomSheet() : BaseBottomSheetDialogFragment() {
+class CategoriesBottomSheet : BaseBottomSheetDialogFragment() {
 
     private var _binding: CategoriesBottomSheetBinding? = null
     private val binding get() = _binding!!

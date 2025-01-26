@@ -2,6 +2,7 @@ package com.example.quicknews.di
 
 import com.example.quicknews.api.ApiService
 import com.example.quicknews.util.Constants
+import com.facebook.shimmer.BuildConfig
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,9 +22,11 @@ object AppModule {
     fun provideRetrofit(): Retrofit {
         val logging = HttpLoggingInterceptor()
         logging.setLevel(HttpLoggingInterceptor.Level.BODY)
-        val httpClient = OkHttpClient.Builder()
-            .addInterceptor(logging)
-            .build()
+        val httpClient = OkHttpClient.Builder().apply {
+            if (BuildConfig.DEBUG) {
+                addInterceptor(logging)
+            }
+        }.build()
 
         return Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)

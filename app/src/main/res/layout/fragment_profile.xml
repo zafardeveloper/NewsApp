@@ -27,7 +27,6 @@
             app:expandedTitleTextAppearance="@style/CustomExpandedTitle"
             app:expandedTitleTextColor="@color/back_button_color"
             app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
-            app:title=""
             app:titleCollapseMode="scale">
 
             <FrameLayout
@@ -65,7 +64,8 @@
                     app:fabCustomSize="40dp"
                     app:rippleColor="@color/ripple_color"
                     app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
-                    app:tint="@color/primary_color" />
+                    app:tint="@color/primary_color"
+                    android:theme="@style/FloatingActionButtonTheme"/>
             </FrameLayout>
 
 
@@ -74,7 +74,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?actionBarSize"
                 android:background="@color/profile_color"
-                app:layout_collapseMode="pin" />
+                app:layout_collapseMode="pin"/>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 

@@ -50,11 +50,12 @@
     <string name="russian">Русский</string>
     <string name="are_you_sure_you_want_to_delete_all_items">Вы уверены, что хотите удалить все элементы?</string>
     <string name="are_you_sure_you_want_to_delete_this_item">Вы уверены, что хотите удалить этот элемент?</string>
+    <string name="delete_items_confirmation">Удалить %1$d элемент(ов) ?</string>
     <string name="undo">Отменить</string>
     <string name="show_list">Показать список</string>
     <string name="item_removed_from_read_it_later">Элемент удален из \"Прочитать позже\"</string>
     <string name="item_added_to_read_it_later">Элемент добавлен в \"Прочитать позже\"</string>
-    <string name="local">Местный</string>
+    <string name="local">В регионе</string>
     <string name="choose_language">Выберите язык</string>
     <string name="choose_theme">Выберите тему</string>
     <string name="photo_deleted">Фото удалено</string>
@@ -63,5 +64,10 @@
     <string name="light_mode">Светлая тема</string>
     <string name="dark_mode">Темная тема</string>
     <string name="appInfo">News app для Android v</string>
+    <string name="no_connection">Ой! Ошибка соединения</string>
+    <string name="try_again">Повторить</string>
+    <string name="selected">выбрано</string>
+    <string name="male">Мужчина</string>
+    <string name="female">Женщина</string>
 
 </resources>

@@ -71,10 +71,10 @@
 
             <EditText
                 android:id="@+id/nameET"
+                style="@style/EditTextStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/profile_text_color"
-                style="@style/EditTextStyle"/>
+                android:backgroundTint="@color/profile_text_color" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -87,10 +87,10 @@
 
             <EditText
                 android:id="@+id/usernameET"
+                style="@style/EditTextStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/profile_text_color"
-                style="@style/EditTextStyle" />
+                android:backgroundTint="@color/profile_text_color" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -103,10 +103,10 @@
 
             <EditText
                 android:id="@+id/phoneET"
+                style="@style/EditTextNumberStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/profile_text_color"
-                style="@style/EditTextNumberStyle"/>
+                android:backgroundTint="@color/profile_text_color" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -117,13 +117,13 @@
                 android:text="@string/gender"
                 android:textColor="@color/profile_text_color" />
 
-            <EditText
-                android:id="@+id/genderET"
+            <AutoCompleteTextView
+                android:id="@+id/genderACTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/profile_text_color"
-                android:fontFamily="@font/qanelas_medium"
-                android:textSize="16sp" />
+                android:inputType="none"
+                android:textSize="16sp"
+                android:backgroundTint="@color/profile_text_color" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -154,11 +154,11 @@
 
             <EditText
                 android:id="@+id/emailET"
+                style="@style/EditTextEmailStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/profile_text_color"
-                android:fontFamily="@font/qanelas_medium"
-                style="@style/EditTextEmailStyle"/>
+                android:fontFamily="@font/qanelas_medium" />
 
         </LinearLayout>
 

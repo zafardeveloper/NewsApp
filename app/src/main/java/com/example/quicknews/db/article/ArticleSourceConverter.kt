@@ -14,7 +14,6 @@ class ArticleSourceConverter {
 
     @TypeConverter
     fun toSource(sourceString: String): Source {
-        val type = object : TypeToken<Source>() {}.type
-        return Gson().fromJson(sourceString, type)
+        return Gson().fromJson(sourceString, Source::class.java)
     }
 }

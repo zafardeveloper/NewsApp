@@ -65,14 +65,12 @@
 
     <TextView
         android:id="@+id/tvPublishedAt"
+        style="@style/SourceTextAppearanceNewsSearch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
         android:text="PUBLISHED AT"
-        style="@style/SourceTextAppearanceNewsSearch"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/tvTitle"
+        app:layout_constraintStart_toStartOf="@+id/tvSource"
         app:layout_constraintTop_toBottomOf="@+id/tvSource" />
 
 

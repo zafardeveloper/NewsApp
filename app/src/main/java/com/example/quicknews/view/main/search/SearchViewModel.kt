@@ -14,29 +14,32 @@ import retrofit2.Response
 import javax.inject.Inject
 
 @HiltViewModel
-class SearchViewModel @Inject constructor(private val newsRepository: NewsRepository) : ViewModel() {
+class SearchViewModel @Inject constructor(private val newsRepository: NewsRepository) :
+    ViewModel() {
 
     private val _searchNews: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
     val searchNews: LiveData<Resource<NewsResponse>> get() = _searchNews
     private var searchNewsPage = 1
 
     fun searchForNews(searchQuery: String) = viewModelScope.launch {
+        _searchNews.postValue(Resource.Loading())
         try {
-            _searchNews.postValue(Resource.Loading())
             val response = newsRepository.searchForNews(searchQuery, searchNewsPage)
             _searchNews.postValue(handleSearchNewsResponse(response))
         } catch (e: Exception) {
+            _searchNews.postValue(Resource.Error(e.message))
             Log.d("MyLog", "searchForNews: $e e.message: ${e.message}")
         }
     }
 
-    private fun handleSearchNewsResponse(response: Response<NewsResponse>) : Resource<NewsResponse> {
-        if (response.isSuccessful) {
+    private fun handleSearchNewsResponse(response: Response<NewsResponse>): Resource<NewsResponse> {
+        return if (response.isSuccessful) {
             response.body()?.let { resultResponse ->
-                return Resource.Success(resultResponse)
-            }
+                Resource.Success(resultResponse)
+            } ?: Resource.Error("Response body is null")
+        } else {
+            Resource.Error(response.message())
         }
-        return Resource.Error(response.message())
     }
 
 }

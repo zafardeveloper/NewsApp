@@ -19,10 +19,10 @@ import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.bumptech.glide.Glide
 import com.example.quicknews.R
+import com.example.quicknews.common.BaseFragment
 import com.example.quicknews.databinding.FragmentProfileBinding
 import com.example.quicknews.model.profile.UserInfoModel
 import com.example.quicknews.model.setting.SettingLayoutModel
@@ -44,7 +44,7 @@ import java.util.Date
 import java.util.Locale
 import kotlin.math.abs
 
-class ProfileFragment : Fragment(), CameraImageBottomSheet.Listener {
+class ProfileFragment : BaseFragment(), CameraImageBottomSheet.Listener {
 
     private val viewModel: ProfileViewModel by activityViewModels()
 
@@ -412,5 +412,10 @@ class ProfileFragment : Fragment(), CameraImageBottomSheet.Listener {
         } else {
             Log.d("MyLog", "File not found: ${file.absolutePath}")
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

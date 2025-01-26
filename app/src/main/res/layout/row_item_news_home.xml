@@ -1,83 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/constraintLayout"
-    android:layout_width="300dp"
-    android:layout_height="223dp"
-    android:backgroundTint="@color/item_color_primary"
-    style="@style/RowItemStyle">
+    android:id="@+id/materialCardView"
+    android:layout_width="280dp"
+    android:layout_height="203dp"
+    android:layout_margin="10dp"
+    app:cardCornerRadius="15dp"
+    app:cardElevation="1dp">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/materialCardView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        app:cardCornerRadius="15dp"
-        app:cardElevation="1dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-        <RelativeLayout
+        <ImageView
+            android:id="@+id/ivArticleImage"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <ImageView
-                android:id="@+id/ivArticleImage"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:foreground="@color/dark"
-                android:scaleType="centerCrop"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            android:layout_height="match_parent"
+            android:foreground="@color/dark"
+            android:scaleType="centerCrop" />
 
 
-            <TextView
-                android:id="@+id/tvSource"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignStart="@id/ivArticleImage"
-                android:layout_alignTop="@id/ivArticleImage"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="100dp"
-                android:background="@drawable/bg_for_tv_red"
-                android:padding="5dp"
-                android:text="SOURCE"
-                android:textColor="@color/white"
-                android:textSize="12sp" />
+        <TextView
+            android:id="@+id/tvSource"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@id/ivArticleImage"
+            android:layout_alignTop="@id/ivArticleImage"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="100dp"
+            android:background="@drawable/bg_for_tv_red"
+            android:padding="5dp"
+            android:text="SOURCE"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
 
-            <TextView
-                android:id="@+id/tvTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignStart="@id/ivArticleImage"
-                android:layout_alignTop="@id/tvSource"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="30dp"
-                android:layout_marginEnd="10dp"
-                android:ellipsize="end"
-                android:maxLines="2"
-                android:text="TITLE"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@id/ivArticleImage"
+            android:layout_alignTop="@id/tvSource"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="10dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="TITLE"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/tvPublishedAt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignEnd="@id/ivArticleImage"
-                android:layout_alignBottom="@id/ivArticleImage"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="10dp"
-                android:text="PUBLISHED AT"
-                android:textColor="@color/white"
-                android:textSize="12sp" />
+        <TextView
+            android:id="@+id/tvPublishedAt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@id/ivArticleImage"
+            android:layout_alignBottom="@id/ivArticleImage"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:text="PUBLISHED AT"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
 
-        </RelativeLayout>
+    </RelativeLayout>
 
-    </androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>
 
-</androidx.constraintlayout.widget.ConstraintLayout>

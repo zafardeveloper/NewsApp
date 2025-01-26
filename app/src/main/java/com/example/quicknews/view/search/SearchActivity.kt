@@ -23,10 +23,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.quicknews.R
 import com.example.quicknews.common.BaseActivity
 import com.example.quicknews.databinding.ActivitySearchBinding
-import com.example.quicknews.db.AppDatabase
-import com.example.quicknews.db.searchHistory.SearchHistoryDao
 import com.example.quicknews.db.searchHistory.SearchHistoryEntity
-import com.example.quicknews.db.searchHistory.SearchHistoryRepository
 import com.example.quicknews.util.Constants.CURRENT_SEARCH_TEXT
 import com.example.quicknews.util.Constants.MANAGE_HISTORY
 import com.example.quicknews.util.Constants.SEARCH_QUERY
@@ -48,9 +45,6 @@ class SearchActivity : BaseActivity(), SearchActivityAdapter.Listener {
     private lateinit var recyclerView: RecyclerView
     private lateinit var searchET: EditText
     private lateinit var cleanBtn: ImageView
-    private lateinit var searchHistoryDatabase: AppDatabase
-    private lateinit var searchHistoryRepository: SearchHistoryRepository
-    private lateinit var searchHistoryDao: SearchHistoryDao
     private var imm: InputMethodManager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,9 +69,6 @@ class SearchActivity : BaseActivity(), SearchActivityAdapter.Listener {
         recyclerView = binding.searchRV
         searchET = binding.searchET
         cleanBtn = binding.cleanSearchText
-        searchHistoryDatabase = AppDatabase.getDatabase(this)
-        searchHistoryDao = searchHistoryDatabase.searchHistoryDao()
-        searchHistoryRepository = SearchHistoryRepository(searchHistoryDao)
     }
 
     private fun loadSearchHistory() {
@@ -204,7 +195,7 @@ class SearchActivity : BaseActivity(), SearchActivityAdapter.Listener {
         val title = dialogView.findViewById<TextView>(R.id.textViewTitle)
 
         val alertDialog = AlertDialog.Builder(this)
-            .setCancelable(false)
+            .setCancelable(true)
             .setView(dialogView)
             .create()
         alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
@@ -227,7 +218,6 @@ class SearchActivity : BaseActivity(), SearchActivityAdapter.Listener {
         clickAreaButton(buttonYes)
         clickAreaButton(buttonNo)
         alertDialog.show()
-        alertDialog.window?.setLayout(800, 1000)
     }
 
     override fun onManageHistoryClick() {
