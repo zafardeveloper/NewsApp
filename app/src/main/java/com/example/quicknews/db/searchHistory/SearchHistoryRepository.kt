@@ -20,6 +20,8 @@ class SearchHistoryRepository(private val searchHistoryDao: SearchHistoryDao) {
     suspend fun deleteAllSearchHistory(histories: List<SearchHistoryEntity>) =
         searchHistoryDao.deleteAllSearchHistory(histories)
 
+    suspend fun deleteByIds(ids: List<Int>) = searchHistoryDao.deleteByIds(ids)
+
     suspend fun deleteSearchHistory(searchHistory: SearchHistoryEntity) =
         searchHistoryDao.deleteSearchHistory(searchHistory)
 

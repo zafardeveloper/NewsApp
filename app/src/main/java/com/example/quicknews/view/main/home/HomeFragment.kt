@@ -13,7 +13,6 @@ import android.widget.PopupMenu
 import android.widget.ProgressBar
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,11 +20,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.quicknews.R
+import com.example.quicknews.common.BaseFragment
 import com.example.quicknews.databinding.FragmentHomeBinding
-import com.example.quicknews.db.AppDatabase
-import com.example.quicknews.db.article.readLater.ReadLaterDao
 import com.example.quicknews.db.article.readLater.ReadLaterEntity
-import com.example.quicknews.db.article.readLater.ReadLaterRepository
 import com.example.quicknews.model.article.Article
 import com.example.quicknews.util.Constants
 import com.example.quicknews.util.Constants.ARTICLE_KEY
@@ -44,7 +41,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class HomeFragment : Fragment(), HomeAdapter.Listener {
+class HomeFragment : BaseFragment(), HomeAdapter.Listener {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
@@ -55,13 +52,9 @@ class HomeFragment : Fragment(), HomeAdapter.Listener {
     private lateinit var progressBar: ProgressBar
     private lateinit var recyclerView: RecyclerView
     private lateinit var profileImage: ImageView
-    private lateinit var articleDatabase: AppDatabase
-    private lateinit var readLaterRepository: ReadLaterRepository
-    private lateinit var readLaterDao: ReadLaterDao
     private lateinit var searchResultLauncher: ActivityResultLauncher<Intent>
     private lateinit var sessionManager: SessionManager
     private lateinit var fab: FloatingActionButton
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -75,8 +68,6 @@ class HomeFragment : Fragment(), HomeAdapter.Listener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-
         setupRecyclerView()
         observeViewModel()
         listener()
@@ -87,9 +78,6 @@ class HomeFragment : Fragment(), HomeAdapter.Listener {
         myAdapter = HomeAdapter(this)
         progressBar = binding.progressBar
         profileImage = binding.profileImage
-        articleDatabase = AppDatabase.getDatabase(requireContext())
-        readLaterDao = articleDatabase.articleDao()
-        readLaterRepository = ReadLaterRepository(readLaterDao)
         sessionManager = SessionManager(requireContext())
         fab = binding.upFloatingActionButton
         searchResultLauncher =
@@ -102,6 +90,7 @@ class HomeFragment : Fragment(), HomeAdapter.Listener {
                 }
             }
     }
+
     override fun onResume() {
         super.onResume()
         val avatarUri = sessionManager.getAvatarImage()
@@ -123,6 +112,9 @@ class HomeFragment : Fragment(), HomeAdapter.Listener {
         }
         fab.setOnClickListener {
             recyclerView.smoothScrollToPosition(0)
+        }
+        binding.noConnectionLayout.tryAgain.setOnClickListener {
+            observeViewModel()
         }
     }
 
@@ -188,51 +180,32 @@ class HomeFragment : Fragment(), HomeAdapter.Listener {
     }
 
     private fun observeViewModel() {
+
         viewModel.getAllBreakingNews(Constants.TOP_NEWS)
-        viewModel.getAllBreakingNewsHorizontal(Constants.TOP_NEWS_HORIZONTAL)
+        myAdapter.showLoading()
 
         viewModel.breakingNews.observe(viewLifecycleOwner) { response ->
             when (response) {
                 is Resource.Success -> {
-                    hideProgressBar()
+                    recyclerView.visibility = View.VISIBLE
+                    binding.noConnectionLayout.root.visibility = View.GONE
                     response.data?.let { newsResponse ->
-                        if (myAdapter.differ.currentList != newsResponse.articles)
-                            myAdapter.differ.submitList(newsResponse.articles)
+                        myAdapter.setData(newsResponse.articles)
                     }
                 }
 
                 is Resource.Error -> {
-                    hideProgressBar()
+                    recyclerView.visibility = View.GONE
+                    binding.noConnectionLayout.root.visibility = View.VISIBLE
                     response.message?.let { message ->
                         Log.e("Mylog", "An error occurred: $message")
                     }
                 }
 
                 is Resource.Loading -> {
-                    showProgressBar()
-                }
-            }
-        }
-
-        viewModel.breakingNewsHorizontal.observe(viewLifecycleOwner) { response ->
-            when (response) {
-                is Resource.Success -> {
-                    hideProgressBar()
-                    response.data?.let { newsResponse ->
-                        if (myAdapter.horizontalArticles != newsResponse.articles)
-                            myAdapter.setArticles(newsResponse.articles)
-                    }
-                }
-
-                is Resource.Error -> {
-                    hideProgressBar()
-                    response.message?.let { message ->
-                        Log.e("Mylog", "An error occurred: $message")
-                    }
-                }
-
-                is Resource.Loading -> {
-                    showProgressBar()
+                    myAdapter.showLoading()
+                    recyclerView.visibility = View.VISIBLE
+                    binding.noConnectionLayout.root.visibility = View.GONE
                 }
             }
         }
@@ -256,14 +229,6 @@ class HomeFragment : Fragment(), HomeAdapter.Listener {
                 }
             })
         }
-    }
-
-    private fun hideProgressBar() {
-        progressBar.visibility = View.INVISIBLE
-    }
-
-    private fun showProgressBar() {
-        progressBar.visibility = View.VISIBLE
     }
 
     override fun onDestroyView() {

@@ -8,14 +8,15 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.quicknews.R
-import com.example.quicknews.databinding.RowItemNewsSearchBinding
+import com.example.quicknews.databinding.RowItemNewsArticleBinding
 import com.example.quicknews.db.article.history.HistoryEntity
+import com.example.quicknews.util.OnItemClickListener
 import com.example.quicknews.util.Util.Companion.formatDate
 
-class HistoryAdapter(private val listener: Listener) :
+class HistoryAdapter(private val listener: OnItemClickListener<HistoryEntity>) :
     RecyclerView.Adapter<HistoryAdapter.ViewHolder>() {
 
-    inner class ViewHolder(binding: RowItemNewsSearchBinding) :
+    inner class ViewHolder(binding: RowItemNewsArticleBinding) :
         RecyclerView.ViewHolder(binding.root) {
         private val title = binding.tvTitle
         private val source = binding.tvSource
@@ -29,7 +30,7 @@ class HistoryAdapter(private val listener: Listener) :
             source.text = historyEntity.source?.name
 
             publishedAt.text =
-                formatDate(historyEntity.publishedAt!!, "yyyy-MM-dd'T'HH:mm:ss'Z'", "dd MMMM")
+                formatDate(historyEntity.publishedAt!!, "yyyy-MM-dd'T'HH:mm:ss'Z'")
             if (historyEntity.urlToImage.isNullOrEmpty()) {
                 image.setImageResource(R.drawable.ic_no_image)
             } else {
@@ -58,7 +59,7 @@ class HistoryAdapter(private val listener: Listener) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
-            RowItemNewsSearchBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            RowItemNewsArticleBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
@@ -76,11 +77,7 @@ class HistoryAdapter(private val listener: Listener) :
             )
         )
         holder.itemView.setOnClickListener {
-            listener.onClickHistory(historyEntity)
+            listener.onClick(historyEntity)
         }
-    }
-
-    interface Listener {
-        fun onClickHistory(item: HistoryEntity)
     }
 }

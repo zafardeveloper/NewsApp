@@ -10,9 +10,14 @@
     <color name="ripple_color">#7E7E7E</color>
     <color name="icon_edit_color">#A8C8FB</color>
     <color name="profile_text_color">#7E7E7E</color>
+    <color name="popup_icon_color">#C7C7C7</color>
+    <color name="date_header_bg_color">#313131</color>
+    <color name="shimmer_color">#565656</color>
+    <color name="shimmer_bg_color">#333333</color>
+    <color name="shimmer_color_home">#565656</color>
 
     <color name="dark">#80000000</color>
-    <color name="hint">#D8D8D8</color>
+    <color name="hint">#7E7E7E</color>
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
     <color name="unchecked">#B3B3B3</color>
@@ -25,9 +30,13 @@
     <color name="transparent">#00FFFFFF</color>
     <color name="translucentBlack">#80000000</color>
     <color name="delete">#e46554</color>
+    <color name="device_theme">#C8C8C8</color>
 
-    <color name="white_95">#F2FFFFFF</color>
-    <color name="unchecked_95">#F2B3B3B3</color>
+    <color name="white_95">#F23E3E3E</color>
+    <color name="unchecked_95">#F2000000</color>
+
+    <color name="dark_gray_95">#F2C8C8C8</color>
+
 
 
 

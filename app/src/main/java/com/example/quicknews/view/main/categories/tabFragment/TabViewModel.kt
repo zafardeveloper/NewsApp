@@ -19,46 +19,37 @@ class TabViewModel @Inject constructor(private val newsRepository: NewsRepositor
     private val _breakingNews: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
     val breakingNews: LiveData<Resource<NewsResponse>> get() = _breakingNews
 
-    fun getAllBreakingNews(domains: String) {
-        viewModelScope.launch {
-            try {
-                _breakingNews.postValue(Resource.Loading())
-                val response = newsRepository.getAllBreakingNews(domains)
-                _breakingNews.postValue(handleBrakingNewsResponse(response))
-            } catch (e: Exception) {
-                Log.d("MyLog", "getAllBreakingNews: $e e.message: ${e.message}")
-            }
-        }
-    }
-
     fun getLocalNews(query: String) = viewModelScope.launch {
+        _breakingNews.postValue(Resource.Loading())
         try {
-            _breakingNews.postValue(Resource.Loading())
             val response = newsRepository.getLocalNews(query)
             _breakingNews.postValue(handleBrakingNewsResponse(response))
         } catch (e: Exception) {
+            _breakingNews.postValue(Resource.Error(e.message))
             Log.d("MyLog", "searchForNews: $e e.message: ${e.message}")
         }
     }
 
     fun getNews(domains: String, q: String) {
         viewModelScope.launch {
+            _breakingNews.postValue(Resource.Loading())
             try {
-                _breakingNews.postValue(Resource.Loading())
                 val response = newsRepository.getNews(domains, q)
                 _breakingNews.postValue(handleBrakingNewsResponse(response))
             } catch (e: Exception) {
-                Log.d("MyLog", "getAllBreakingNews: $e e.message: ${e.message}")
+                _breakingNews.postValue(Resource.Error(e.message))
+                Log.d("MyLog", "getNews: $e e.message: ${e.message}")
             }
         }
     }
 
     private fun handleBrakingNewsResponse(response: Response<NewsResponse>): Resource<NewsResponse> {
-        if (response.isSuccessful) {
+        return if (response.isSuccessful) {
             response.body()?.let { resultResponse ->
-                return Resource.Success(resultResponse)
-            }
+                Resource.Success(resultResponse)
+            } ?: Resource.Error("Response body is null")
+        } else {
+            Resource.Error(response.message())
         }
-        return Resource.Error(response.message())
     }
 }

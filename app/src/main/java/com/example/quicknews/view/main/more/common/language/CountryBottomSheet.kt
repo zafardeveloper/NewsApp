@@ -8,9 +8,9 @@ import android.view.ViewGroup
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import com.example.quicknews.R
+import com.example.quicknews.common.BaseBottomSheetDialogFragment
 import com.example.quicknews.databinding.BottomSheetCountryBinding
 import com.example.quicknews.util.SharedPreferencesUtils.getLanguagePosition
-import com.fin_group.artelmark.util.BaseBottomSheetDialogFragment
 
 class CountryBottomSheet : BaseBottomSheetDialogFragment() {
 
@@ -67,7 +67,6 @@ class CountryBottomSheet : BaseBottomSheetDialogFragment() {
                         listener?.onCountryClick("ru")
                         dismiss()
                     }
-
             }
         }
     }

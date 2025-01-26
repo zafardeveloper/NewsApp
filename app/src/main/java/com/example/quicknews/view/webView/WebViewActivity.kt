@@ -8,15 +8,13 @@ import android.view.WindowInsetsController
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.quicknews.R
 import com.example.quicknews.common.BaseActivity
 import com.example.quicknews.databinding.ActivityWebViewBinding
-import com.example.quicknews.db.AppDatabase
-import com.example.quicknews.db.article.history.HistoryDao
 import com.example.quicknews.db.article.history.HistoryEntity
-import com.example.quicknews.db.article.history.HistoryRepository
 import com.example.quicknews.db.article.readLater.ReadLaterEntity
 import com.example.quicknews.model.article.Article
 import com.example.quicknews.util.Constants.ARTICLE_KEY
@@ -37,11 +35,9 @@ class WebViewActivity : BaseActivity() {
     private lateinit var webView: WebView
     private lateinit var progressBar: ProgressBar
     private lateinit var toolbar: MaterialToolbar
+    private lateinit var expandedTitleTV: TextView
     private lateinit var collapsingToolbarLayout: CollapsingToolbarLayout
     private lateinit var appBar: AppBarLayout
-    private lateinit var articleDatabase: AppDatabase
-    private lateinit var historyDao: HistoryDao
-    private lateinit var historyRepository: HistoryRepository
     private lateinit var article: Article
     private lateinit var readLater: ReadLaterEntity
     private lateinit var history: HistoryEntity
@@ -61,9 +57,8 @@ class WebViewActivity : BaseActivity() {
         toolbar = binding.materialToolbar
         collapsingToolbarLayout = binding.collapsingToolbarLayout
         appBar = binding.appBarLayout
-        articleDatabase = AppDatabase.getDatabase(this)
-        historyDao = articleDatabase.historyDao()
-        historyRepository = HistoryRepository(historyDao)
+        expandedTitleTV = findViewById(R.id.expandedTitleTV)
+
     }
 
     private fun setupToolbar() {
@@ -98,7 +93,7 @@ class WebViewActivity : BaseActivity() {
                 readLater = intent.getParcelableExtra(READ_LATER_KEY)!!
                 readLater.let {
                     webView.loadUrl(it.url)
-                    collapsingToolbarLayout.title = it.source?.name
+                    updateAppBarTitle(it.source?.name)
                 }
             }
 
@@ -106,7 +101,7 @@ class WebViewActivity : BaseActivity() {
                 history = intent.getParcelableExtra(HISTORY_KEY)!!
                 history.let {
                     webView.loadUrl(it.url)
-                    collapsingToolbarLayout.title = it.source?.name
+                    updateAppBarTitle(it.source?.name)
                 }
             }
 
@@ -114,7 +109,7 @@ class WebViewActivity : BaseActivity() {
                 article = intent.getParcelableExtra(ARTICLE_KEY)!!
                 article.let {
                     webView.loadUrl(it.url)
-                    collapsingToolbarLayout.title = it.source?.name
+                    updateAppBarTitle(it.source?.name)
                     saveHistory(it)
                 }
             }
@@ -136,6 +131,11 @@ class WebViewActivity : BaseActivity() {
         lifecycleScope.launch {
             historyRepository.saveHistory(history)
         }
+    }
+
+    private fun updateAppBarTitle(title: String?) {
+        collapsingToolbarLayout.title = title
+        expandedTitleTV.text = title
     }
 
     private fun setStatusNavigationBarColor() {

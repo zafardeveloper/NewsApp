@@ -7,33 +7,30 @@ import android.util.Log
 import android.view.View
 import android.view.WindowInsetsController
 import android.widget.PopupMenu
-import android.widget.ProgressBar
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
+import androidx.paging.map
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.quicknews.R
 import com.example.quicknews.common.BaseActivity
 import com.example.quicknews.databinding.ActivityHeadlinesBinding
-import com.example.quicknews.db.AppDatabase
-import com.example.quicknews.db.article.readLater.ReadLaterDao
 import com.example.quicknews.db.article.readLater.ReadLaterEntity
-import com.example.quicknews.db.article.readLater.ReadLaterRepository
 import com.example.quicknews.model.article.Article
 import com.example.quicknews.util.Constants
 import com.example.quicknews.util.Constants.ARTICLE_KEY
 import com.example.quicknews.util.OnItemClickListener
-import com.example.quicknews.util.Resource
 import com.example.quicknews.util.Util.Companion.showIconPopupMenu
 import com.example.quicknews.view.main.home.HomeViewModel
 import com.example.quicknews.view.main.more.common.readLater.ReadLaterActivity
-import com.example.quicknews.view.main.search.queryAdapter.SearchQueryAdapter
 import com.example.quicknews.view.webView.WebViewActivity
-import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -46,41 +43,41 @@ class HeadlinesActivity : BaseActivity(), OnItemClickListener<Article> {
     private val viewModel: HomeViewModel by viewModels()
 
     private lateinit var recyclerView: RecyclerView
-    private lateinit var myAdapter: SearchQueryAdapter
-    private lateinit var progressBar: ProgressBar
+
+    //    private lateinit var myAdapter: SearchQueryAdapter
     private lateinit var toolbar: MaterialToolbar
-    private lateinit var appBar: AppBarLayout
     private lateinit var fab: FloatingActionButton
-    private lateinit var articleDatabase: AppDatabase
-    private lateinit var readLaterRepository: ReadLaterRepository
-    private lateinit var readLaterDao: ReadLaterDao
+    private lateinit var myAdapter: HeadlinesAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         init()
         listener()
-        setupToolbar()
         setStatusNavigationBarColor()
-        viewModel.getAllBreakingNewsHorizontal(Constants.TOP_NEWS_HORIZONTAL)
         observeViewModel()
         setupRv()
+
+        toolbar = findViewById(R.id.materialToolbar)
+        setupToolBar(
+            toolbar,
+            getString(R.string.headlines)
+        )
     }
+
     private fun init() {
         recyclerView = binding.rvHeadlines
-        myAdapter = SearchQueryAdapter(this)
-        progressBar = binding.progressBar
-        toolbar = binding.materialToolbar
-        appBar = binding.appBarLayout
+//        myAdapter = SearchQueryAdapter(this)
+        myAdapter = HeadlinesAdapter(this)
         fab = binding.upFloatingActionButton
-        articleDatabase = AppDatabase.getDatabase(this)
-        readLaterDao = articleDatabase.articleDao()
-        readLaterRepository = ReadLaterRepository(readLaterDao)
     }
 
     private fun listener() {
         fab.setOnClickListener {
             recyclerView.smoothScrollToPosition(0)
+        }
+        binding.noConnectionLayout.tryAgain.setOnClickListener {
+            observeViewModel()
         }
     }
 
@@ -95,29 +92,67 @@ class HeadlinesActivity : BaseActivity(), OnItemClickListener<Article> {
     }
 
     private fun observeViewModel() {
-        viewModel.breakingNewsHorizontal.observe(this) { response ->
-            when (response) {
-                is Resource.Success -> {
-                    hideProgressBar()
-                    response.data?.let { newsResponse ->
-                        if (myAdapter.differ.currentList != newsResponse.articles)
-                            myAdapter.differ.submitList(newsResponse.articles)
-                        Log.d("MyLog", "differ.submitList: differ.submitList")
-                    }
-                }
 
-                is Resource.Error -> {
-                    hideProgressBar()
-                    response.message?.let { message ->
-                        Log.e("Mylog", "An error occurred: $message")
-                    }
+//        viewModel.getAllBreakingNewsShowMore(Constants.TOP_NEWS_SHOW_MORE)
+//        myAdapter.showLoading()
+        lifecycleScope.launch {
+            viewModel.getAllBreakingNewsWithPaging(Constants.TOP_NEWS_SHOW_MORE).collectLatest {
+                it.map { article ->
+                    Log.d("MyLog", "observeViewModel: $article")
                 }
-
-                is Resource.Loading -> {
-                    showProgressBar()
-                }
+                myAdapter.submitData(it)
             }
         }
+
+        lifecycleScope.launch {
+            myAdapter.loadStateFlow
+                .collectLatest { loadState ->
+                    when (val refreshState = loadState.source.refresh) {
+                        is LoadState.NotLoading -> {
+                            binding.progressbar.visibility = View.INVISIBLE
+                            Log.d("pagination", "pagination: NotLoading")
+                        }
+                        is LoadState.Loading -> {
+                            binding.progressbar.visibility = View.VISIBLE
+                            Log.d("pagination", "pagination: Loading")
+                        }
+                        is LoadState.Error -> {
+                            binding.progressbar.visibility = View.INVISIBLE
+                            Log.d("pagination", "pagination: Error - ${refreshState.error.message}")
+                        }
+                    }
+                }
+        }
+
+
+
+//        viewModel.breakingNewsShowMore.observe(this) { response ->
+//            when (response) {
+//                is Resource.Success -> {
+//                    recyclerView.visibility = View.VISIBLE
+//                    binding.noConnectionLayout.root.visibility = View.GONE
+//                    response.data?.let { newsResponse ->
+//                        if (myAdapter.differ.currentList != newsResponse.articles) {
+//                            myAdapter.setData(newsResponse.articles)
+//                        }
+//                    }
+//                }
+//
+//                is Resource.Error -> {
+//                    recyclerView.visibility = View.GONE
+//                    binding.noConnectionLayout.root.visibility = View.VISIBLE
+//                    response.message?.let { message ->
+//                        Log.e("Mylog", "An error occurred: $message")
+//                    }
+//                }
+//
+//                is Resource.Loading -> {
+//                    recyclerView.visibility = View.VISIBLE
+//                    binding.noConnectionLayout.root.visibility = View.GONE
+//                    myAdapter.showLoading()
+//                }
+//            }
+//        }
     }
 
     private fun setupRv() {
@@ -137,23 +172,6 @@ class HeadlinesActivity : BaseActivity(), OnItemClickListener<Article> {
                 }
             })
         }
-    }
-
-    private fun setupToolbar() {
-        appBar.setExpanded(false)
-        setSupportActionBar(toolbar)
-        toolbar.setNavigationIcon(R.drawable.ic_back)
-        toolbar.setNavigationOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
-        }
-    }
-
-    private fun hideProgressBar() {
-        progressBar.visibility = View.INVISIBLE
-    }
-
-    private fun showProgressBar() {
-        progressBar.visibility = View.VISIBLE
     }
 
     override fun onClick(item: Article) {

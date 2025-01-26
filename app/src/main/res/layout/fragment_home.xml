@@ -5,7 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/item_color_primary"
+    android:visibility="visible"
     tools:context=".view.main.home.HomeFragment">
+
+    <include
+        android:id="@+id/noConnectionLayout"
+        layout="@layout/no_connection_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/linearLayout"
@@ -59,7 +67,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        android:overScrollMode="never"/>
+        android:visibility="visible"/>
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -93,6 +101,7 @@
         android:backgroundTint="@color/appBar_color"
         android:contentDescription="@string/todo"
         android:src="@drawable/ic_up"
+        android:theme="@style/FloatingActionButtonTheme"
         android:visibility="invisible"
         app:fabCustomSize="48dp"
         app:layout_constraintBottom_toBottomOf="parent"

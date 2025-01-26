@@ -8,12 +8,12 @@ import android.view.ViewGroup
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import com.example.quicknews.R
+import com.example.quicknews.common.BaseBottomSheetDialogFragment
 import com.example.quicknews.databinding.BottomSheetThemeBinding
 import com.example.quicknews.util.Constants.DARK_MODE
 import com.example.quicknews.util.Constants.LIGHT_MODE
 import com.example.quicknews.util.Constants.SYSTEM_MODE
 import com.example.quicknews.util.SharedPreferencesUtils
-import com.fin_group.artelmark.util.BaseBottomSheetDialogFragment
 
 class ThemeBottomSheet : BaseBottomSheetDialogFragment() {
 

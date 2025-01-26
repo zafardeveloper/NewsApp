@@ -1,6 +1,6 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="Base.Theme.QuickNews" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Base.Theme.QuickNews" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimaryDark">@color/item_color_primary</item>
 
     </style>
@@ -9,18 +9,16 @@
         <item name="android:background">@android:color/transparent</item>
     </style>
 
+    <style name="FloatingActionButtonTheme" parent="Theme.Material3.DayNight.NoActionBar"/>
+
     <style name="MineCustomTabText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse">
         <item name="android:textSize">18sp</item>
         <item name="fontFamily">@font/qanelas_medium</item>
     </style>
 
-    <style name="BottomSheetDialogTheme" parent="ThemeOverlay.Material3.BottomSheetDialog">
-        <item name="bottomSheetStyle">@style/BottomSheetDialogStyle</item>
-        <item name="android:windowSoftInputMode">adjustResize</item>
+    <style name="TransparentBottomSheetDialog" parent="Theme.Material3.DayNight.BottomSheetDialog">
+        <item name="android:windowIsFloating">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowIsFloating">false</item>
-        <item name="android:backgroundDimEnabled">true</item>
     </style>
 
     <style name="BottomSheetDialogStyle" parent="Widget.MaterialComponents.BottomSheet">
@@ -31,6 +29,13 @@
         <item name="android:fontFamily">@font/qanelas_medium</item>
     </style>
 
+    <style name="chipStyle">
+        <item name="android:textAppearance">@style/chipText</item>
+        <item name="chipStrokeColor">@color/unchecked</item>
+        <item name="android:backgroundTint">@color/appBar_color</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="chipCornerRadius">99dp</item>
+    </style>
 
     <style name="Theme.QuickNews" parent="Base.Theme.QuickNews" >
         <item name="android:popupMenuStyle">@style/PopupMenu</item>
@@ -93,6 +98,11 @@
     <style name="EditTextNumberStyle">
         <item name="android:textSize">16sp</item>
         <item name="android:inputType">phone</item>
+    </style>
+
+    <style name="ShimmerBackground">
+        <item name="android:background">@drawable/rounded_corner_all</item>
+        <item name="android:backgroundTint">@color/shimmer_color_home</item>
     </style>
 
 </resources>

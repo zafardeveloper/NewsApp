@@ -55,4 +55,16 @@ interface ApiService {
         @Query("apiKey")
         apiKey: String = API_KEY
     ): Response<NewsResponse>
+
+    @GET("v2/everything")
+    suspend fun getAllBreakingNewsWithPaging(
+        @Query("domains")
+        domains: String,
+        @Query("apiKey")
+        apiKey: String = API_KEY,
+        @Query("page")
+        page: Int,
+        @Query("pageSize")
+        pageSize: Int = 20
+    ): Response<NewsResponse>
 }

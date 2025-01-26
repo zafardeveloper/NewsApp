@@ -7,11 +7,12 @@ import com.bumptech.glide.Glide
 import com.example.quicknews.R
 import com.example.quicknews.databinding.RowItemNewsCategoriesHorizontalBinding
 import com.example.quicknews.model.article.Article
+import com.example.quicknews.util.OnItemClickListener
 import com.example.quicknews.util.Util.Companion.formatDate
 
 class TabChildAdapter(
     private val articleList: List<Article>,
-    private val listener: TabAdapter.Listener
+    private val listener: OnItemClickListener<Article>
 ) :
     RecyclerView.Adapter<TabChildAdapter.ChildViewHolder>() {
 
@@ -21,17 +22,18 @@ class TabChildAdapter(
         private val source = binding.tvSource
         private val publishedAt = binding.tvPublishedAt
         private val image = binding.ivArticleImage
-        val constraintLayout = binding.constraintLayout
         fun bind(article: Article) {
             title.text = article.title
             source.text = article.source?.name
 
             publishedAt.text =
-                formatDate(article.publishedAt!!, "yyyy-MM-dd'T'HH:mm:ss'Z'", "dd MMMM")
+                formatDate(article.publishedAt!!, "yyyy-MM-dd'T'HH:mm:ss'Z'")
             if (article.urlToImage.isNullOrEmpty()) {
                 image.setImageResource(R.drawable.ic_no_image)
             } else {
-                Glide.with(itemView.context).load(article.urlToImage).into(image)
+                Glide.with(itemView.context).load(article.urlToImage)
+                    .error(R.drawable.ic_no_image)
+                    .into(image)
             }
             itemView.setOnClickListener {
                 listener.onClick(article)

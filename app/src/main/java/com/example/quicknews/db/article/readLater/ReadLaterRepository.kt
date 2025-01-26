@@ -3,6 +3,7 @@ package com.example.quicknews.db.article.readLater
 import android.content.Context
 import android.graphics.Color
 import android.view.View
+import androidx.core.content.ContextCompat
 import com.example.quicknews.R
 import com.example.quicknews.util.Util.Companion.showSnackBar
 
@@ -23,7 +24,8 @@ class ReadLaterRepository(private val readLaterDao: ReadLaterDao) {
                 view,
                 anchor,
                 context.getString(R.string.item_added_to_read_it_later),
-                Color.WHITE,
+                ContextCompat.getColor(context, R.color.item_color_primary),
+                context.getString(R.string.show_list),
                 action
             )
         } else {
@@ -34,6 +36,7 @@ class ReadLaterRepository(private val readLaterDao: ReadLaterDao) {
                 anchor,
                 context.getString(R.string.item_added_to_read_it_later),
                 Color.WHITE,
+                context.getString(R.string.show_list),
                 action
             )
         }

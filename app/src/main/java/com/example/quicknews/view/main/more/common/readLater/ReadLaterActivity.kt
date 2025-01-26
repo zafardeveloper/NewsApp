@@ -4,12 +4,12 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.view.View
 import android.view.WindowInsetsController
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
@@ -19,14 +19,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.quicknews.R
 import com.example.quicknews.common.BaseActivity
 import com.example.quicknews.databinding.ActivityReadLaterBinding
-import com.example.quicknews.db.AppDatabase
-import com.example.quicknews.db.article.readLater.ReadLaterDao
 import com.example.quicknews.db.article.readLater.ReadLaterEntity
-import com.example.quicknews.db.article.readLater.ReadLaterRepository
 import com.example.quicknews.util.Constants.MODEL_TYPE
 import com.example.quicknews.util.Constants.READ_LATER_KEY
+import com.example.quicknews.util.OnItemClickListener
 import com.example.quicknews.view.webView.WebViewActivity
-import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
@@ -34,7 +31,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ReadLaterActivity : BaseActivity(), ReadLaterAdapter.Listener {
+class ReadLaterActivity : BaseActivity(), OnItemClickListener<ReadLaterEntity> {
 
     private val binding by lazy {
         ActivityReadLaterBinding.inflate(layoutInflater)
@@ -43,33 +40,29 @@ class ReadLaterActivity : BaseActivity(), ReadLaterAdapter.Listener {
     private lateinit var recyclerView: RecyclerView
     private lateinit var readLaterAdapter: ReadLaterAdapter
     private lateinit var toolbar: MaterialToolbar
-    private lateinit var appBar: AppBarLayout
-    private lateinit var articleDatabase: AppDatabase
-    private lateinit var readLaterRepository: ReadLaterRepository
-    private lateinit var readLaterDao: ReadLaterDao
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         setStatusNavigationBarColor()
         init()
-        setupToolbar()
         setupRv()
         loadArticles()
 
         ItemTouchHelper(itemTouchHelperCallback).apply {
             attachToRecyclerView(recyclerView)
         }
+
+        toolbar = findViewById(R.id.materialToolbar)
+        setupToolBar(
+            toolbar,
+            getString(R.string.read_it_later)
+        )
     }
 
     private fun init() {
         recyclerView = binding.rvReadLater
         readLaterAdapter = ReadLaterAdapter(this)
-        toolbar = binding.materialToolbar
-        appBar = binding.appBarLayout
-        articleDatabase = AppDatabase.getDatabase(this)
-        readLaterDao = articleDatabase.articleDao()
-        readLaterRepository = ReadLaterRepository(readLaterDao)
     }
 
     private val itemTouchHelperCallback by lazy {
@@ -116,7 +109,8 @@ class ReadLaterActivity : BaseActivity(), ReadLaterAdapter.Listener {
                     setAction(getString(R.string.undo)) {
                         insertArticle(article)
                     }
-                    setActionTextColor(Color.LTGRAY)
+                    setBackgroundTint(ContextCompat.getColor(this@ReadLaterActivity, R.color.dark_gray_95))
+                    setActionTextColor(ContextCompat.getColor(this@ReadLaterActivity, R.color.item_color_primary))
                     show()
                 }
             }
@@ -197,16 +191,7 @@ class ReadLaterActivity : BaseActivity(), ReadLaterAdapter.Listener {
         }
     }
 
-    private fun setupToolbar() {
-        appBar.setExpanded(false)
-        setSupportActionBar(toolbar)
-        toolbar.setNavigationIcon(R.drawable.ic_back)
-        toolbar.setNavigationOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
-        }
-    }
-
-    override fun onClickHistory(item: ReadLaterEntity) {
+    override fun onClick(item: ReadLaterEntity) {
         val bundle = Bundle().apply {
             putParcelable(READ_LATER_KEY, item)
             putString(MODEL_TYPE, "readLater")
@@ -216,6 +201,8 @@ class ReadLaterActivity : BaseActivity(), ReadLaterAdapter.Listener {
         }
         startActivity(intent)
     }
+
+    override fun onLongClick(view: View, item: ReadLaterEntity) {}
 
     private fun loadArticles() {
         lifecycleScope.launch {
@@ -235,7 +222,6 @@ class ReadLaterActivity : BaseActivity(), ReadLaterAdapter.Listener {
             }
         }
     }
-
     private fun deleteArticle(article: ReadLaterEntity) {
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
@@ -245,4 +231,5 @@ class ReadLaterActivity : BaseActivity(), ReadLaterAdapter.Listener {
             }
         }
     }
+
 }

@@ -2,11 +2,8 @@ package com.example.quicknews.view.main
 
 import android.app.Activity
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
-import android.view.WindowInsetsController
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -15,7 +12,6 @@ import com.example.quicknews.common.BaseActivity
 import com.example.quicknews.databinding.ActivityMainBinding
 import com.example.quicknews.util.Constants.SEARCH_QUERY
 import com.example.quicknews.util.Constants.SEARCH_REQUEST_CODE
-import com.example.quicknews.util.Constants.SELECTED_ITEM_ID
 import com.example.quicknews.view.main.categories.CategoriesFragment
 import com.example.quicknews.view.main.home.HomeFragment
 import com.example.quicknews.view.main.home.HomeViewModel
@@ -51,18 +47,13 @@ class MainActivity : BaseActivity(), NavigationBarView.OnItemSelectedListener {
         setStatusNavigationBarColor()
         init()
         setupBottomNavigation()
-        addFragments()
-        if (savedInstanceState != null) {
-            val selectedItemId = savedInstanceState.getInt(SELECTED_ITEM_ID)
-            bottomNavigationView.selectedItemId = selectedItemId
-            savedInstanceState.getString("searchTV")?.let {
-                if (searchFragment.isAdded && searchFragment.view != null) {
-                    searchFragment.updateSearchQuery(it)
-                } else {
-                    Log.d("MyLog", "onCreate: Empty")
-                }
-            }
+
+        if (savedInstanceState == null) {
+            addFragments()
+        } else {
+            restoreFragments(savedInstanceState)
         }
+
         observeHomeViewModel()
     }
 
@@ -102,13 +93,6 @@ class MainActivity : BaseActivity(), NavigationBarView.OnItemSelectedListener {
     private fun setStatusNavigationBarColor() {
         window.apply {
             navigationBarColor = ContextCompat.getColor(this@MainActivity, R.color.appBar_color)
-//            statusBarColor = ContextCompat.getColor(this@MainActivity, R.color.item_color_primary)
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            window.insetsController?.setSystemBarsAppearance(
-                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
-                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
-            )
         }
     }
 
@@ -127,6 +111,33 @@ class MainActivity : BaseActivity(), NavigationBarView.OnItemSelectedListener {
             .add(R.id.fragmentContainerView, fragment, tag)
             .hide(fragment)
             .commit()
+    }
+
+    private fun restoreFragments(savedInstanceState: Bundle) {
+        homeFragment = supportFragmentManager.findFragmentByTag("1") as? HomeFragment ?: HomeFragment()
+        categoriesFragment = supportFragmentManager.findFragmentByTag("2") as? CategoriesFragment
+            ?: CategoriesFragment()
+        searchFragment = supportFragmentManager.findFragmentByTag("3") as? SearchFragment
+            ?: SearchFragment()
+        moreFragment = supportFragmentManager.findFragmentByTag("4") as? MoreFragment ?: MoreFragment()
+
+        val activeTag = savedInstanceState.getString("activeFragmentTag")
+        activeFragment = when (activeTag) {
+            "1" -> homeFragment
+            "2" -> categoriesFragment
+            "3" -> searchFragment
+            "4" -> moreFragment
+            else -> homeFragment
+        }
+
+        supportFragmentManager.beginTransaction().apply {
+            hide(homeFragment)
+            hide(categoriesFragment)
+            hide(searchFragment)
+            hide(moreFragment)
+            show(activeFragment)
+        }.commit()
+
     }
 
     @Suppress("DEPRECATION")
@@ -170,8 +181,8 @@ class MainActivity : BaseActivity(), NavigationBarView.OnItemSelectedListener {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putInt(SELECTED_ITEM_ID, bottomNavigationView.selectedItemId)
         outState.putString("searchTV", searchQuery)
+        outState.putString("activeFragmentTag", activeFragment.tag)
     }
 
 

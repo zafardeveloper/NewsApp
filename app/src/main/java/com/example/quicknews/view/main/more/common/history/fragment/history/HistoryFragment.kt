@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.VibrationEffect
@@ -13,20 +12,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.core.view.get
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.quicknews.R
+import com.example.quicknews.common.BaseFragment
 import com.example.quicknews.databinding.FragmentHistoryBinding
-import com.example.quicknews.db.AppDatabase
-import com.example.quicknews.db.article.history.HistoryDao
 import com.example.quicknews.db.article.history.HistoryEntity
-import com.example.quicknews.db.article.history.HistoryRepository
 import com.example.quicknews.util.Constants.HISTORY_KEY
 import com.example.quicknews.util.Constants.MODEL_TYPE
+import com.example.quicknews.util.OnItemClickListener
 import com.example.quicknews.view.main.more.common.history.HistoryAdapter
 import com.example.quicknews.view.main.more.common.history.fragment.searchHistory.SearchHistoryFragment
 import com.example.quicknews.view.webView.WebViewActivity
@@ -38,7 +34,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class HistoryFragment : Fragment(), HistoryAdapter.Listener {
+class HistoryFragment : BaseFragment(), OnItemClickListener<HistoryEntity> {
 
     private var _binding: FragmentHistoryBinding? = null
     private val binding get() = _binding!!
@@ -47,9 +43,6 @@ class HistoryFragment : Fragment(), HistoryAdapter.Listener {
     private lateinit var historyAdapter: HistoryAdapter
     private lateinit var toolbar: MaterialToolbar
     private lateinit var appBar: AppBarLayout
-    private lateinit var articleDatabase: AppDatabase
-    private lateinit var historyRepository: HistoryRepository
-    private lateinit var historyDao: HistoryDao
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -62,25 +55,49 @@ class HistoryFragment : Fragment(), HistoryAdapter.Listener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupToolbar()
         setupRv()
         loadHistories()
         ItemTouchHelper(itemTouchHelperCallback).apply {
             attachToRecyclerView(recyclerView)
         }
+
+        toolbar = view.findViewById(R.id.materialToolbar)
+        appBar = view.findViewById(R.id.appBarLayout)
+        setupToolBar(
+            toolbar = toolbar,
+            title = getString(R.string.history),
+            menuResId = R.menu.action_menu,
+            updateMenuIcon = R.drawable.ic_search_history
+        ) {
+            when (it.itemId) {
+                R.id.action -> {
+                    parentFragmentManager.beginTransaction()
+                        .setCustomAnimations(
+                            R.anim.overlay_from_right,
+                            R.anim.overlay_to_left,
+                            R.anim.overlay_from_left,
+                            R.anim.overlay_to_right
+                        )
+                        .add(R.id.historyFragmentContainerView, SearchHistoryFragment())
+                        .hide(this@HistoryFragment)
+                        .addToBackStack(null)
+                        .commit()
+                    true
+                }
+
+                else -> false
+            }
+        }
+
     }
 
 
     private fun init() {
         recyclerView = binding.rvHistory
         historyAdapter = HistoryAdapter(this)
-        toolbar = binding.materialToolbar
-        appBar = binding.appBarLayout
-        articleDatabase = AppDatabase.getDatabase(requireContext())
-        historyDao = articleDatabase.historyDao()
-        historyRepository = HistoryRepository(historyDao)
     }
 
+    @Suppress("DEPRECATION")
     private val itemTouchHelperCallback by lazy {
         object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
             private val deleteIcon by lazy {
@@ -128,7 +145,18 @@ class HistoryFragment : Fragment(), HistoryAdapter.Listener {
                     setAction(getString(R.string.undo)) {
                         insertHistory(history)
                     }
-                    setActionTextColor(Color.LTGRAY)
+                    setBackgroundTint(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.dark_gray_95
+                        )
+                    )
+                    setActionTextColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.item_color_primary
+                        )
+                    )
                     show()
                 }
             }
@@ -198,40 +226,7 @@ class HistoryFragment : Fragment(), HistoryAdapter.Listener {
         }
     }
 
-    private fun setupToolbar() {
-        appBar.setExpanded(false)
-        toolbar.apply {
-            inflateMenu(R.menu.action_menu)
-            menu[0].setIcon(R.drawable.ic_search_history)
-            setOnMenuItemClickListener { menuItem ->
-                when (menuItem.itemId) {
-                    R.id.action -> {
-                        parentFragmentManager.beginTransaction()
-                            .setCustomAnimations(
-                                R.anim.overlay_from_right,
-                                R.anim.overlay_to_left,
-                                R.anim.overlay_from_left,
-                                R.anim.overlay_to_right
-                            )
-                            .add(R.id.historyFragmentContainerView, SearchHistoryFragment())
-                            .hide(this@HistoryFragment)
-                            .addToBackStack(null)
-                            .commit()
-                        true
-                    }
-
-                    else -> false
-                }
-            }
-            setNavigationIcon(R.drawable.ic_back)
-            setNavigationOnClickListener {
-                requireActivity().onBackPressedDispatcher.onBackPressed()
-            }
-
-        }
-    }
-
-    override fun onClickHistory(item: HistoryEntity) {
+    override fun onClick(item: HistoryEntity) {
         val bundle = Bundle().apply {
             putParcelable(HISTORY_KEY, item)
             putString(MODEL_TYPE, "history")
@@ -241,6 +236,8 @@ class HistoryFragment : Fragment(), HistoryAdapter.Listener {
         }
         startActivity(intent)
     }
+
+    override fun onLongClick(view: View, item: HistoryEntity) {}
 
     private fun loadHistories() {
         lifecycleScope.launch {
@@ -271,4 +268,8 @@ class HistoryFragment : Fragment(), HistoryAdapter.Listener {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

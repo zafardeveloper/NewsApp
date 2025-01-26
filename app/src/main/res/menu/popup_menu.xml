@@ -5,6 +5,6 @@
         android:id="@+id/addReadLater"
         android:title="@string/add_read_it_later"
         android:icon="@drawable/ic_later"
-        android:iconTint="#2E2E2E"
+        android:iconTint="@color/popup_icon_color"
         tools:ignore="UnusedAttribute" />
 </menu>

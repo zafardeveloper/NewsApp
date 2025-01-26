@@ -8,20 +8,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.quicknews.R
+import com.example.quicknews.common.BaseFragment
 import com.example.quicknews.databinding.FragmentSearchBinding
-import com.example.quicknews.db.AppDatabase
-import com.example.quicknews.db.article.readLater.ReadLaterDao
 import com.example.quicknews.db.article.readLater.ReadLaterEntity
-import com.example.quicknews.db.article.readLater.ReadLaterRepository
 import com.example.quicknews.model.article.Article
 import com.example.quicknews.util.Constants.ARTICLE_KEY
 import com.example.quicknews.util.Constants.CURRENT_SEARCH_TEXT
@@ -39,7 +35,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class SearchFragment : Fragment(), OnItemClickListener<Article> {
+class SearchFragment : BaseFragment(), OnItemClickListener<Article> {
 
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
@@ -48,10 +44,6 @@ class SearchFragment : Fragment(), OnItemClickListener<Article> {
     private lateinit var recyclerView: RecyclerView
     private lateinit var searchTV: TextView
     private lateinit var cardView: MaterialCardView
-    private lateinit var progressBar: ProgressBar
-    private lateinit var articleDatabase: AppDatabase
-    private lateinit var readLaterRepository: ReadLaterRepository
-    private lateinit var readLaterDao: ReadLaterDao
     private lateinit var fab: FloatingActionButton
     private val viewModel: SearchViewModel by activityViewModels()
 
@@ -66,20 +58,19 @@ class SearchFragment : Fragment(), OnItemClickListener<Article> {
 
     private fun init() {
         searchTV = binding.searchTV
-        progressBar = binding.progressBar
         recyclerView = binding.searchRV
         cardView = binding.searchCV
-        articleDatabase = AppDatabase.getDatabase(requireContext())
-        readLaterDao = articleDatabase.articleDao()
-        readLaterRepository = ReadLaterRepository(readLaterDao)
         fab = binding.upFloatingActionButton
+        searchQueryAdapter = SearchQueryAdapter(this)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupRecyclerView()
-        observeViewModel()
+        savedInstanceState?.getString("searchQuery")?.let {
+            searchTV.text = it
+            viewModel.searchForNews(it)
+        }
 
         val searchResultLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -95,13 +86,22 @@ class SearchFragment : Fragment(), OnItemClickListener<Article> {
             }
             searchResultLauncher.launch(intent)
         }
+
+        observeViewModel()
+        setupRecyclerView()
+        listener()
+    }
+
+    private fun listener() {
+        binding.noConnectionLayout.tryAgain.setOnClickListener {
+            observeViewModel()
+        }
         fab.setOnClickListener {
             recyclerView.smoothScrollToPosition(0)
         }
     }
 
     private fun setupRecyclerView() {
-        searchQueryAdapter = SearchQueryAdapter(this)
         recyclerView.apply {
             adapter = searchQueryAdapter
             layoutManager = LinearLayoutManager(requireContext())
@@ -121,22 +121,30 @@ class SearchFragment : Fragment(), OnItemClickListener<Article> {
     }
 
     private fun observeViewModel() {
+
+        viewModel.searchForNews(searchTV.text.toString())
+        searchQueryAdapter.showLoading()
+
         viewModel.searchNews.observe(viewLifecycleOwner) { response ->
             when (response) {
 
                 is Resource.Loading -> {
-                    showProgressBar()
+                    recyclerView.visibility = View.VISIBLE
+                    binding.noConnectionLayout.root.visibility = View.GONE
+                    searchQueryAdapter.showLoading()
                 }
 
                 is Resource.Success -> {
                     response.data?.let { newsResponse ->
-                        searchQueryAdapter.differ.submitList(newsResponse.articles)
+                        searchQueryAdapter.setData(newsResponse.articles)
                     }
-
-                    hideProgressBar()
+                    recyclerView.visibility = View.VISIBLE
+                    binding.noConnectionLayout.root.visibility = View.GONE
                 }
 
                 is Resource.Error -> {
+                    recyclerView.visibility = View.GONE
+                    binding.noConnectionLayout.root.visibility = View.VISIBLE
                     response.message?.let { message ->
                         Log.e("MyLog", "An error occurred: $message")
                     }
@@ -154,15 +162,8 @@ class SearchFragment : Fragment(), OnItemClickListener<Article> {
     }
 
     fun checkQueryExist(): Boolean {
+
         return !searchTV.text.isNullOrEmpty()
-    }
-
-    private fun hideProgressBar() {
-        progressBar.visibility = View.INVISIBLE
-    }
-
-    private fun showProgressBar() {
-        progressBar.visibility = View.VISIBLE
     }
 
     override fun onClick(item: Article) {
@@ -212,6 +213,11 @@ class SearchFragment : Fragment(), OnItemClickListener<Article> {
     private fun snapBarAction() {
         val intent = Intent(requireContext(), ReadLaterActivity::class.java)
         startActivity(intent)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("searchQuery", searchTV.text.toString())
     }
 
     override fun onDestroyView() {

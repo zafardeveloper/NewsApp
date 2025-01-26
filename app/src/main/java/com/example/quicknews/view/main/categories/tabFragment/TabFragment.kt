@@ -7,21 +7,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
-import android.widget.ProgressBar
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.quicknews.R
+import com.example.quicknews.common.BaseFragment
 import com.example.quicknews.databinding.FragmentTabBinding
-import com.example.quicknews.db.AppDatabase
-import com.example.quicknews.db.article.readLater.ReadLaterDao
 import com.example.quicknews.db.article.readLater.ReadLaterEntity
-import com.example.quicknews.db.article.readLater.ReadLaterRepository
 import com.example.quicknews.model.article.Article
 import com.example.quicknews.util.Constants
 import com.example.quicknews.util.Constants.ARTICLE_KEY
+import com.example.quicknews.util.OnItemClickListener
 import com.example.quicknews.util.Resource
 import com.example.quicknews.util.SharedPreferencesUtils.getLanguageCode
 import com.example.quicknews.util.Util.Companion.showIconPopupMenu
@@ -32,20 +29,17 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class TabFragment : Fragment(), TabAdapter.Listener {
+class TabFragment : BaseFragment(), OnItemClickListener<Article> {
 
     private var _binding: FragmentTabBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel: TabViewModel by viewModels()
+
     private lateinit var myAdapter: TabAdapter
     private lateinit var recyclerView: RecyclerView
-    private lateinit var progressBar: ProgressBar
     private lateinit var fab: FloatingActionButton
-    private lateinit var articleDatabase: AppDatabase
-    private lateinit var readLaterRepository: ReadLaterRepository
-    private lateinit var readLaterDao: ReadLaterDao
-
+    private var search: String? = null
 
     companion object {
         fun newInstance(data: String): TabFragment {
@@ -69,32 +63,40 @@ class TabFragment : Fragment(), TabAdapter.Listener {
     private fun init() {
         myAdapter = TabAdapter(this)
         recyclerView = binding.rvBreakingNews
-        progressBar = binding.progressBar
         fab = binding.upFloatingActionButton
-        articleDatabase = AppDatabase.getDatabase(requireContext())
-        readLaterDao = articleDatabase.articleDao()
-        readLaterRepository = ReadLaterRepository(readLaterDao)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         myAdapter = TabAdapter(this)
         setupRecyclerView()
-        observeViewModel()
         fab.setOnClickListener {
             recyclerView.smoothScrollToPosition(0)
         }
         val data = arguments?.getString(Constants.CATEGORY_KEY)
+        search = data
+        observeViewModel()
+        binding.noConnectionLayout.tryAgain.setOnClickListener {
+            observeViewModel()
+        }
+    }
+
+    private fun observeViewModel() {
+
+        myAdapter.showLoading()
+
         val countryCode = when (getLanguageCode(requireContext())) {
             "en" -> {
                 getString(R.string.america)
             }
+
             "ru" -> {
                 getString(R.string.russia)
             }
+
             else -> ""
         }
-        when (data) {
+        when (search) {
 
             getString(R.string.local) -> {
                 viewModel.getLocalNews(countryCode)
@@ -161,28 +163,29 @@ class TabFragment : Fragment(), TabAdapter.Listener {
             }
 
         }
-    }
 
-    private fun observeViewModel() {
         viewModel.breakingNews.observe(viewLifecycleOwner) { response ->
             when (response) {
                 is Resource.Success -> {
-                    hideProgressBar()
                     response.data?.let { newsResponse ->
-                        if (myAdapter.differ.currentList != newsResponse.articles)
-                            myAdapter.differ.submitList(newsResponse.articles)
+                        myAdapter.setData(newsResponse.articles)
                     }
+                    binding.mainContent.visibility = View.VISIBLE
+                    binding.noConnectionLayout.root.visibility = View.GONE
                 }
 
                 is Resource.Error -> {
-                    hideProgressBar()
                     response.message?.let { message ->
                         Log.e("Mylog", "An error occurred: $message")
                     }
+                    binding.mainContent.visibility = View.GONE
+                    binding.noConnectionLayout.root.visibility = View.VISIBLE
                 }
 
                 is Resource.Loading -> {
-                    showProgressBar()
+                    myAdapter.showLoading()
+                    binding.mainContent.visibility = View.VISIBLE
+                    binding.noConnectionLayout.root.visibility = View.GONE
                 }
             }
         }
@@ -255,14 +258,6 @@ class TabFragment : Fragment(), TabAdapter.Listener {
                 }
             })
         }
-    }
-
-    private fun hideProgressBar() {
-        progressBar.visibility = View.INVISIBLE
-    }
-
-    private fun showProgressBar() {
-        progressBar.visibility = View.VISIBLE
     }
 
     override fun onDestroyView() {
